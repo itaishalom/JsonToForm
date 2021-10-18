@@ -1,0 +1,36 @@
+{
+  "widgets": [
+    {
+      "type": "header",
+      "name": "History"
+    },
+    {
+      "id": 1,
+      "name": "blabla",
+      "type": "toggle",
+      "values": [
+        "On",
+        "Off"
+      ],
+      "default_value": "0",
+      "chosen_value": 1
+    },
+    {
+      "id": 2,
+      "name": "some drop",
+      "type": "drop_down",
+      "values": [
+        "a",
+        "b",
+        "c"
+      ],
+      "default_value": "2"
+    },
+    {
+      "id": 3,
+      "type": "number_input",
+      "default_value": "28",
+      "name": "Pressure"
+    }
+  ]
+}
