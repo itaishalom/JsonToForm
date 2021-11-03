@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:json_to_form/themes/Inherited_json_form_theme.dart';
+import 'package:json_to_form/themes/inherited_json_form_theme.dart';
 
 class Header extends StatelessWidget {
   final String name;
@@ -10,6 +9,7 @@ class Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  Container(
+
       padding: InheritedJsonFormTheme.of(context).theme.headerContainerPadding,
       decoration: InheritedJsonFormTheme.of(context).theme.headerContainerDecoration,
       child: Text(

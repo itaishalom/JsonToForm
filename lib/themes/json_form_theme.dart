@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 // For internal usage only. Use values from theme itself.
 
-/// See [JsonFormField.userAvatarNameColors]
+/// See [JsonFormTheme.userAvatarNameColors]
 const colors = [
   Color(0xffff6767),
   Color(0xff66e0da),
@@ -15,6 +15,8 @@ const colors = [
   Color(0xfffd7590),
   Color(0xffc78ae5),
 ];
+
+const backgroundColor = Color(0xff1A1A1A);
 
 /// Dark
 const dark = Color(0xff1f1c38);
@@ -53,37 +55,50 @@ const inactiveToggleActiveBgColor = Color(0xffFD5C14);
 /// Base chat theme containing all required properties to make a theme.
 /// Extend this class if you want to create a custom theme.
 @immutable
-abstract class JsonFormField {
+abstract class JsonFormTheme {
   /// Creates a new chat theme based on provided colors and text styles.
-  const JsonFormField({
-    required this.headerContainerPadding,
-    required this.headerContainerDecoration,
-    required this.headerTextStyle,
-    required this.toggleMinWidth,
-    required this.toggleMinHeight,
-    required this.toggleFontSize,
-    required this.toggleActiveColor,
-    required this.toggleActiveTextColor,
-    required this.toggleInactiveColor,
-    required this.toggleInactiveTextColor,
-    required this.dropDownIcon,
-    required this.underLineWidget,
-    required this.nameTextStyle,
-    required this.nameContainerPadding,
-    required this.nameContainerDecoration,
-    required this.descriptionTextStyle,
-    required this.staticTextStyle,
-  });
+  const JsonFormTheme(
+      {required this.headerContainerPadding,
+      required this.titleTextStyle,
+      required this.headerContainerDecoration,
+      required this.headerTextStyle,
+      required this.toggleMinWidth,
+      required this.toggleMinHeight,
+      required this.toggleFontSize,
+      required this.toggleActiveColor,
+      required this.toggleActiveTextColor,
+      required this.toggleInactiveColor,
+      required this.toggleInactiveTextColor,
+      required this.dropDownIcon,
+      required this.underLineWidget,
+      required this.nameTextStyle,
+      required this.nameContainerPadding,
+      required this.nameContainerDecoration,
+      required this.descriptionTextStyle,
+      required this.staticTextStyle,
+      required this.linePadding,
+      required this.linePaDecoration,
+      required this.linePaDecorationAboveHeader,
+      required this.backgroundColor});
 
   /// Global container params///
 
   final EdgeInsets nameContainerPadding;
+
+  final EdgeInsets linePadding;
+
+  final BoxDecoration linePaDecoration;
+
+
+  final BoxDecoration linePaDecorationAboveHeader;
 
   final BoxDecoration nameContainerDecoration;
 
   final TextStyle nameTextStyle;
 
   final TextStyle descriptionTextStyle;
+
+  final Color backgroundColor;
 
   ///Header section//////
 
@@ -93,6 +108,8 @@ abstract class JsonFormField {
   final BoxDecoration headerContainerDecoration;
 
   final TextStyle headerTextStyle;
+
+  final TextStyle titleTextStyle;
 
   //////////////////////////////////
 
@@ -118,15 +135,14 @@ abstract class JsonFormField {
   final Widget? underLineWidget;
 }
 
-/// Default chat theme which extends [JsonFormField]
+/// Default chat theme which extends [JsonFormTheme]
 @immutable
-class DefaultTheme extends JsonFormField {
+class DefaultTheme extends JsonFormTheme {
   /// Creates a default chat theme. Use this constructor if you want to
   /// override only a couple of properties, otherwise create a new class
-  /// which extends [JsonFormField]
+  /// which extends [JsonFormTheme]
   const DefaultTheme({
     Widget? attachmentButtonIcon,
-    Color backgroundColor = neutral7,
     TextStyle descriptionTextStyle = const TextStyle(
       color: neutral2,
       fontFamily: 'Avenir',
@@ -161,6 +177,7 @@ class DefaultTheme extends JsonFormField {
       fontFamily: 'Avenir',
       fontSize: 16,
       fontWeight: FontWeight.w500,
+      color: Color(0xffE8EAED),
       height: 1.5,
     ),
     double messageBorderRadius = 20,
@@ -240,33 +257,66 @@ class DefaultTheme extends JsonFormField {
     ),
     TextStyle headerTextStyle = const TextStyle(
       fontFamily: 'Avenir',
-      fontSize: 12,
-      fontWeight: FontWeight.w800,
+      fontSize: 13,
+      color: Color(0xffA9AAAD),
+      fontWeight: FontWeight.w400,
+      height: 1.333,
+    ),
+    TextStyle titleTextStyle = const TextStyle(
+      fontFamily: 'Avenir',
+      fontSize: 16,
+      color: Color(0xffE8EAED),
+      fontWeight: FontWeight.w400,
       height: 1.333,
     ),
     BoxDecoration headerContainerDecoration = const BoxDecoration(
-      color: Color(0xff7c94b6),
-    ),
+        color: Color(0xff0D0D0D),
+        border: Border(
+          top: BorderSide(width: 0.0, color: Color(0xFF8A8B8F)),
+          left: BorderSide.none,
+          right: BorderSide.none,
+          bottom: BorderSide(width: 0.0, color: Color(0xFF8A8B8F)),
+        )),
+    BoxDecoration linePaDecoration = const BoxDecoration(
+        border: Border(
+      top: BorderSide.none,
+      left: BorderSide.none,
+      right: BorderSide.none,
+      bottom: BorderSide(width: 0.0, color: Color(0xFF8A8B8F)),
+    )),
+    BoxDecoration linePaDecorationAboveHeader = const BoxDecoration(
+        border: Border(
+      top: BorderSide.none,
+      left: BorderSide.none,
+      right: BorderSide.none,
+      bottom: BorderSide.none,
+    )),
     BoxDecoration nameContainerDecoration = const BoxDecoration(
-      color: Color(0xff7c94b6),
+      color: Colors.transparent,
     ),
   }) : super(
-          headerContainerPadding: const EdgeInsets.all(5),
-          headerContainerDecoration: headerContainerDecoration,
-          headerTextStyle: headerTextStyle,
-          toggleMinWidth: 20,
-          toggleMinHeight: 20,
-          toggleFontSize: 15,
-          toggleActiveColor: inactiveToggleActiveBgColor,
-          toggleActiveTextColor: inactiveToggleTextColor,
-          toggleInactiveColor: inactiveToggleBgColor,
-          toggleInactiveTextColor: inactiveToggleTextColor,
-          dropDownIcon: null,
-          underLineWidget: null,
-          nameTextStyle: nameTextStyle,
-          nameContainerPadding: const EdgeInsets.all(5),
-          nameContainerDecoration: nameContainerDecoration,
-          descriptionTextStyle: descriptionTextStyle,
-          staticTextStyle: staticTextStyle,
-        );
+            linePaDecoration: linePaDecoration,
+            linePadding:
+                const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+            backgroundColor: backgroundColor,
+            headerContainerPadding:
+                const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 20),
+            headerContainerDecoration: headerContainerDecoration,
+            headerTextStyle: headerTextStyle,
+            titleTextStyle: titleTextStyle,
+            toggleMinWidth: 50,
+            toggleMinHeight: 35,
+            toggleFontSize: 18,
+            toggleActiveColor: inactiveToggleActiveBgColor,
+            toggleActiveTextColor: inactiveToggleTextColor,
+            toggleInactiveColor: inactiveToggleBgColor,
+            toggleInactiveTextColor: inactiveToggleTextColor,
+            dropDownIcon: null,
+            underLineWidget: null,
+            nameTextStyle: nameTextStyle,
+            nameContainerPadding: const EdgeInsets.all(0),
+            nameContainerDecoration: nameContainerDecoration,
+            descriptionTextStyle: descriptionTextStyle,
+            staticTextStyle: staticTextStyle,
+            linePaDecorationAboveHeader: linePaDecorationAboveHeader);
 }

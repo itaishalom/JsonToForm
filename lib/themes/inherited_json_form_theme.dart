@@ -11,7 +11,7 @@ class InheritedJsonFormTheme extends InheritedWidget {
   }) : super(key: key, child: child);
 
   /// Represents chat theme
-  final JsonFormField theme;
+  final JsonFormTheme theme;
 
   static InheritedJsonFormTheme of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<InheritedJsonFormTheme>()!;
