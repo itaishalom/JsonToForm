@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:json_to_form/exceptions/parsing_exception.dart';
 import 'package:json_to_form/parsers/drop_down_parser.dart';
+import 'package:json_to_form/parsers/edit_text_parser.dart';
 import 'package:json_to_form/parsers/header_parser.dart';
 import 'package:json_to_form/parsers/static_text_parser.dart';
 import 'package:json_to_form/parsers/toggle_parser.dart';
@@ -64,6 +65,10 @@ class JsonToForm {
         case "drop_down":
           parsers.add(DropDownParser.fromJson(widget, onValueChanged, isBeforeHeader));
           break;
+        case "edit_text":
+          parsers.add(EditTextParser.fromJson(widget, onValueChanged, isBeforeHeader));
+          break;
+
       }
     }
   }

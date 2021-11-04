@@ -15,7 +15,8 @@ class DropDownWidget extends StatefulWidget {
       required this.values,
       required this.description,
       required this.onValueChanged,
-      this.chosenValue, required this.isBeforeHeader})
+      this.chosenValue,
+      required this.isBeforeHeader})
       : super(key: key);
 
   final String name;
@@ -32,44 +33,67 @@ class DropDownWidget extends StatefulWidget {
 
 /// This is the private State class that goes with MyStatefulWidget.
 class _MyStatefulWidgetState extends State<DropDownWidget> {
-
+  String? dropdownValue;
 
   @override
   Widget build(BuildContext context) {
-    String? value = widget.chosenValue;
-    return LineWrapper(isBeforeHeader: widget.isBeforeHeader,
+    dropdownValue ??= widget.chosenValue;
+    return LineWrapper(
+      isBeforeHeader: widget.isBeforeHeader,
       child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           textDirection: TextDirection.ltr,
           children: <Widget>[
             NameWidgetDescription(
                 name: widget.name, description: widget.description),
-            DropdownButton<String>(
-              value: value ?? widget.values[0],
-              icon: InheritedJsonFormTheme.of(context).theme.dropDownIcon != null
-                  ? InheritedJsonFormTheme.of(context).theme.dropDownIcon!
-                  : const Icon(Icons.arrow_downward),
-              iconSize: 24,
-              elevation: 16,
-              style: const TextStyle(color: Color(0xff8A8B8F)),
-              underline:
-                  InheritedJsonFormTheme.of(context).theme.underLineWidget != null
-                      ? InheritedJsonFormTheme.of(context).theme.underLineWidget!
-                      : Container(
-                          height: 2,
-                        ),
-              onChanged: (String? newValue) {
-                setState(() {
-                  value = newValue!;
-                });
-                widget.onValueChanged(widget.id, value);
-              },
-              items: widget.values.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
+            Container(
+              alignment: Alignment.center,
+              child: DropdownButton<String>(
+                dropdownColor: const Color(0xff222222),
+                value: dropdownValue,
+                icon: InheritedJsonFormTheme.of(context).theme.dropDownIcon !=
+                        null
+                    ? InheritedJsonFormTheme.of(context).theme.dropDownIcon!
+                    : const Icon(
+                        Icons.arrow_drop_down_sharp,
+                        color: Colors.white,
+                      ),
+                iconSize: 24,
+                underline: InheritedJsonFormTheme.of(context)
+                            .theme
+                            .underLineWidget !=
+                        null
+                    ? InheritedJsonFormTheme.of(context).theme.underLineWidget!
+                    : Container(
+                        height: 2,
+                      ),
+                style: const TextStyle(
+                  color: Color(0xff8A8B8F),
+                  fontSize: 16,
+                ),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    dropdownValue = newValue!;
+                  });
+                },
+                selectedItemBuilder: (BuildContext context) {
+                  return widget.values.map((String value) {
+                    return Center(
+                      child: Text(
+                        dropdownValue!,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    );
+                  }).toList();
+                },
+                items: widget.values.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
             )
           ]),
     );

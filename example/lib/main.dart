@@ -113,41 +113,6 @@ class MyHomePage extends StatefulWidget {
         "values": ["On", "Off"],
         "default_value": "0",
         "chosen_value": 1
-      }, {
-      "id": 1,
-      "name": "Toggle",
-      "type": "toggle",
-      "values": ["On", "Off"],
-      "default_value": "0",
-      "chosen_value": 1
-    },{
-        "id": 1,
-        "name": "Toggle",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "default_value": "0",
-        "chosen_value": 1
-      },   {
-        "id": 1,
-        "name": "Toggle",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "default_value": "0",
-        "chosen_value": 1
-      },   {
-        "id": 1,
-        "name": "Toggle",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "default_value": "0",
-        "chosen_value": 1
-      },   {
-        "id": 1,
-        "name": "Toggle",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "default_value": "0",
-        "chosen_value": 1
       },   {
         "id": 1,
         "name": "Toggle",
@@ -190,6 +155,20 @@ class MyHomePage extends StatefulWidget {
         "type": "static_text",
         "chosen_value": "value",
         "description" :"(description..)",
+      },
+      {
+        "id": 2,
+        "name": "Edit text",
+        "type": "edit_text",
+        "chosen_value": "edit value",
+        "description" :"(edit description..)",
+      },
+      {
+        "id": 2,
+        "name": "Edit text2",
+        "type": "edit_text",
+        "chosen_value": "edit value",
+        "description" :"(edit description..)",
       },
       {"type": "header", "name": "Header"},
       {
@@ -197,11 +176,11 @@ class MyHomePage extends StatefulWidget {
         "name": "Drop down",
         "type": "drop_down",
         "values": [
-          "a",
-          "b",
-          "c"
+          "Low-Intermediate",
+          "Medium",
+          "High"
         ],
-        "default_value": "2"
+        "chosen_value": "Medium"
       }
     ]
   };
