@@ -300,7 +300,7 @@ class DefaultTheme extends JsonFormTheme {
                 const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
             backgroundColor: backgroundColor,
             headerContainerPadding:
-                const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 20),
+                const EdgeInsets.only(left: 20, right: 10, top: 10, bottom: 10),
             headerContainerDecoration: headerContainerDecoration,
             headerTextStyle: headerTextStyle,
             titleTextStyle: titleTextStyle,

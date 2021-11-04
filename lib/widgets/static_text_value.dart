@@ -32,7 +32,7 @@ class StaticTextValue extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(5)),
-                border: Border.all(color: Color(0xff383839))
+                border: Border.all(color: Colors.transparent)
             ),
             child: Padding(
               padding: EdgeInsets.fromLTRB(20, 10, 20, 10),

@@ -41,31 +41,37 @@ class _EditTextValueState extends State<EditTextValue> {
         textDirection: TextDirection.ltr,
         children: <Widget>[
           NameWidgetDescription(name: widget.name, description: widget.description),
-             Padding(
+          Container(
+            height: 50,
+            child: Padding(
               padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
               child: IntrinsicWidth(
-                  child: TextFormField(
-                    obscureText: false,
-                    inputFormatters: [
-                      new LengthLimitingTextInputFormatter(12), /// here char limit is 5
-                    ],
-                    style: TextStyle(color: Color(0xffFE753C)),
-                    initialValue: widget.chosenValue,
-                    cursorColor: Color(0xffFE753C),
-                    decoration: InputDecoration(
-                      fillColor: Colors.white,
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Color(0xff383839), width: 2.0),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      focusedBorder:OutlineInputBorder(
-                        borderSide: const BorderSide(color: Color(0xffFE753C), width: 2.0),
-                        borderRadius: BorderRadius.circular(5.0),
+                  child: Center(
+                    child: TextFormField(
+                      textAlign: TextAlign.center,
+                      obscureText: false,
+                      inputFormatters: [
+                        new LengthLimitingTextInputFormatter(12), /// here char limit is 5
+                      ],
+                      style: TextStyle(color: Color(0xffFE753C), height: 1),
+                      initialValue: widget.chosenValue,
+                      cursorColor: Color(0xffFE753C),
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Color(0xff383839), width: 2.0),
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        focusedBorder:OutlineInputBorder(
+                          borderSide: const BorderSide(color: Color(0xffFE753C), width: 2.0),
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
                       ),
                     ),
                   ),
               ),
             ),
+          )
 
 
         ],
