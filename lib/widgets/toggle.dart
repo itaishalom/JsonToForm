@@ -7,22 +7,21 @@ import 'package:toggle_switch/toggle_switch.dart';
 import 'name_description_widget.dart';
 
 class Toggle extends StatefulWidget {
-  const Toggle(
-      {Key? key,
-      required this.name,
-      required this.id,
-      required this.values,
-      required this.onValueChanged,
-      this.description,
-        required this.isBeforeHeader,
-      this.chosenValue})
+  Toggle({Key? key,
+    required this.name,
+    required this.id,
+    required this.values,
+    required this.onValueChanged,
+    this.description,
+    required this.isBeforeHeader,
+    this.chosenValue})
       : super(key: key);
 
   final String? description;
   final String name;
   final int id;
   final List<String> values;
-  final int? chosenValue;
+  int? chosenValue;
   final OnValueChanged onValueChanged;
   final bool isBeforeHeader;
 
@@ -30,7 +29,8 @@ class Toggle extends StatefulWidget {
   _ToggleState createState() => _ToggleState();
 }
 
-class _ToggleState extends State<Toggle> {
+class _ToggleState extends State<Toggle>  {
+
   @override
   Widget build(BuildContext context) {
     return LineWrapper(isBeforeHeader: widget.isBeforeHeader,
@@ -66,5 +66,12 @@ class _ToggleState extends State<Toggle> {
         ],
       ),
     );
+  }
+
+  @override
+  void onNewValue(value) {
+    setState(() {
+
+    });
   }
 }

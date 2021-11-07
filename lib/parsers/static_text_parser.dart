@@ -18,7 +18,7 @@ class StaticTextParser implements WidgetParser {
   final String? description;
   final String name;
   final int id;
-  String chosenValue;
+  dynamic chosenValue;
   final bool isBeforeHeader;
   OnValueChanged? onValueChangedLocal;
 
@@ -43,6 +43,11 @@ class StaticTextParser implements WidgetParser {
         description: description,
         chosenValue: chosenValue,
         isBeforeHeader: isBeforeHeader);
+  }
+
+  @override
+  set id(int _id) {
+    // TODO: implement id
   }
 }
 /*

@@ -20,7 +20,6 @@ class DropDownParser implements WidgetParser{
   final String name;
   final int id;
   final List<String> values;
-  String? chosenValue;
   OnValueChanged? onValueChangedLocal;
 
 
@@ -42,6 +41,7 @@ class DropDownParser implements WidgetParser{
 
   Widget getWidget() {
     return DropDownWidget(
+        key: ValueKey(chosenValue),
         name: name,
         id: id,
         values: values,
@@ -49,5 +49,13 @@ class DropDownParser implements WidgetParser{
         chosenValue: chosenValue,
         isBeforeHeader: isBeforeHeader,
         onValueChanged: onValueChanged);
+  }
+
+  @override
+  dynamic chosenValue;
+
+  @override
+  set id(int _id) {
+    // TODO: implement id
   }
 }

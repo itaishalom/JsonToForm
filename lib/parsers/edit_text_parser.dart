@@ -19,7 +19,7 @@ class EditTextParser implements WidgetParser {
   final String? description;
   final String name;
   final int id;
-  String chosenValue;
+  dynamic chosenValue;
   final bool isBeforeHeader;
   OnValueChanged? onValueChangedLocal;
 
@@ -45,6 +45,9 @@ class EditTextParser implements WidgetParser {
         chosenValue: chosenValue,
         isBeforeHeader: isBeforeHeader);
   }
+
+  @override
+  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 /*
 this.name, this.description, this.id, this.chosenValue, this.values, this.onValueChanged){

@@ -5,9 +5,9 @@ import 'package:json_to_form/themes/inherited_json_form_theme.dart';
 import 'line_wrapper.dart';
 import 'name_description_widget.dart';
 
-class StaticTextValue extends StatelessWidget {
+class StaticTextValue extends StatelessWidget   {
 
-  const StaticTextValue(
+  StaticTextValue(
       {Key? key,
         required this.name,
         required this.id,
@@ -18,7 +18,7 @@ class StaticTextValue extends StatelessWidget {
   final String? description;
   final String name;
   final int id;
-  final String chosenValue;
+   String chosenValue;
   final bool isBeforeHeader;
 
   @override
@@ -49,5 +49,15 @@ class StaticTextValue extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  @override
+  void onNewValue(value) {
+    // TODO: implement onNewValue
+  }
+
+  @override
+  set id(int _id) {
+    // TODO: implement id
   }
 }

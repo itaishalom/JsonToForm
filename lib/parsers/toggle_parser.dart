@@ -18,7 +18,7 @@ class ToggleParser implements WidgetParser{
   final String name;
   final int id;
   final List<String> values;
-  int? chosenValue;
+  dynamic? chosenValue;
   OnValueChanged? onValueChangedLocal;
   final bool isBeforeHeader;
 
@@ -48,5 +48,10 @@ class ToggleParser implements WidgetParser{
         description: description,
         chosenValue: chosenValue,
         onValueChanged: onValueChanged);
+  }
+
+  @override
+  set id(int _id) {
+    // TODO: implement id
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:json_to_form/json_to_form.dart';
 import 'package:json_to_form/themes/json_form_theme.dart';
@@ -33,13 +35,10 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key) {
-    form = JsonToForm.fromMap(
-        onValueChanged: (int d, dynamic s) {},
-        map: json,
-        theme: const DefaultTheme());
+
   }
 
-  JsonToForm? form;
+
 
   final Map<String, dynamic> json = {
     "widgets": [
@@ -50,137 +49,28 @@ class MyHomePage extends StatefulWidget {
         "values": ["On", "Off"],
         "default_value": "0",
         "chosen_value": 1
-      },   {
-        "id": 1,
-        "name": "Toggle",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "default_value": "0",
-        "chosen_value": 1
-      },   {
-        "id": 1,
-        "name": "Toggle",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "default_value": "0",
-        "chosen_value": 1
-      },   {
-        "id": 1,
-        "name": "Toggle",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "default_value": "0",
-        "chosen_value": 1
-      },   {
-        "id": 1,
-        "name": "Toggle",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "default_value": "0",
-        "chosen_value": 1
-      },   {
-        "id": 1,
-        "name": "Toggle",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "default_value": "0",
-        "chosen_value": 1
-      },   {
-        "id": 1,
-        "name": "Toggle",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "default_value": "0",
-        "chosen_value": 1
-      },   {
-        "id": 1,
-        "name": "Toggle",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "default_value": "0",
-        "chosen_value": 1
-      },   {
-        "id": 1,
-        "name": "Toggle",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "default_value": "0",
-        "chosen_value": 1
-      },   {
-        "id": 1,
-        "name": "Toggle",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "default_value": "0",
-        "chosen_value": 1
-      },   {
-        "id": 1,
-        "name": "Toggle",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "default_value": "0",
-        "chosen_value": 1
-      },   {
-        "id": 1,
-        "name": "Toggle",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "default_value": "0",
-        "chosen_value": 1
-      },   {
-        "id": 1,
-        "name": "Toggle",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "default_value": "0",
-        "chosen_value": 1
       },
       {
         "id": 2,
         "name": "Static text",
         "type": "static_text",
         "chosen_value": "value",
-        "description" :"(description..)",
+        "description": "(description..)",
       },
       {
-        "id": 2,
-        "name": "Static text",
-        "type": "static_text",
-        "chosen_value": "value",
-        "description" :"(description..)",
-      },
-      {
-        "id": 2,
-        "name": "Static text",
-        "type": "static_text",
-        "chosen_value": "value",
-        "description" :"(description..)",
-      },
-      {
-        "id": 2,
+        "id": 3,
         "name": "Edit text",
         "type": "edit_text",
         "chosen_value": "edit value",
-        "description" :"(edit description..)",
+        "description": "(edit description..)",
       },
+      {"type": "header", "name": "Header", "id": 99},
       {
-        "id": 2,
-        "name": "Edit text2",
-        "type": "edit_text",
-        "chosen_value": "edit value",
-        "description" :"(edit description..)",
-      },
-      {"type": "header", "name": "Header"},
-      {
-        "id": 2,
+        "id": 4,
         "name": "Drop down",
         "type": "drop_down",
-        "values": [
-          "Low-Intermediate",
-          "Medium",
-          "High"
-        ],
-        "chosen_value": "Medium"
+        "values": ["Low-Intermediate", "Medium", "High"],
+        "chosen_value": "Low-Intermediate"
       }
     ]
   };
@@ -192,55 +82,59 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-/*  var json = {
-    "widgets": [
-      {
-        "type": "header",
-        "name": "History"
-      },
-      {
-        "id": 1,
-        "name": "blabla",
-        "type": "toggle",
-        "values": [
-          "On",
-          "Off"
-        ],
-        "default_value": "0",
-        "chosen_value": 1
-      },
-      {
-        "id": 2,
-        "name": "some drop",
-        "type": "drop_down",
-        "values": [
-          "a",
-          "b",
-          "c"
-        ],
-        "default_value": "2"
-      },
-      {
-        "id": 3,
-        "type": "number_input",
-        "default_value": "28",
-        "name": "Pressure"
-      }
-    ]
-  };*/
+
+  JsonToForm? form;
+
+  @override
+  void initState() {
+    super.initState();
+    form = JsonToForm.fromMap(
+        onValueChanged: (int d, dynamic s) {},
+        map: widget.json,
+        triggerRefresh: (){
+          setState(() {
+
+          });
+        },
+        theme: const DefaultTheme());
+  }
+
+  List<String> list = ["Medium", "High"];
+
+  int counter = 0;
+  int toggle = 1;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text('Floating Action Button'),
       ),
-      body: Center(
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
-          child: widget.form?.getWidget()),
+      body: form?.getForm(context),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          counter++;
+          if(counter % 4 == 1) {
+            toggle++;
+            form?.onUpdate(1, toggle%2); // toggle
+          }
+          if(counter % 4 == 2) {
+            form?.onUpdate(2, "updated"+Random().nextInt(10).toString());
+          }
+          if(counter % 4 == 3) {
+            form?.onUpdate(3, "editUp"+Random().nextInt(10).toString());
+          }
+          if(counter % 4 == 0) {
+            form?.onUpdate(4, list[toggle%2]);
+          }
+        },
+        child: const Icon(Icons.navigation),
+        backgroundColor: Colors.green,
+      ),
     );
   }
+
+
+
+
 }
