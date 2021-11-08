@@ -2,11 +2,9 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:json_to_form/json_to_form.dart';
 import 'package:json_to_form/themes/json_form_theme.dart';
 
-import 'aidoc_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -114,12 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: JsonForm(onValueChange, map: widget.json,
           onValueChanged: (String d, dynamic s) {
-        Fluttertoast.showToast(
-            msg: "Update id $d to value $s",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            fontSize: 16.0);
+        print("Update id $d to value $s");
       }, theme: const DefaultTheme()),
       /*form?.getForm(context),*/
       floatingActionButton: FloatingActionButton(
