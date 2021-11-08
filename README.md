@@ -96,8 +96,10 @@ And easily use the basic Theme (or edit it)
       ),
     );
 ```
+<p align="center">
+  <img src="../main/screen_shot.jpg" width="350">
+</p>
 
-<img src="../main/screen_shot.jpg" width="350">
 
 ## Additional information
 
