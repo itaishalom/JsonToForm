@@ -67,7 +67,7 @@ And easily use the basic Theme (or edit it)
       appBar: AppBar(
         title: const Text('Floating Action Button'),
       ),
-      body: JsonForm(onValueChange, map: widget.json,
+      body: JsonFormWithTheme(onValueChange, map: widget.json,
           onValueChanged: (String d, dynamic s) {
            // Do something with the data
       }, theme: const DefaultTheme()),
@@ -81,14 +81,14 @@ And easily use the basic Theme (or edit it)
           }
           if (counter % 4 == 2) {
             _onUserController.add({}..["2"] =
-                "updated" + Random().nextInt(10).toString()); // toggle
+                "updated" + Random().nextInt(10).toString()); // static text
           }
           if (counter % 4 == 3) {
             _onUserController.add({}..["3"] =
-                "editUp" + Random().nextInt(10).toString()); // toggle
+                "editUp" + Random().nextInt(10).toString()); // edit text
           }
           if (counter % 4 == 0) {
-            _onUserController.add({}..["4"] = list[toggle % 2]); // toggle
+            _onUserController.add({}..["4"] = list[toggle % 2]); // dropdown
           }
         },
         child: const Icon(Icons.navigation),
