@@ -97,7 +97,7 @@ And easily use the basic Theme (or edit it)
     );
 ```
 
-![To get](../main/screen_shot.jpg)
+<img src="../main/screen_shot.jpg" width="350">
 
 ## Additional information
 
