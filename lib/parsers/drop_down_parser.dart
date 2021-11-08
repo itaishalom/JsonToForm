@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
-import 'package:json_to_form/parsers/widget_parser.dart';
-import 'package:json_to_form/widgets/drop_down_widget.dart';
-import 'package:json_to_form/widgets/toggle.dart';
+import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
+import 'package:json_to_form_with_theme/widgets/drop_down_widget.dart';
+import 'package:json_to_form_with_theme/widgets/toggle.dart';
 
-import '../json_to_form.dart';
+import '../json_to_form_with_theme.dart';
 
 class DropDownParser implements WidgetParser{
   DropDownParser(

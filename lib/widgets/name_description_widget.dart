@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:json_to_form/themes/inherited_json_form_theme.dart';
+import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 
 class NameWidgetDescription extends StatelessWidget {
 

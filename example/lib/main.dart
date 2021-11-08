@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:json_to_form/json_to_form.dart';
-import 'package:json_to_form/themes/json_form_theme.dart';
+import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
+import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
 
 
 void main() {

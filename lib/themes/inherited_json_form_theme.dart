@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:json_to_form/themes/json_form_theme.dart';
+import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
 
 /// Used to make provided [ChatTheme] class available through the whole package
 class InheritedJsonFormTheme extends InheritedWidget {

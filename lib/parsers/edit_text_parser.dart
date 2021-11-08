@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import 'package:json_to_form/parsers/widget_parser.dart';
-import 'package:json_to_form/widgets/edit_text_value.dart';
-import 'package:json_to_form/widgets/static_text_value.dart';
-import 'package:json_to_form/widgets/toggle.dart';
+import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
+import 'package:json_to_form_with_theme/widgets/edit_text_value.dart';
+import 'package:json_to_form_with_theme/widgets/static_text_value.dart';
+import 'package:json_to_form_with_theme/widgets/toggle.dart';
 
-import '../json_to_form.dart';
+import '../json_to_form_with_theme.dart';
 
 class EditTextParser implements WidgetParser {
   EditTextParser(this.name, this.description, this.id, this.chosenValue,

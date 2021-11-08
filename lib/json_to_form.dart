@@ -1,4 +1,4 @@
-library json_to_form;
+library json_to_form_with_theme;
 
 import 'dart:async';
 import 'dart:collection';
@@ -6,17 +6,17 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:json_to_form/exceptions/parsing_exception.dart';
-import 'package:json_to_form/parsers/drop_down_parser.dart';
-import 'package:json_to_form/parsers/edit_text_parser.dart';
-import 'package:json_to_form/parsers/header_parser.dart';
-import 'package:json_to_form/parsers/static_text_parser.dart';
-import 'package:json_to_form/parsers/toggle_parser.dart';
-import 'package:json_to_form/parsers/widget_parser.dart';
-import 'package:json_to_form/themes/inherited_json_form_theme.dart';
+import 'package:json_to_form_with_theme/exceptions/parsing_exception.dart';
+import 'package:json_to_form_with_theme/parsers/drop_down_parser.dart';
+import 'package:json_to_form_with_theme/parsers/edit_text_parser.dart';
+import 'package:json_to_form_with_theme/parsers/header_parser.dart';
+import 'package:json_to_form_with_theme/parsers/static_text_parser.dart';
+import 'package:json_to_form_with_theme/parsers/toggle_parser.dart';
+import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
+import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 
-import 'package:json_to_form/themes/json_form_theme.dart';
-import 'package:json_to_form/widgets/form.dart';
+import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
+import 'package:json_to_form_with_theme/widgets/form.dart';
 
 typedef OnValueChanged = void Function(String id, dynamic value);
 

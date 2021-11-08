@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
-import 'package:json_to_form/json_to_form.dart';
-import 'package:json_to_form/themes/inherited_json_form_theme.dart';
-import 'package:json_to_form/widgets/line_wrapper.dart';
+import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
+import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
+import 'package:json_to_form_with_theme/widgets/line_wrapper.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import 'name_description_widget.dart';

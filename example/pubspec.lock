@@ -74,7 +74,7 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  json_to_form:
+  json_to_form_with_theme:
     dependency: "direct main"
     description:
       path: ".."
