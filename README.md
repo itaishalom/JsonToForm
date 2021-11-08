@@ -17,13 +17,48 @@ This library aims to help developer get started quickly and create a form made o
 ## Features
 
 The JsonForm can be updated both from the user interaction but can also be notified from outside
-(check the example for the stream)
-
-## Getting started
-
+(check the example for the stream). You can also get the Json back.
 
 ## Usage
+You can declare a Json as:
+```dart
+  final Map<String, dynamic> json = {
+    "widgets": [
+      {
+        "id": "1",
+        "name": "Toggle",
+        "type": "toggle",
+        "values": ["On", "Off"],
+        "default_value": "0",
+        "chosen_value": 1
+      },
+      {
+        "id": "2",
+        "name": "Static text",
+        "type": "static_text",
+        "chosen_value": "value",
+        "description": "(description..)",
+      },
+      {
+        "id": "3",
+        "name": "Edit text",
+        "type": "edit_text",
+        "chosen_value": "edit value",
+        "description": "(edit description..)",
+      },
+      {"type": "header", "name": "Header", "id": "99"},
+      {
+        "id": "4",
+        "name": "Drop down",
+        "type": "drop_down",
+        "values": ["Low-Intermediate", "Medium", "High"],
+        "chosen_value": "Low-Intermediate"
+      }
+    ]
+  };
+```
 
+And easily use the basic Theme (or edit it)
 
 ```dart
 @override
@@ -62,8 +97,11 @@ The JsonForm can be updated both from the user interaction but can also be notif
     );
 ```
 
+To get:
+![Optional Text](../screen_shot.jpg)
+
 ## Additional information
 
 contribute to the package, how to file issues, what response they can expect
 from the package authors, and more.
-# JsonToForm
+# JsonToFormWithTheme

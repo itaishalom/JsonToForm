@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:json_to_form_with_theme/json_to_form.dart';
+import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
 
 
@@ -110,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: const Text('Floating Action Button'),
       ),
-      body: JsonForm(onValueChange, map: widget.json,
+      body: JsonFormWithTheme(onValueChange, map: widget.json,
           onValueChanged: (String d, dynamic s) {
         print("Update id $d to value $s");
       }, theme: const DefaultTheme()),

@@ -20,14 +20,14 @@ import 'package:json_to_form_with_theme/widgets/form.dart';
 
 typedef OnValueChanged = void Function(String id, dynamic value);
 
-class JsonForm extends StatefulWidget {
+class JsonFormWithTheme extends StatefulWidget {
   final OnValueChanged onValueChanged;
   HashMap<int, WidgetParser> parsers = HashMap();
   final Map<String, dynamic> map;
   final JsonFormTheme theme;
   Stream<Map<String, dynamic>>? streamUpdates;
 
-  JsonForm(
+  JsonFormWithTheme(
     Stream<Map<String, dynamic>>? stream, {Key? key,
     required this.onValueChanged,
     required this.map,
@@ -37,10 +37,10 @@ class JsonForm extends StatefulWidget {
   }
 
   @override
-  _JsonFormState createState() => _JsonFormState();
+  _JsonFormWithThemeState createState() => _JsonFormWithThemeState();
 }
 
-class _JsonFormState extends State<JsonForm> {
+class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
   HashMap<String, WidgetParser> parsers = HashMap();
   List<Widget> widgetsGlobal = [];
   late final StreamSubscription<Map<String, dynamic>>? _valueChange;
