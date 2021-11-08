@@ -23,8 +23,8 @@ class EditTextParser implements WidgetParser {
   final bool isBeforeHeader;
   OnValueChanged? onValueChangedLocal;
 
-  EditTextParser.fromJson(
-      Map<String, dynamic> json, this.onValueChanged, this.isBeforeHeader, this.index)
+  EditTextParser.fromJson(Map<String, dynamic> json, this.onValueChanged,
+      this.isBeforeHeader, this.index)
       : name = json['name'],
         description = json['description'],
         id = json['id'],
@@ -44,7 +44,8 @@ class EditTextParser implements WidgetParser {
         description: description,
         chosenValue: chosenValue,
         key: ValueKey(chosenValue),
-        isBeforeHeader: isBeforeHeader, onValueChanged: onValueChanged);
+        isBeforeHeader: isBeforeHeader,
+        onValueChanged: onValueChanged);
   }
 
   @override
@@ -54,7 +55,6 @@ class EditTextParser implements WidgetParser {
   set id(String _id) {
     // TODO: implement id
   }
-
 }
 /*
 this.name, this.description, this.id, this.chosenValue, this.values, this.onValueChanged){

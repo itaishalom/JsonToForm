@@ -7,14 +7,15 @@ import 'package:toggle_switch/toggle_switch.dart';
 import 'name_description_widget.dart';
 
 class Toggle extends StatefulWidget {
-  Toggle({Key? key,
-    required this.name,
-    required this.id,
-    required this.values,
-    required this.onValueChanged,
-    this.description,
-    required this.isBeforeHeader,
-    this.chosenValue})
+  Toggle(
+      {Key? key,
+      required this.name,
+      required this.id,
+      required this.values,
+      required this.onValueChanged,
+      this.description,
+      required this.isBeforeHeader,
+      this.chosenValue})
       : super(key: key);
 
   final String? description;
@@ -29,11 +30,11 @@ class Toggle extends StatefulWidget {
   _ToggleState createState() => _ToggleState();
 }
 
-class _ToggleState extends State<Toggle>  {
-
+class _ToggleState extends State<Toggle> {
   @override
   Widget build(BuildContext context) {
-    return LineWrapper(isBeforeHeader: widget.isBeforeHeader,
+    return LineWrapper(
+      isBeforeHeader: widget.isBeforeHeader,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -47,7 +48,7 @@ class _ToggleState extends State<Toggle>  {
             minHeight: InheritedJsonFormTheme.of(context).theme.toggleMinHeight,
             fontSize: InheritedJsonFormTheme.of(context).theme.toggleFontSize,
             initialLabelIndex: widget.chosenValue,
-              cornerRadius: 4.0,
+            cornerRadius: 4.0,
             activeBgColor: [
               InheritedJsonFormTheme.of(context).theme.toggleActiveColor
             ],

@@ -14,7 +14,8 @@ class InheritedJsonFormTheme extends InheritedWidget {
   final JsonFormTheme theme;
 
   static InheritedJsonFormTheme of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<InheritedJsonFormTheme>()!;
+    return context
+        .dependOnInheritedWidgetOfExactType<InheritedJsonFormTheme>()!;
   }
 
   @override

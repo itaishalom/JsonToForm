@@ -5,26 +5,26 @@ import 'package:json_to_form_with_theme/widgets/toggle.dart';
 
 import '../json_to_form_with_theme.dart';
 
-class HeaderParser implements WidgetParser{
-  HeaderParser(
-      this.name, this.id, this.index);
+class HeaderParser implements WidgetParser {
+  HeaderParser(this.name, this.id, this.index);
 
   final String name;
   final String id;
 
   HeaderParser.fromJson(Map<String, dynamic> json, this.index)
       : name = json['name'],
-      id = json['id'];
+        id = json['id'];
 
   Map<String, dynamic> toJson() => {
         'name': name,
-    'id': id,
+        'id': id,
       };
-
 
   Widget getWidget() {
     return Header(
-        name: name, id: id,);
+      name: name,
+      id: id,
+    );
   }
 
   @override

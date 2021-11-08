@@ -62,9 +62,7 @@ class _EditTextValueState extends State<EditTextValue> {
           NameWidgetDescription(
               name: widget.name, description: widget.description),
           SizedBox(
-            height: InheritedJsonFormTheme.of(context)
-                .theme
-                .editTextHeight,
+            height: InheritedJsonFormTheme.of(context).theme.editTextHeight,
             child: Padding(
               padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
               child: IntrinsicWidth(

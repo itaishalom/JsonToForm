@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-abstract class WidgetParser{
+abstract class WidgetParser {
   Widget getWidget();
   late String id;
   late int index;

@@ -28,7 +28,8 @@ class JsonFormWithTheme extends StatefulWidget {
   Stream<Map<String, dynamic>>? streamUpdates;
 
   JsonFormWithTheme(
-    Stream<Map<String, dynamic>>? stream, {Key? key,
+    Stream<Map<String, dynamic>>? stream, {
+    Key? key,
     required this.onValueChanged,
     required this.map,
     required this.theme,
@@ -93,7 +94,7 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
       if (tempParser == null) {
         throw const ParsingException("Unknown type");
       }
-      if(parsers.containsKey(tempParser.id)){
+      if (parsers.containsKey(tempParser.id)) {
         throw ParsingException("Duplicate Id ${tempParser.id}");
       }
       parsers[tempParser.id] = tempParser;

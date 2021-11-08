@@ -22,8 +22,8 @@ class StaticTextParser implements WidgetParser {
   final bool isBeforeHeader;
   OnValueChanged? onValueChangedLocal;
 
-  StaticTextParser.fromJson(
-      Map<String, dynamic> json, this.onValueChanged, this.isBeforeHeader, this.index)
+  StaticTextParser.fromJson(Map<String, dynamic> json, this.onValueChanged,
+      this.isBeforeHeader, this.index)
       : name = json['name'],
         description = json['description'],
         id = json['id'],

@@ -5,9 +5,9 @@ import 'package:json_to_form_with_theme/widgets/toggle.dart';
 
 import '../json_to_form_with_theme.dart';
 
-class DropDownParser implements WidgetParser{
-  DropDownParser(
-      this.name, this.description, this.id, this.chosenValue, this.values, this.onValueChanged, this.isBeforeHeader, this.index){
+class DropDownParser implements WidgetParser {
+  DropDownParser(this.name, this.description, this.id, this.chosenValue,
+      this.values, this.onValueChanged, this.isBeforeHeader, this.index) {
     onValueChangedLocal = (String id, dynamic value) {
       chosenValue = value;
       onValueChanged(id, value);
@@ -22,8 +22,8 @@ class DropDownParser implements WidgetParser{
   final List<String> values;
   OnValueChanged? onValueChangedLocal;
 
-
-  DropDownParser.fromJson(Map<String, dynamic> json, this.onValueChanged,  this.isBeforeHeader, this.index)
+  DropDownParser.fromJson(Map<String, dynamic> json, this.onValueChanged,
+      this.isBeforeHeader, this.index)
       : name = json['name'],
         description = json['description'],
         id = json['id'],
@@ -37,7 +37,6 @@ class DropDownParser implements WidgetParser{
         'values': values,
         'chosen_value': chosenValue,
       };
-
 
   Widget getWidget() {
     return DropDownWidget(

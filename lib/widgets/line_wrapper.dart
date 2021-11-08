@@ -5,7 +5,8 @@ class LineWrapper extends StatelessWidget {
   final Widget child;
   final bool isBeforeHeader;
 
-  const LineWrapper({Key? key, required this.child, required this.isBeforeHeader})
+  const LineWrapper(
+      {Key? key, required this.child, required this.isBeforeHeader})
       : super(key: key);
 
   @override

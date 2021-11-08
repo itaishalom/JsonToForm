@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
 
-
 void main() {
   runApp(const MyApp());
 }

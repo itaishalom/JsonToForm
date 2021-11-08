@@ -8,7 +8,7 @@ import 'name_description_widget.dart';
 
 /// This is the stateful widget that the main application instantiates.
 class DropDownWidget extends StatefulWidget {
-   DropDownWidget(
+  DropDownWidget(
       {Key? key,
       required this.name,
       required this.id,
@@ -23,13 +23,12 @@ class DropDownWidget extends StatefulWidget {
   final String? description;
   final String id;
   final List<String> values;
-   String? chosenValue;
+  String? chosenValue;
   final OnValueChanged onValueChanged;
   final bool isBeforeHeader;
 
   @override
   State<DropDownWidget> createState() => _MyStatefulWidgetState();
-
 }
 
 /// This is the private State class that goes with MyStatefulWidget.
@@ -41,7 +40,6 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
     dropdownValue = null;
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -95,9 +93,9 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                     );
                   }).toList();
                 },
-                items: widget.values.map<DropdownMenuItem<String>>((String value) {
+                items:
+                    widget.values.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
-
                     value: value,
                     child: Text(value),
                   );
