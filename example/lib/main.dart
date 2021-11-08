@@ -1,8 +1,12 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:json_to_form/json_to_form.dart';
 import 'package:json_to_form/themes/json_form_theme.dart';
+
+import 'aidoc_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,16 +38,12 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key) {
-
-  }
-
-
+  MyHomePage({Key? key, required this.title}) : super(key: key) {}
 
   final Map<String, dynamic> json = {
     "widgets": [
       {
-        "id": 1,
+        "id": "1",
         "name": "Toggle",
         "type": "toggle",
         "values": ["On", "Off"],
@@ -51,22 +51,22 @@ class MyHomePage extends StatefulWidget {
         "chosen_value": 1
       },
       {
-        "id": 2,
+        "id": "2",
         "name": "Static text",
         "type": "static_text",
         "chosen_value": "value",
         "description": "(description..)",
       },
       {
-        "id": 3,
+        "id": "3",
         "name": "Edit text",
         "type": "edit_text",
         "chosen_value": "edit value",
         "description": "(edit description..)",
       },
-      {"type": "header", "name": "Header", "id": 99},
+      {"type": "header", "name": "Header", "id": "99"},
       {
-        "id": 4,
+        "id": "4",
         "name": "Drop down",
         "type": "drop_down",
         "values": ["Low-Intermediate", "Medium", "High"],
@@ -82,13 +82,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-  JsonToForm? form;
+  Stream<Map<String, dynamic>>? onValueChange;
+  final StreamController<Map<String, dynamic>> _onUserController =
+      StreamController<Map<String, dynamic>>();
 
   @override
   void initState() {
     super.initState();
-    form = JsonToForm.fromMap(
+    onValueChange = _onUserController.stream.asBroadcastStream();
+/*    form = JsonToForm.fromMap(
         onValueChanged: (int d, dynamic s) {},
         map: widget.json,
         triggerRefresh: (){
@@ -96,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
           });
         },
-        theme: const DefaultTheme());
+        theme: const DefaultTheme());*/
   }
 
   List<String> list = ["Medium", "High"];
@@ -110,22 +112,33 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: const Text('Floating Action Button'),
       ),
-      body: form?.getForm(context),
+      body: JsonForm(onValueChange, map: widget.json,
+          onValueChanged: (String d, dynamic s) {
+        Fluttertoast.showToast(
+            msg: "Update id $d to value $s",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            fontSize: 16.0);
+      }, theme: const DefaultTheme()),
+      /*form?.getForm(context),*/
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           counter++;
-          if(counter % 4 == 1) {
+          if (counter % 4 == 1) {
             toggle++;
-            form?.onUpdate(1, toggle%2); // toggle
+            _onUserController.add({}..["1"] = toggle % 2); // toggle
           }
-          if(counter % 4 == 2) {
-            form?.onUpdate(2, "updated"+Random().nextInt(10).toString());
+          if (counter % 4 == 2) {
+            _onUserController.add({}..["2"] =
+                "updated" + Random().nextInt(10).toString()); // toggle
           }
-          if(counter % 4 == 3) {
-            form?.onUpdate(3, "editUp"+Random().nextInt(10).toString());
+          if (counter % 4 == 3) {
+            _onUserController.add({}..["3"] =
+                "editUp" + Random().nextInt(10).toString()); // toggle
           }
-          if(counter % 4 == 0) {
-            form?.onUpdate(4, list[toggle%2]);
+          if (counter % 4 == 0) {
+            _onUserController.add({}..["4"] = list[toggle % 2]); // toggle
           }
         },
         child: const Icon(Icons.navigation),
@@ -133,8 +146,4 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-
-
-
-
 }

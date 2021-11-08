@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 // For internal usage only. Use values from theme itself.
 
@@ -16,7 +18,7 @@ const colors = [
   Color(0xffc78ae5),
 ];
 
-const backgroundColor = Color(0xff1A1A1A);
+const backgroundColor = Color(0xff0e9cab);
 
 /// Dark
 const dark = Color(0xff1f1c38);
@@ -25,7 +27,7 @@ const dark = Color(0xff1f1c38);
 const error = Color(0xffff6767);
 
 /// N0
-const neutral0 = Color(0xff1d1c21);
+const neutral0 = Color(0xffad1c21);
 
 /// N2
 const neutral2 = Color(0xff9e9cab);
@@ -43,13 +45,13 @@ const primary = Color(0xff6f61e8);
 const secondary = Color(0xfff5f5f7);
 
 /// Secondary dark
-const secondaryDark = Color(0xff2b2250);
+const secondaryDark = Color(0xff6a2250);
 
 const inactiveToggleTextColor = Color(0xffE8EAED);
 
-const inactiveToggleBgColor = Color(0xff2B2B2B);
+const inactiveToggleBgColor = Color(0xfffB2B2B);
 
-const inactiveToggleActiveBgColor = Color(0xffFD5C14);
+const inactiveToggleActiveBgColor = Color(0xffaD5C14);
 //
 
 /// Base chat theme containing all required properties to make a theme.
@@ -59,6 +61,12 @@ abstract class JsonFormTheme {
   /// Creates a new chat theme based on provided colors and text styles.
   const JsonFormTheme(
       {required this.headerContainerPadding,
+      required this.inputDecoration,
+      required this.editTextHeight,
+      required this.editTextStyle,
+      required this.staticTextPadding,
+      required this.lineMargins,
+      required this.staticContainerDecoration,
       required this.titleTextStyle,
       required this.headerContainerDecoration,
       required this.headerTextStyle,
@@ -79,6 +87,7 @@ abstract class JsonFormTheme {
       required this.linePadding,
       required this.linePaDecoration,
       required this.linePaDecorationAboveHeader,
+      required this.editTextCursorColor,
       required this.backgroundColor});
 
   /// Global container params///
@@ -87,8 +96,9 @@ abstract class JsonFormTheme {
 
   final EdgeInsets linePadding;
 
-  final BoxDecoration linePaDecoration;
+  final EdgeInsets lineMargins;
 
+  final BoxDecoration linePaDecoration;
 
   final BoxDecoration linePaDecorationAboveHeader;
 
@@ -126,7 +136,23 @@ abstract class JsonFormTheme {
   ///// Static Text ////
   final TextStyle staticTextStyle;
 
+  final EdgeInsets staticTextPadding;
+
+  final BoxDecoration staticContainerDecoration;
+
   ///////////////////////////////
+
+  /// Edit Text ///
+
+  final TextStyle editTextStyle;
+
+  final Color editTextCursorColor;
+
+  final double editTextHeight;
+
+  final InputDecoration inputDecoration;
+
+  /////////////////
 
   /// DropDown Widget ////
 
@@ -141,160 +167,102 @@ class DefaultTheme extends JsonFormTheme {
   /// Creates a default chat theme. Use this constructor if you want to
   /// override only a couple of properties, otherwise create a new class
   /// which extends [JsonFormTheme]
-  const DefaultTheme({
-    Widget? attachmentButtonIcon,
-    TextStyle descriptionTextStyle = const TextStyle(
-      color: neutral2,
-      fontFamily: 'Avenir',
-      fontSize: 12,
-      fontWeight: FontWeight.w800,
-      height: 1.333,
-    ),
-    Widget? deliveredIcon,
-    Widget? documentIcon,
-    TextStyle emptyChatPlaceholderTextStyle = const TextStyle(
-      color: neutral2,
-      fontFamily: 'Avenir',
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-      height: 1.5,
-    ),
-    Color errorColor = error,
-    Widget? errorIcon,
-    Color inputBackgroundColor = neutral0,
-    BorderRadius inputBorderRadius = const BorderRadius.vertical(
-      top: Radius.circular(20),
-    ),
-    EdgeInsetsGeometry inputPadding = EdgeInsets.zero,
-    Color inputTextColor = neutral7,
-    Color? inputTextCursorColor,
-    InputDecoration inputTextDecoration = const InputDecoration(
-      border: InputBorder.none,
-      contentPadding: EdgeInsets.zero,
-      isCollapsed: true,
-    ),
-    TextStyle staticTextStyle = const TextStyle(
-      fontFamily: 'Avenir',
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-      color: Color(0xffE8EAED),
-      height: 1.5,
-    ),
-    double messageBorderRadius = 20,
-    double messageInsetsHorizontal = 20,
-    double messageInsetsVertical = 16,
-    Color primaryColor = primary,
-    TextStyle receivedMessageBodyTextStyle = const TextStyle(
-      color: neutral0,
-      fontFamily: 'Avenir',
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-      height: 1.5,
-    ),
-    TextStyle receivedMessageCaptionTextStyle = const TextStyle(
-      color: neutral2,
-      fontFamily: 'Avenir',
-      fontSize: 12,
-      fontWeight: FontWeight.w500,
-      height: 1.333,
-    ),
-    Color receivedMessageDocumentIconColor = primary,
-    TextStyle receivedMessageLinkDescriptionTextStyle = const TextStyle(
-      color: neutral0,
-      fontFamily: 'Avenir',
-      fontSize: 14,
-      fontWeight: FontWeight.w400,
-      height: 1.428,
-    ),
-    TextStyle receivedMessageLinkTitleTextStyle = const TextStyle(
-      color: neutral0,
-      fontFamily: 'Avenir',
-      fontSize: 16,
-      fontWeight: FontWeight.w800,
-      height: 1.375,
-    ),
-    Color secondaryColor = secondary,
-    Widget? seenIcon,
-    Widget? sendButtonIcon,
-    Widget? sendingIcon,
-    TextStyle sentMessageBodyTextStyle = const TextStyle(
-      color: neutral7,
-      fontFamily: 'Avenir',
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-      height: 1.5,
-    ),
-    TextStyle sentMessageCaptionTextStyle = const TextStyle(
-      color: neutral7WithOpacity,
-      fontFamily: 'Avenir',
-      fontSize: 12,
-      fontWeight: FontWeight.w500,
-      height: 1.333,
-    ),
-    Color sentMessageDocumentIconColor = neutral7,
-    TextStyle sentMessageLinkDescriptionTextStyle = const TextStyle(
-      color: neutral7,
-      fontFamily: 'Avenir',
-      fontSize: 14,
-      fontWeight: FontWeight.w400,
-      height: 1.428,
-    ),
-    TextStyle nameTextStyle = const TextStyle(
-      color: neutral7,
-      fontFamily: 'Avenir',
-      fontSize: 16,
-      fontWeight: FontWeight.w800,
-      height: 1.375,
-    ),
-    Color userAvatarImageBackgroundColor = Colors.transparent,
-    List<Color> userAvatarNameColors = colors,
-    TextStyle userAvatarTextStyle = const TextStyle(
-      color: neutral7,
-      fontFamily: 'Avenir',
-      fontSize: 12,
-      fontWeight: FontWeight.w800,
-      height: 1.333,
-    ),
-    TextStyle headerTextStyle = const TextStyle(
-      fontFamily: 'Avenir',
-      fontSize: 13,
-      color: Color(0xffA9AAAD),
-      fontWeight: FontWeight.w400,
-      height: 1.333,
-    ),
-    TextStyle titleTextStyle = const TextStyle(
-      fontFamily: 'Avenir',
-      fontSize: 16,
-      color: Color(0xffE8EAED),
-      fontWeight: FontWeight.w400,
-      height: 1.333,
-    ),
-    BoxDecoration headerContainerDecoration = const BoxDecoration(
-        color: Color(0xff0D0D0D),
-        border: Border(
-          top: BorderSide(width: 0.0, color: Color(0xFF8A8B8F)),
-          left: BorderSide.none,
-          right: BorderSide.none,
-          bottom: BorderSide(width: 0.0, color: Color(0xFF8A8B8F)),
-        )),
-    BoxDecoration linePaDecoration = const BoxDecoration(
-        border: Border(
-      top: BorderSide.none,
-      left: BorderSide.none,
-      right: BorderSide.none,
-      bottom: BorderSide(width: 0.0, color: Color(0xFF8A8B8F)),
-    )),
-    BoxDecoration linePaDecorationAboveHeader = const BoxDecoration(
-        border: Border(
-      top: BorderSide.none,
-      left: BorderSide.none,
-      right: BorderSide.none,
-      bottom: BorderSide.none,
-    )),
-    BoxDecoration nameContainerDecoration = const BoxDecoration(
-      color: Colors.transparent,
-    ),
-  }) : super(
+  const DefaultTheme(
+      {TextStyle descriptionTextStyle = const TextStyle(
+        color: neutral2,
+        fontFamily: 'Avenir',
+        fontSize: 12,
+        fontWeight: FontWeight.w800,
+        height: 1.333,
+      ),
+      TextStyle staticTextStyle = const TextStyle(
+        fontFamily: 'Avenir',
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        color: Color(0xffE8EAED),
+        height: 1.5,
+      ),
+      TextStyle nameTextStyle = const TextStyle(
+        color: neutral7,
+        fontFamily: 'Avenir',
+        fontSize: 16,
+        fontWeight: FontWeight.w800,
+        height: 1.375,
+      ),
+      TextStyle headerTextStyle = const TextStyle(
+        fontFamily: 'Avenir',
+        fontSize: 13,
+        color: Color(0xffA9AAAD),
+        fontWeight: FontWeight.w400,
+        height: 1.333,
+      ),
+      TextStyle titleTextStyle = const TextStyle(
+        fontFamily: 'Avenir',
+        fontSize: 16,
+        color: Color(0xffE8EAED),
+        fontWeight: FontWeight.w400,
+        height: 1.333,
+      ),
+      BoxDecoration headerContainerDecoration = const BoxDecoration(
+          color: Color(0xff0Da20D),
+          border: Border(
+            top: BorderSide(width: 0.0, color: Color(0xFF8A666F)),
+            left: BorderSide.none,
+            right: BorderSide.none,
+            bottom: BorderSide(width: 0.0, color: Color(0xFF628B8F)),
+          )),
+      BoxDecoration linePaDecoration = const BoxDecoration(
+          border: Border(
+        top: BorderSide.none,
+        left: BorderSide.none,
+        right: BorderSide.none,
+        bottom: BorderSide(width: 0.0, color: Color(0xFF8233F)),
+      )),
+      BoxDecoration linePaDecorationAboveHeader = const BoxDecoration(
+          border: Border(
+        top: BorderSide.none,
+        left: BorderSide.none,
+        right: BorderSide.none,
+        bottom: BorderSide.none,
+      )),
+      BoxDecoration nameContainerDecoration = const BoxDecoration(
+        color: Colors.transparent,
+      ),
+      EdgeInsets lineMargins =
+          const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
+      EdgeInsets staticTextPadding = const EdgeInsets.fromLTRB(20, 10, 5, 10),
+      TextStyle editTextStyle =
+          const TextStyle(color: Color(0xffaa7420), height: 1),
+      Color editTextCursorColor = const Color(0xff9E753C),
+      OutlineInputBorder editTextEnabledBorder = const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          borderSide: BorderSide(color: Color(0xffa22839), width: 2.0)),
+      InputDecoration inputDecoration = const InputDecoration(
+        fillColor: Colors.white,
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            borderSide: BorderSide(color: Color(0xffa03839), width: 2.0)),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            borderSide: BorderSide(color: Color(0xff51753C), width: 2.0)),
+      ),
+      editTextHeight = 50.0,
+      BoxDecoration staticContainerDecoration = const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          border: Border(
+            top: BorderSide.none,
+            left: BorderSide.none,
+            right: BorderSide.none,
+            bottom: BorderSide.none,
+          ))})
+      : super(
+            staticContainerDecoration: staticContainerDecoration,
+            editTextHeight: editTextHeight,
+            inputDecoration: inputDecoration,
+            editTextCursorColor: editTextCursorColor,
+            editTextStyle: editTextStyle,
+            staticTextPadding: staticTextPadding,
+            lineMargins: lineMargins,
             linePaDecoration: linePaDecoration,
             linePadding:
                 const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),

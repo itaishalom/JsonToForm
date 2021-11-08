@@ -19,7 +19,7 @@ class Toggle extends StatefulWidget {
 
   final String? description;
   final String name;
-  final int id;
+  final String id;
   final List<String> values;
   int? chosenValue;
   final OnValueChanged onValueChanged;
@@ -47,6 +47,7 @@ class _ToggleState extends State<Toggle>  {
             minHeight: InheritedJsonFormTheme.of(context).theme.toggleMinHeight,
             fontSize: InheritedJsonFormTheme.of(context).theme.toggleFontSize,
             initialLabelIndex: widget.chosenValue,
+              cornerRadius: 4.0,
             activeBgColor: [
               InheritedJsonFormTheme.of(context).theme.toggleActiveColor
             ],
@@ -66,12 +67,5 @@ class _ToggleState extends State<Toggle>  {
         ],
       ),
     );
-  }
-
-  @override
-  void onNewValue(value) {
-    setState(() {
-
-    });
   }
 }

@@ -6,8 +6,8 @@ import '../json_to_form.dart';
 
 class ToggleParser implements WidgetParser{
   ToggleParser(
-      this.name, this.description, this.id, this.chosenValue, this.values, this.onValueChanged, this.isBeforeHeader){
-    onValueChangedLocal = (int id, dynamic value) {
+      this.name, this.description, this.id, this.chosenValue, this.values, this.onValueChanged, this.isBeforeHeader, this.index){
+    onValueChangedLocal = (String id, dynamic value) {
       chosenValue = value;
       onValueChanged(id, value);
     };
@@ -16,14 +16,14 @@ class ToggleParser implements WidgetParser{
   final OnValueChanged onValueChanged;
   final String? description;
   final String name;
-  final int id;
+  final String id;
   final List<String> values;
   dynamic? chosenValue;
   OnValueChanged? onValueChangedLocal;
   final bool isBeforeHeader;
 
 
-  ToggleParser.fromJson(Map<String, dynamic> json, this.onValueChanged, this.isBeforeHeader)
+  ToggleParser.fromJson(Map<String, dynamic> json, this.onValueChanged, this.isBeforeHeader, this.index)
       : name = json['name'],
         description = json['description'],
         id = json['id'],
@@ -51,7 +51,10 @@ class ToggleParser implements WidgetParser{
   }
 
   @override
-  set id(int _id) {
+  set id(String _id) {
     // TODO: implement id
   }
+
+  @override
+  int index;
 }

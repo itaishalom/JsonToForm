@@ -4,18 +4,17 @@ import 'package:json_to_form/themes/inherited_json_form_theme.dart';
 import 'package:json_to_form/themes/json_form_theme.dart';
 
 class JsonForm extends StatefulWidget {
-
   final JsonFormTheme theme;
-  final List<Widget>  widgets;
-  const JsonForm({Key? key, required this.theme, required this.widgets}) : super(key: key);
+  final List<Widget> widgets;
+
+  const JsonForm({Key? key, required this.theme, required this.widgets})
+      : super(key: key);
 
   @override
   JsonFormState createState() => JsonFormState();
 }
 
-
 class JsonFormState extends State<JsonForm> {
-
   @override
   Widget build(BuildContext context) {
     return InheritedJsonFormTheme(
@@ -30,7 +29,7 @@ class JsonFormState extends State<JsonForm> {
               child: CustomScrollView(slivers: <Widget>[
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
-                        (BuildContext context, int index) {
+                    (BuildContext context, int index) {
                       return widget.widgets[index];
                     },
                     childCount: widget.widgets.length,

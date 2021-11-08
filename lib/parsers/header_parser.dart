@@ -7,12 +7,12 @@ import '../json_to_form.dart';
 
 class HeaderParser implements WidgetParser{
   HeaderParser(
-      this.name, this.id);
+      this.name, this.id, this.index);
 
   final String name;
-  final int id;
+  final String id;
 
-  HeaderParser.fromJson(Map<String, dynamic> json)
+  HeaderParser.fromJson(Map<String, dynamic> json, this.index)
       : name = json['name'],
       id = json['id'];
 
@@ -31,7 +31,10 @@ class HeaderParser implements WidgetParser{
   dynamic chosenValue = "";
 
   @override
-  set id(int _id) {
+  set id(String _id) {
     // TODO: implement id
   }
+
+  @override
+  int index;
 }

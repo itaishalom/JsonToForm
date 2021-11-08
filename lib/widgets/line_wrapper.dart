@@ -5,23 +5,19 @@ class LineWrapper extends StatelessWidget {
   final Widget child;
   final bool isBeforeHeader;
 
-  LineWrapper({Key? key, required this.child, required this.isBeforeHeader}) : super(key: key);
+  const LineWrapper({Key? key, required this.child, required this.isBeforeHeader})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: !isBeforeHeader ? InheritedJsonFormTheme
-            .of(context)
-            .theme
-            .linePaDecoration : InheritedJsonFormTheme
-            .of(context)
-            .theme
-            .linePaDecorationAboveHeader,
-        padding: InheritedJsonFormTheme
-            .of(context)
-            .theme
-            .linePadding,
-        margin: EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
+        decoration: !isBeforeHeader
+            ? InheritedJsonFormTheme.of(context).theme.linePaDecoration
+            : InheritedJsonFormTheme.of(context)
+                .theme
+                .linePaDecorationAboveHeader,
+        padding: InheritedJsonFormTheme.of(context).theme.linePadding,
+        margin: InheritedJsonFormTheme.of(context).theme.lineMargins,
         child: child);
   }
 }

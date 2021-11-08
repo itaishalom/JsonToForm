@@ -1,5 +1,6 @@
 library json_to_form;
 
+import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 
@@ -12,40 +13,49 @@ import 'package:json_to_form/parsers/header_parser.dart';
 import 'package:json_to_form/parsers/static_text_parser.dart';
 import 'package:json_to_form/parsers/toggle_parser.dart';
 import 'package:json_to_form/parsers/widget_parser.dart';
+import 'package:json_to_form/themes/inherited_json_form_theme.dart';
 
 import 'package:json_to_form/themes/json_form_theme.dart';
 import 'package:json_to_form/widgets/form.dart';
 
-typedef OnValueChanged = void Function(int id, dynamic value);
+typedef OnValueChanged = void Function(String id, dynamic value);
 
-/// A JsonToForm.
-class JsonToForm {
+class JsonForm extends StatefulWidget {
   final OnValueChanged onValueChanged;
-  final Function triggerRefresh;
-  List<WidgetParser> parsers = [];
-  List<Widget> widgetsGlobal = [];
+  HashMap<int, WidgetParser> parsers = HashMap();
+  final Map<String, dynamic> map;
   final JsonFormTheme theme;
-  final HashMap<String, Widget> idToWidget = HashMap();
+  Stream<Map<String, dynamic>>? streamUpdates;
 
-  JsonToForm(
-      {required this.onValueChanged,
-      required this.triggerRefresh,
-      required String arrayText,
-      required this.theme}) {
-    var tagsJson = jsonDecode(arrayText)['widgets'];
+  JsonForm(
+    Stream<Map<String, dynamic>>? stream, {Key? key,
+    required this.onValueChanged,
+    required this.map,
+    required this.theme,
+  }) : super(key: key) {
+    streamUpdates = stream;
   }
 
-  JsonToForm.fromMap(
-      {required this.onValueChanged,     required this.triggerRefresh,
-      required Map<String, dynamic> map,
-      required this.theme}) {
-    List<dynamic>? widgets = map['widgets'];
+  @override
+  _JsonFormState createState() => _JsonFormState();
+}
+
+class _JsonFormState extends State<JsonForm> {
+  HashMap<String, WidgetParser> parsers = HashMap();
+  List<Widget> widgetsGlobal = [];
+  late final StreamSubscription<Map<String, dynamic>>? _valueChange;
+
+  @override
+  void initState() {
+    _valueChange = widget.streamUpdates?.listen(_onRemoteValueChanged);
+    List<dynamic>? widgets = widget.map['widgets'];
     if (widgets == null) {
       throw const ParsingException("No widgets found");
     }
+    widgetsGlobal = [];
     for (int i = 0; i < widgets.length; i++) {
-      var widget = widgets[i];
-      String? type = widget["type"];
+      var widgetJson = widgets[i];
+      String? type = widgetJson["type"];
       if (type == null) {
         throw const ParsingException("No type found on widget");
       }
@@ -58,48 +68,75 @@ class JsonToForm {
         }
         isBeforeHeader = typeTemp == "header";
       }
+      WidgetParser? tempParser;
       switch (type) {
         case "toggle":
-          parsers.add(
-              ToggleParser.fromJson(widget, onValueChanged, isBeforeHeader));
+          tempParser = ToggleParser.fromJson(
+              widgetJson, widget.onValueChanged, isBeforeHeader, i);
           break;
         case "header":
-          parsers.add(HeaderParser.fromJson(widget));
+          tempParser = (HeaderParser.fromJson(widgetJson, i));
           break;
         case "static_text":
-          parsers.add(StaticTextParser.fromJson(
-              widget, onValueChanged, isBeforeHeader));
+          tempParser = (StaticTextParser.fromJson(
+              widgetJson, widget.onValueChanged, isBeforeHeader, i));
           break;
         case "drop_down":
-          parsers.add(
-              DropDownParser.fromJson(widget, onValueChanged, isBeforeHeader));
+          tempParser = (DropDownParser.fromJson(
+              widgetJson, widget.onValueChanged, isBeforeHeader, i));
           break;
         case "edit_text":
-          parsers.add(
-              EditTextParser.fromJson(widget, onValueChanged, isBeforeHeader));
+          tempParser = (EditTextParser.fromJson(
+              widgetJson, widget.onValueChanged, isBeforeHeader, i));
           break;
       }
+      if (tempParser == null) {
+        throw const ParsingException("Unknown type");
+      }
+      if(parsers.containsKey(tempParser.id)){
+        throw ParsingException("Duplicate Id ${tempParser.id}");
+      }
+      parsers[tempParser.id] = tempParser;
+      widgetsGlobal.add(tempParser.getWidget());
     }
-    widgetsGlobal = [];
-    for (WidgetParser parser in parsers) {
-      widgetsGlobal.add(parser.getWidget());
-    }
+    super.initState();
   }
 
-  void onUpdate(int id, dynamic value) {
-    for (int i = 0; i < widgetsGlobal.length; i++) {
-      if (parsers[i].id == id) {
-        parsers[i].chosenValue = value;
-        widgetsGlobal[i] = parsers[i].getWidget();
-        triggerRefresh();
-        break;
+  void _onRemoteValueChanged(Map<String, dynamic> values) {
+    bool wasUpdated = false;
+    for (String id in values.keys) {
+      if (parsers[id] != null) {
+        parsers[id]?.chosenValue = values[id];
+        widgetsGlobal[parsers[id]!.index] = parsers[id]!.getWidget();
+        wasUpdated = true;
+      }
+      if (wasUpdated) {
+        setState(() {});
       }
     }
   }
 
-  final GlobalKey<JsonFormState> _key = GlobalKey();
-
-  Widget getForm(BuildContext context) {
-    return JsonForm(theme: theme, widgets: widgetsGlobal);
+  @override
+  Widget build(BuildContext context) {
+    return InheritedJsonFormTheme(
+        theme: widget.theme,
+        child: Scaffold(
+            backgroundColor: widget.theme.backgroundColor,
+            body: GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+                TextEditingController().clear();
+              },
+              child: CustomScrollView(slivers: <Widget>[
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      return widgetsGlobal[index];
+                    },
+                    childCount: widgetsGlobal.length,
+                  ),
+                )
+              ]),
+            )));
   }
 }

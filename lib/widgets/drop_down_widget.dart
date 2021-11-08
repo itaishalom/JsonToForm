@@ -21,7 +21,7 @@ class DropDownWidget extends StatefulWidget {
 
   final String name;
   final String? description;
-  final int id;
+  final String id;
   final List<String> values;
    String? chosenValue;
   final OnValueChanged onValueChanged;
@@ -30,10 +30,6 @@ class DropDownWidget extends StatefulWidget {
   @override
   State<DropDownWidget> createState() => _MyStatefulWidgetState();
 
-  @override
-  set id(int _id) {
-    // TODO: implement id
-  }
 }
 
 /// This is the private State class that goes with MyStatefulWidget.
@@ -86,6 +82,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                 onChanged: (String? newValue) {
                   setState(() {
                     dropdownValue = newValue!;
+                    widget.onValueChanged(widget.id, dropdownValue);
                   });
                 },
                 selectedItemBuilder: (BuildContext context) {

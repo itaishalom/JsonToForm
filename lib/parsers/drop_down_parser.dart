@@ -7,8 +7,8 @@ import '../json_to_form.dart';
 
 class DropDownParser implements WidgetParser{
   DropDownParser(
-      this.name, this.description, this.id, this.chosenValue, this.values, this.onValueChanged, this.isBeforeHeader){
-    onValueChangedLocal = (int id, dynamic value) {
+      this.name, this.description, this.id, this.chosenValue, this.values, this.onValueChanged, this.isBeforeHeader, this.index){
+    onValueChangedLocal = (String id, dynamic value) {
       chosenValue = value;
       onValueChanged(id, value);
     };
@@ -18,12 +18,12 @@ class DropDownParser implements WidgetParser{
   final bool isBeforeHeader;
   final String? description;
   final String name;
-  final int id;
+  final String id;
   final List<String> values;
   OnValueChanged? onValueChangedLocal;
 
 
-  DropDownParser.fromJson(Map<String, dynamic> json, this.onValueChanged,  this.isBeforeHeader)
+  DropDownParser.fromJson(Map<String, dynamic> json, this.onValueChanged,  this.isBeforeHeader, this.index)
       : name = json['name'],
         description = json['description'],
         id = json['id'],
@@ -55,7 +55,10 @@ class DropDownParser implements WidgetParser{
   dynamic chosenValue;
 
   @override
-  set id(int _id) {
+  set id(String _id) {
     // TODO: implement id
   }
+
+  @override
+  int index;
 }

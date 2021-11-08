@@ -17,7 +17,7 @@ class StaticTextValue extends StatelessWidget   {
 
   final String? description;
   final String name;
-  final int id;
+  final String id;
    String chosenValue;
   final bool isBeforeHeader;
 
@@ -30,12 +30,9 @@ class StaticTextValue extends StatelessWidget   {
         children: <Widget>[
           NameWidgetDescription(name: name, description: description),
           Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(5)),
-                border: Border.all(color: Colors.transparent)
-            ),
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            decoration: InheritedJsonFormTheme.of(context).theme.staticContainerDecoration,
+            child: Padding(//
+              padding:  InheritedJsonFormTheme.of(context).theme.staticTextPadding,
               child: Text(
                 chosenValue,
                 style: InheritedJsonFormTheme.of(context)
@@ -49,15 +46,5 @@ class StaticTextValue extends StatelessWidget   {
         ],
       ),
     );
-  }
-
-  @override
-  void onNewValue(value) {
-    // TODO: implement onNewValue
-  }
-
-  @override
-  set id(int _id) {
-    // TODO: implement id
   }
 }
