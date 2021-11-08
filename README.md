@@ -97,8 +97,7 @@ And easily use the basic Theme (or edit it)
     );
 ```
 
-To get:
-![Optional Text](../main/screen_shot.jpg)
+![To get](../main/screen_shot.jpg)
 
 ## Additional information
 
