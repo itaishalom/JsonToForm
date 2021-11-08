@@ -1,40 +1,70 @@
-<!-- 
+<!--
 This README describes the package. If you publish this package to pub.dev,
 this README's contents appear on the landing page for your package.
 
 For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages). 
+[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
 
 For general information about developing packages, see the Dart guide for
 [creating packages](https://dart.dev/guides/libraries/create-library-packages)
 and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages). 
+[developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+This library aims to help developer get started quickly and create a form made out of json.
+
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+The JsonForm can be updated both from the user interaction but can also be notified from outside
+(check the example for the stream)
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
+to `/example` folder.
 
 ```dart
-const like = 'sample';
+@override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Floating Action Button'),
+      ),
+      body: JsonForm(onValueChange, map: widget.json,
+          onValueChanged: (String d, dynamic s) {
+           // Do something with the data
+      }, theme: const DefaultTheme()),
+      /*form?.getForm(context),*/
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          counter++;
+          if (counter % 4 == 1) {
+            toggle++;
+            _onUserController.add({}..["1"] = toggle % 2); // toggle
+          }
+          if (counter % 4 == 2) {
+            _onUserController.add({}..["2"] =
+                "updated" + Random().nextInt(10).toString()); // toggle
+          }
+          if (counter % 4 == 3) {
+            _onUserController.add({}..["3"] =
+                "editUp" + Random().nextInt(10).toString()); // toggle
+          }
+          if (counter % 4 == 0) {
+            _onUserController.add({}..["4"] = list[toggle % 2]); // toggle
+          }
+        },
+        child: const Icon(Icons.navigation),
+        backgroundColor: Colors.green,
+      ),
+    );
 ```
 
 ## Additional information
 
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
+contribute to the package, how to file issues, what response they can expect
 from the package authors, and more.
 # JsonToForm
