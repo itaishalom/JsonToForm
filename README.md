@@ -98,7 +98,7 @@ And easily use the basic Theme (or edit it)
 ```
 
 To get:
-![Optional Text](../screen_shot.jpg)
+![Optional Text](../main/screen_shot.jpg)
 
 ## Additional information
 
