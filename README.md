@@ -24,7 +24,6 @@ The JsonForm can be updated both from the user interaction but can also be notif
 
 ## Usage
 
-to `/example` folder.
 
 ```dart
 @override
