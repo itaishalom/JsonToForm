@@ -3,3 +3,6 @@ Initial release
 
 ## 0.0.11
 Fix drop down conversion dynamic to string
+
+## 0.0.12
+Fix toggle conversion dynamic to string
