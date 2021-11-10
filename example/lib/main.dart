@@ -44,7 +44,6 @@ class MyHomePage extends StatefulWidget {
         "name": "Toggle",
         "type": "toggle",
         "values": ["On", "Off"],
-        "default_value": "0",
         "chosen_value": 1
       },
       {

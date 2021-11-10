@@ -27,7 +27,7 @@ class DropDownParser implements WidgetParser {
       : name = json['name'],
         description = json['description'],
         id = json['id'],
-        values = json['values'],
+        values = json['values'].cast<String>(),
         chosenValue = json['chosen_value'];
 
   Map<String, dynamic> toJson() => {
