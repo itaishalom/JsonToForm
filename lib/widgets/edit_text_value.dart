@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -13,16 +15,17 @@ class EditTextValue extends StatefulWidget {
   final String id;
   String chosenValue;
   final bool isBeforeHeader;
+  final int? debounceTime;
   final OnValueChanged onValueChanged;
 
-  EditTextValue(
-      {Key? key,
-      required this.name,
-      required this.id,
-      required this.isBeforeHeader,
-      this.description,
-      required this.onValueChanged,
-      required this.chosenValue})
+  EditTextValue({Key? key,
+    required this.name,
+    required this.id,
+    required this.isBeforeHeader,
+    this.description,
+    required this.onValueChanged,
+    required this.chosenValue,
+    this.debounceTime})
       : super(key: key);
 
   @override
@@ -31,6 +34,7 @@ class EditTextValue extends StatefulWidget {
 
 class _EditTextValueState extends State<EditTextValue> {
   TextEditingController? _controller;
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -40,7 +44,16 @@ class _EditTextValueState extends State<EditTextValue> {
   }
 
   void notifyValue() {
-    widget.onValueChanged(widget.id, _controller!.text);
+    if (_debounce?.isActive ?? false) {
+      _debounce?.cancel();
+    }
+    if(widget.debounceTime != null && widget.debounceTime! > 0) {
+      _debounce = Timer(Duration(milliseconds: widget.debounceTime!), () {
+        widget.onValueChanged(widget.id, _controller!.text);
+      });
+    }else{
+      widget.onValueChanged(widget.id, _controller!.text);
+    }
   }
 
   @override
@@ -62,7 +75,10 @@ class _EditTextValueState extends State<EditTextValue> {
           NameWidgetDescription(
               name: widget.name, description: widget.description),
           SizedBox(
-            height: InheritedJsonFormTheme.of(context).theme.editTextHeight,
+            height: InheritedJsonFormTheme
+                .of(context)
+                .theme
+                .editTextHeight,
             child: Padding(
               padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
               child: IntrinsicWidth(
@@ -79,12 +95,17 @@ class _EditTextValueState extends State<EditTextValue> {
                       /// here char limit is 5
                     ],
                     style:
-                        InheritedJsonFormTheme.of(context).theme.editTextStyle,
-                    cursorColor: InheritedJsonFormTheme.of(context)
+                    InheritedJsonFormTheme
+                        .of(context)
+                        .theme
+                        .editTextStyle,
+                    cursorColor: InheritedJsonFormTheme
+                        .of(context)
                         .theme
                         .editTextCursorColor,
                     //
-                    decoration: InheritedJsonFormTheme.of(context)
+                    decoration: InheritedJsonFormTheme
+                        .of(context)
                         .theme
                         .inputDecoration,
                   ),
