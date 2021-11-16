@@ -18,14 +18,15 @@ class EditTextValue extends StatefulWidget {
   final int? debounceTime;
   final OnValueChanged onValueChanged;
 
-  EditTextValue({Key? key,
-    required this.name,
-    required this.id,
-    required this.isBeforeHeader,
-    this.description,
-    required this.onValueChanged,
-    required this.chosenValue,
-    this.debounceTime})
+  EditTextValue(
+      {Key? key,
+      required this.name,
+      required this.id,
+      required this.isBeforeHeader,
+      this.description,
+      required this.onValueChanged,
+      required this.chosenValue,
+      this.debounceTime})
       : super(key: key);
 
   @override
@@ -47,11 +48,11 @@ class _EditTextValueState extends State<EditTextValue> {
     if (_debounce?.isActive ?? false) {
       _debounce?.cancel();
     }
-    if(widget.debounceTime != null && widget.debounceTime! > 0) {
+    if (widget.debounceTime != null && widget.debounceTime! > 0) {
       _debounce = Timer(Duration(milliseconds: widget.debounceTime!), () {
         widget.onValueChanged(widget.id, _controller!.text);
       });
-    }else{
+    } else {
       widget.onValueChanged(widget.id, _controller!.text);
     }
   }
@@ -75,44 +76,29 @@ class _EditTextValueState extends State<EditTextValue> {
           NameWidgetDescription(
               name: widget.name, description: widget.description),
           SizedBox(
-            height: InheritedJsonFormTheme
-                .of(context)
-                .theme
-                .editTextHeight,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-              child: IntrinsicWidth(
-                child: Center(
-                  child: TextField(
-                    key: widget.key,
-                    autofocus: false,
-                    textAlign: TextAlign.center,
-                    obscureText: false,
-                    controller: _controller,
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(12),
+            height: InheritedJsonFormTheme.of(context).theme.editTextHeight,
+                width: InheritedJsonFormTheme.of(context).theme.editTextWidth,
+                child: TextField(
+                  key: widget.key,
+                  autofocus: false,
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                  obscureText: false,
+                  controller: _controller,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(12),
 
-                      /// here char limit is 5
-                    ],
-                    style:
-                    InheritedJsonFormTheme
-                        .of(context)
-                        .theme
-                        .editTextStyle,
-                    cursorColor: InheritedJsonFormTheme
-                        .of(context)
-                        .theme
-                        .editTextCursorColor,
-                    //
-                    decoration: InheritedJsonFormTheme
-                        .of(context)
-                        .theme
-                        .inputDecoration,
-                  ),
+                    /// here char limit is 5
+                  ],
+                  style: InheritedJsonFormTheme.of(context).theme.editTextStyle,
+                  cursorColor: InheritedJsonFormTheme.of(context)
+                      .theme
+                      .editTextCursorColor,
+                  //
+                  decoration:
+                      InheritedJsonFormTheme.of(context).theme.inputDecoration,
                 ),
               ),
-            ),
-          )
         ],
       ),
     );

@@ -9,3 +9,6 @@ Fix toggle conversion dynamic to string
 
 ## 0.0.13
 Added debounce_time as an option to edit text
+
+## 0.0.14
+Edit text modifications

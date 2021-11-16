@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 const backgroundColor = Color(0xff0e9cab);
 
 /// Dark
@@ -71,6 +70,7 @@ abstract class JsonFormTheme {
       required this.linePaDecoration,
       required this.linePaDecorationAboveHeader,
       required this.editTextCursorColor,
+      required this.editTextWidth,
       required this.backgroundColor});
 
   /// Global container params///
@@ -132,6 +132,8 @@ abstract class JsonFormTheme {
   final Color editTextCursorColor;
 
   final double editTextHeight;
+
+  final double editTextWidth;
 
   final InputDecoration inputDecoration;
 
@@ -221,6 +223,8 @@ class DefaultTheme extends JsonFormTheme {
           borderRadius: BorderRadius.all(Radius.circular(5.0)),
           borderSide: BorderSide(color: Color(0xffa22839), width: 2.0)),
       InputDecoration inputDecoration = const InputDecoration(
+        isDense: true,
+        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
         fillColor: Colors.white,
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(5.0)),
@@ -229,7 +233,7 @@ class DefaultTheme extends JsonFormTheme {
             borderRadius: BorderRadius.all(Radius.circular(5.0)),
             borderSide: BorderSide(color: Color(0xff51753C), width: 2.0)),
       ),
-      editTextHeight = 50.0,
+      editTextHeight = 35.0,
       BoxDecoration staticContainerDecoration = const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5)),
           border: Border(
@@ -239,6 +243,7 @@ class DefaultTheme extends JsonFormTheme {
             bottom: BorderSide.none,
           ))})
       : super(
+            editTextWidth: 70,
             staticContainerDecoration: staticContainerDecoration,
             editTextHeight: editTextHeight,
             inputDecoration: inputDecoration,
