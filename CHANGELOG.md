@@ -21,3 +21,6 @@ Added support for dynamic widgets + added example of usage.
 ## 1.0.1
 More tests
 
+## 1.0.2
+More tests and bug fixes
+

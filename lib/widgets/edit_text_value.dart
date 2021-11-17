@@ -70,7 +70,6 @@ class _EditTextValueState extends State<EditTextValue> {
   }
 
   void startController(){
-    _controller?.dispose();
     _controller = TextEditingController(text: widget.chosenValue);
     _controller?.addListener(notifyValue);
   }

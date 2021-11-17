@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:json_to_form_with_theme/exceptions/parsing_exception.dart';
@@ -200,6 +203,44 @@ void main() {
       expect(valueAfterChange, "test");
       await tester.enterText(find.byKey(const ValueKey("3")), "edit value");
       expect(valueAfterChange, "edit value");
+    });
+
+
+    testWidgets('Change value from outside', (WidgetTester tester) async {
+
+      Stream<Map<String, dynamic>>? onValueChangeStream;
+      final StreamController<Map<String, dynamic>> _onUserController =
+      StreamController<Map<String, dynamic>>();
+      onValueChangeStream = _onUserController.stream.asBroadcastStream();
+      String valueAfterChange = "Hello world";
+      final Map<String, dynamic> json = {
+        "widgets": [
+          {
+            "id": "3",
+            "name": "Edit text",
+            "type": "edit_text",
+            "chosen_value": "edit value",
+            "description": "(edit description..)",
+          }
+        ]
+      };
+      // Build the Chat widget.
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(child: JsonFormWithTheme(jsonWidgets: json, streamUpdates: onValueChangeStream)),
+        ),
+      );
+      // Trigger a frame.
+      await tester.pump();
+      _onUserController.add({}..["3"] =
+          valueAfterChange); // toggle
+      // Expect to find one ImageMessage
+
+
+      await tester.pump(const Duration(seconds: 5));
+      final findText = find.text(valueAfterChange);
+      debugDumpApp();
+      expect(findText, findsOneWidget);
     });
   });
 }
