@@ -18,3 +18,6 @@ Changed constructor and optional params.
 Added tests.
 Added support for dynamic widgets + added example of usage.
 
+## 1.0.1
+More tests
+
