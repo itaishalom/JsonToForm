@@ -9,11 +9,13 @@ class ToggleParser implements WidgetParser {
       this.values, this.onValueChanged, this.isBeforeHeader, this.index) {
     onValueChangedLocal = (String id, dynamic value) {
       chosenValue = value;
-      onValueChanged(id, value);
+      if (onValueChanged != null) {
+        onValueChanged!(id, value);
+      }
     };
   }
 
-  final OnValueChanged onValueChanged;
+  final OnValueChanged? onValueChanged;
   final String? description;
   final String name;
   final String id;
@@ -56,4 +58,5 @@ class ToggleParser implements WidgetParser {
 
   @override
   int index;
+
 }

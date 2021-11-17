@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:example/drop_down_parser2.dart';
+import 'package:example/widget_parser_factory.dart';
 import 'package:flutter/material.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
+import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
 import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
 
 void main() {
@@ -67,6 +70,13 @@ class MyHomePage extends StatefulWidget {
         "type": "drop_down",
         "values": ["Low-Intermediate", "Medium", "High"],
         "chosen_value": "Low-Intermediate"
+      },
+      {
+        "id": "5",
+        "name": "Dynamic Drop down",
+        "type": "drop_down2",
+        "values": ["one", "two", "three"],
+        "chosen_value": "one"
       }
     ]
   };
@@ -78,14 +88,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Stream<Map<String, dynamic>>? onValueChange;
+  Stream<Map<String, dynamic>>? onValueChangeStream;
   final StreamController<Map<String, dynamic>> _onUserController =
       StreamController<Map<String, dynamic>>();
 
+  Map<String, WidgetParser> dynamics = {};
+  
   @override
   void initState() {
+  //  dynamics["drop_down2"] = DropDownParser2(name, description, id, chosenValue, values, onValueChanged, isBeforeHeader, index)
     super.initState();
-    onValueChange = _onUserController.stream.asBroadcastStream();
+    onValueChangeStream = _onUserController.stream.asBroadcastStream();
   }
 
   List<String> list = ["Medium", "High"];
@@ -99,11 +112,14 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: const Text('Floating Action Button'),
       ),
-      body: JsonFormWithTheme(onValueChange, map: widget.json,
+      body: JsonFormWithTheme(
+          jsonWidgets: widget.json,
+          dynamicFactory: MyWidgetParserFactory(),
+          streamUpdates: onValueChangeStream,
           onValueChanged: (String d, dynamic s) {
-        print("Update id $d to value $s");
-      }, theme: const DefaultTheme()),
-      /*form?.getForm(context),*/
+            print("Update id $d to value $s");
+          },
+          theme: const DefaultTheme()),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           counter++;

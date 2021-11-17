@@ -23,7 +23,7 @@ class Toggle extends StatefulWidget {
   final String id;
   final List<String> values;
   int? chosenValue;
-  final OnValueChanged onValueChanged;
+  final OnValueChanged? onValueChanged;
   final bool isBeforeHeader;
 
   @override
@@ -62,7 +62,9 @@ class _ToggleState extends State<Toggle> {
             totalSwitches: widget.values.length,
             labels: widget.values,
             onToggle: (index) {
-              widget.onValueChanged(widget.id, index);
+              if (widget.onValueChanged != null) {
+                widget.onValueChanged!(widget.id, index);
+              }
             },
           )
         ],

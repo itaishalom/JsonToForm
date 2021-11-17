@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
 import 'package:json_to_form_with_theme/widgets/drop_down_widget.dart';
-import 'package:json_to_form_with_theme/widgets/toggle.dart';
 
 import '../json_to_form_with_theme.dart';
 
@@ -10,11 +9,13 @@ class DropDownParser implements WidgetParser {
       this.values, this.onValueChanged, this.isBeforeHeader, this.index) {
     onValueChangedLocal = (String id, dynamic value) {
       chosenValue = value;
-      onValueChanged(id, value);
+      if(onValueChanged != null) {
+        onValueChanged!(id, value);
+      }
     };
   }
 
-  final OnValueChanged onValueChanged;
+  final OnValueChanged? onValueChanged;
   final bool isBeforeHeader;
   final String? description;
   final String name;
@@ -60,4 +61,5 @@ class DropDownParser implements WidgetParser {
 
   @override
   int index;
+
 }

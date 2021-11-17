@@ -62,39 +62,45 @@ And easily use the basic Theme (or edit it)
 
 ```dart
 @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Floating Action Button'),
-      ),
-      body: JsonFormWithTheme(onValueChange, map: widget.json,
-          onValueChanged: (String d, dynamic s) {
-           // Do something with the data
-      }, theme: const DefaultTheme()),
-      /*form?.getForm(context),*/
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          counter++;
-          if (counter % 4 == 1) {
-            toggle++;
-            _onUserController.add({}..["1"] = toggle % 2); // toggle
-          }
-          if (counter % 4 == 2) {
-            _onUserController.add({}..["2"] =
-                "updated" + Random().nextInt(10).toString()); // static text
-          }
-          if (counter % 4 == 3) {
-            _onUserController.add({}..["3"] =
-                "editUp" + Random().nextInt(10).toString()); // edit text
-          }
-          if (counter % 4 == 0) {
-            _onUserController.add({}..["4"] = list[toggle % 2]); // dropdown
-          }
-        },
-        child: const Icon(Icons.navigation),
-        backgroundColor: Colors.green,
-      ),
-    );
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Floating Action Button'),
+        ),
+        body: JsonFormWithTheme(
+            jsonWidgets: widget.json,
+            dynamicFactory: MyWidgetParserFactory(),
+            streamUpdates: onValueChangeStream,
+            onValueChanged: (String d, dynamic s) {
+              print("Update id $d to value $s");
+            },
+            theme: const DefaultTheme()),
+        /*form?.getForm(context),*/
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            counter++;
+            if (counter % 4 == 1) {
+              toggle++;
+              _onUserController.add({}..["1"] = toggle % 2); // toggle
+            }
+            if (counter % 4 == 2) {
+              _onUserController.add({}..["2"] =
+                  "updated" + Random().nextInt(10).toString()); // toggle
+            }
+            if (counter % 4 == 3) {
+              _onUserController.add({}..["3"] =
+                  "editUp" + Random().nextInt(10).toString()); // toggle
+            }
+            if (counter % 4 == 0) {
+              _onUserController.add({}..["4"] = list[toggle % 2]); // toggle
+            }
+          },
+          child: const Icon(Icons.navigation),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
 ```
 <p align="center">
   <img src="https://raw.githubusercontent.com/itaishalom/JsonToForm/main/screen_shot.jpg" width="350">

@@ -1,13 +1,14 @@
 import 'package:flutter/cupertino.dart';
+import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
-import 'package:json_to_form_with_theme/widgets/static_text_value.dart';
-import 'package:json_to_form_with_theme/widgets/toggle.dart';
+import 'package:json_to_form_with_theme/widgets/drop_down_widget.dart';
 
-import '../json_to_form_with_theme.dart';
+import 'drop_down_widget2.dart';
 
-class StaticTextParser implements WidgetParser {
-  StaticTextParser(this.name, this.description, this.id, this.chosenValue,
-      this.onValueChanged, this.isBeforeHeader, this.index) {
+
+class DropDownParser2 implements WidgetParser {
+  DropDownParser2(this.name, this.description, this.id, this.chosenValue,
+      this.values, this.onValueChanged, this.isBeforeHeader, this.index) {
     onValueChangedLocal = (String id, dynamic value) {
       chosenValue = value;
       if(onValueChanged != null) {
@@ -17,35 +18,43 @@ class StaticTextParser implements WidgetParser {
   }
 
   final OnValueChanged? onValueChanged;
+  final bool isBeforeHeader;
   final String? description;
   final String name;
   final String id;
-  dynamic chosenValue;
-  final bool isBeforeHeader;
+  final List<String> values;
   OnValueChanged? onValueChangedLocal;
 
-  StaticTextParser.fromJson(Map<String, dynamic> json, this.onValueChanged,
+  DropDownParser2.fromJson(Map<String, dynamic> json, this.onValueChanged,
       this.isBeforeHeader, this.index)
       : name = json['name'],
         description = json['description'],
         id = json['id'],
-        chosenValue = json['chosen_value'] ?? "";
+        values = json['values'].cast<String>(),
+        chosenValue = json['chosen_value'];
 
   Map<String, dynamic> toJson() => {
         'name': name,
         'description': description,
         'id': id,
+        'values': values,
         'chosen_value': chosenValue,
       };
 
   Widget getWidget() {
-    return StaticTextValue(
+    return DropDownWidget2(
+        key: ValueKey(chosenValue),
         name: name,
         id: id,
+        values: values,
         description: description,
         chosenValue: chosenValue,
-        isBeforeHeader: isBeforeHeader);
+        isBeforeHeader: isBeforeHeader,
+        onValueChanged: onValueChanged);
   }
+
+  @override
+  dynamic chosenValue;
 
   @override
   set id(String _id) {
@@ -54,10 +63,4 @@ class StaticTextParser implements WidgetParser {
 
   @override
   int index;
-
 }
-/*
-this.name, this.description, this.id, this.chosenValue, this.values, this.onValueChanged){
-onValueChangedLocal = (int id, dynamic value) {
-chosenValue = value;
-onValueChanged(id, value);*/

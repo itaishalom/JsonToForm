@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
+import 'package:json_to_form_with_theme/widgets/line_wrapper.dart';
+import 'package:json_to_form_with_theme/widgets/name_description_widget.dart';
 
-import 'line_wrapper.dart';
-import 'name_description_widget.dart';
 
 /// This is the stateful widget that the main application instantiates.
-class DropDownWidget extends StatefulWidget {
-  DropDownWidget(
+class DropDownWidget2 extends StatefulWidget {
+  DropDownWidget2(
       {Key? key,
       required this.name,
       required this.id,
@@ -28,11 +28,11 @@ class DropDownWidget extends StatefulWidget {
   final bool isBeforeHeader;
 
   @override
-  State<DropDownWidget> createState() => _MyStatefulWidgetState();
+  State<DropDownWidget2> createState() => _MyStatefulWidgetState();
 }
 
 /// This is the private State class that goes with MyStatefulWidget.
-class _MyStatefulWidgetState extends State<DropDownWidget> {
+class _MyStatefulWidgetState extends State<DropDownWidget2> {
   String? dropdownValue;
 
   @override

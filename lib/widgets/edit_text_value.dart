@@ -16,7 +16,7 @@ class EditTextValue extends StatefulWidget {
   String chosenValue;
   final bool isBeforeHeader;
   final int? debounceTime;
-  final OnValueChanged onValueChanged;
+  final OnValueChanged? onValueChanged;
 
   EditTextValue(
       {Key? key,
@@ -45,15 +45,19 @@ class _EditTextValueState extends State<EditTextValue> {
   }
 
   void notifyValue() {
-    if (_debounce?.isActive ?? false) {
-      _debounce?.cancel();
-    }
-    if (widget.debounceTime != null && widget.debounceTime! > 0) {
-      _debounce = Timer(Duration(milliseconds: widget.debounceTime!), () {
-        widget.onValueChanged(widget.id, _controller!.text);
-      });
-    } else {
-      widget.onValueChanged(widget.id, _controller!.text);
+    if(widget.onValueChanged!= null) {
+      if (_debounce?.isActive ?? false) {
+        _debounce?.cancel();
+      }
+      if (widget.debounceTime != null && widget.debounceTime! > 0) {
+        _debounce = Timer(Duration(milliseconds: widget.debounceTime!), () {
+          if (widget.onValueChanged != null) {
+            widget.onValueChanged!(widget.id, _controller!.text);
+          }
+        });
+      } else {
+        widget.onValueChanged!(widget.id, _controller!.text);
+      }
     }
   }
 

@@ -37,4 +37,5 @@ class HeaderParser implements WidgetParser {
 
   @override
   int index;
+
 }

@@ -11,11 +11,13 @@ class EditTextParser implements WidgetParser {
       this.onValueChanged, this.isBeforeHeader, this.index, this.debounceTime) {
     onValueChangedLocal = (String id, dynamic value) {
       chosenValue = value;
-      onValueChanged(id, value);
+      if (onValueChanged != null) {
+        onValueChanged!(id, value);
+      }
     };
   }
 
-  final OnValueChanged onValueChanged;
+  final OnValueChanged? onValueChanged;
   final String? description;
   final String name;
   final String id;
@@ -24,19 +26,11 @@ class EditTextParser implements WidgetParser {
   final bool isBeforeHeader;
   OnValueChanged? onValueChangedLocal;
 
-  EditTextParser.fromJson(Map<String, dynamic> json, this.onValueChanged,
-      this.isBeforeHeader, this.index)
-      : name = json['name'],
-        description = json['description'],
-        debounceTime = json['debounce_time'],
-        id = json['id'],
-        chosenValue = json['chosen_value'] ?? "";
-
   Map<String, dynamic> toJson() => {
         'name': name,
         'description': description,
         'id': id,
-          'debounce_time' : debounceTime,
+        'debounce_time': debounceTime,
         'chosen_value': chosenValue,
       };
 
@@ -59,9 +53,13 @@ class EditTextParser implements WidgetParser {
   set id(String _id) {
     // TODO: implement id
   }
+
+  @override
+  EditTextParser.fromJson(Map<String, dynamic> json, this.onValueChanged,
+      this.isBeforeHeader, this.index)
+      : name = json['name'],
+        description = json['description'],
+        debounceTime = json['debounce_time'],
+        id = json['id'],
+        chosenValue = json['chosen_value'] ?? "";
 }
-/*
-this.name, this.description, this.id, this.chosenValue, this.values, this.onValueChanged){
-onValueChangedLocal = (int id, dynamic value) {
-chosenValue = value;
-onValueChanged(id, value);*/

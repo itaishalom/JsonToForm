@@ -13,6 +13,7 @@ import 'package:json_to_form_with_theme/parsers/header_parser.dart';
 import 'package:json_to_form_with_theme/parsers/static_text_parser.dart';
 import 'package:json_to_form_with_theme/parsers/toggle_parser.dart';
 import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
+import 'package:json_to_form_with_theme/parsers/widget_parser_factory.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 
 import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
@@ -21,21 +22,22 @@ import 'package:json_to_form_with_theme/widgets/form.dart';
 typedef OnValueChanged = void Function(String id, dynamic value);
 
 class JsonFormWithTheme extends StatefulWidget {
-  final OnValueChanged onValueChanged;
-  HashMap<int, WidgetParser> parsers = HashMap();
-  final Map<String, dynamic> map;
+  final OnValueChanged? onValueChanged;
+  final HashMap<int, WidgetParser> parsers = HashMap();
+  final WidgetParserFactory? dynamicFactory;
+
+  final Map<String, dynamic> jsonWidgets;
   final JsonFormTheme theme;
-  Stream<Map<String, dynamic>>? streamUpdates;
+  final Stream<Map<String, dynamic>>? streamUpdates;
 
   JsonFormWithTheme(
-    Stream<Map<String, dynamic>>? stream, {
-    Key? key,
-    required this.onValueChanged,
-    required this.map,
-    required this.theme,
-  }) : super(key: key) {
-    streamUpdates = stream;
-  }
+      {Key? key,
+      required this.jsonWidgets,
+      this.onValueChanged,
+      this.dynamicFactory,
+      this.theme = const DefaultTheme(),
+      this.streamUpdates})
+      : super(key: key);
 
   @override
   _JsonFormWithThemeState createState() => _JsonFormWithThemeState();
@@ -49,7 +51,7 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
   @override
   void initState() {
     _valueChange = widget.streamUpdates?.listen(_onRemoteValueChanged);
-    List<dynamic>? widgets = widget.map['widgets'];
+    List<dynamic>? widgets = widget.jsonWidgets['widgets'];
     if (widgets == null) {
       throw const ParsingException("No widgets found");
     }
@@ -70,30 +72,64 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
         isBeforeHeader = typeTemp == "header";
       }
       WidgetParser? tempParser;
+
       switch (type) {
         case "toggle":
-          tempParser = ToggleParser.fromJson(
-              widgetJson, widget.onValueChanged, isBeforeHeader, i);
+          try {
+            tempParser = ToggleParser.fromJson(
+                widgetJson, widget.onValueChanged, isBeforeHeader, i);
+          } catch (e) {
+            throw const ParsingException("Bad toggle format");
+          }
           break;
         case "header":
-          tempParser = (HeaderParser.fromJson(widgetJson, i));
+          try {
+            tempParser = (HeaderParser.fromJson(widgetJson, i));
+          } catch (e) {
+            throw const ParsingException("Bad header format");
+          }
           break;
         case "static_text":
-          tempParser = (StaticTextParser.fromJson(
-              widgetJson, widget.onValueChanged, isBeforeHeader, i));
+          try {
+            tempParser = (StaticTextParser.fromJson(
+                widgetJson, widget.onValueChanged, isBeforeHeader, i));
+          } catch (e) {
+            throw const ParsingException("Bad static_text format");
+          }
           break;
         case "drop_down":
-          tempParser = (DropDownParser.fromJson(
-              widgetJson, widget.onValueChanged, isBeforeHeader, i));
+          try {
+            tempParser = (DropDownParser.fromJson(
+                widgetJson, widget.onValueChanged, isBeforeHeader, i));
+          } catch (e) {
+            throw const ParsingException("Bad drop_down format");
+          }
           break;
         case "edit_text":
-          tempParser = (EditTextParser.fromJson(
-              widgetJson, widget.onValueChanged, isBeforeHeader, i));
+          try {
+            tempParser = (EditTextParser.fromJson(
+                widgetJson, widget.onValueChanged, isBeforeHeader, i));
+          } catch (e) {
+            throw const ParsingException("Bad edit_text format");
+          }
+          break;
+        default:
+          if(widget.dynamicFactory != null){
+            try {
+              tempParser = widget.dynamicFactory!.getWidgetParser(type,i, widgetJson,isBeforeHeader, widget.onValueChanged);
+              if(tempParser == null){
+                throw const ParsingException("Unknown type");
+              }
+            } catch (e) {
+              throw const ParsingException("Unknown type");
+            }
+          }else{
+            throw const ParsingException("Unknown type");
+          }
           break;
       }
-      if (tempParser == null) {
-        throw const ParsingException("Unknown type");
-      }
+
+
       if (parsers.containsKey(tempParser.id)) {
         throw ParsingException("Duplicate Id ${tempParser.id}");
       }
@@ -115,6 +151,12 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
         setState(() {});
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _valueChange?.cancel();
+    super.dispose();
   }
 
   @override

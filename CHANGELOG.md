@@ -12,3 +12,9 @@ Added debounce_time as an option to edit text
 
 ## 0.0.14
 Edit text modifications
+
+## 1.0.0
+Changed constructor and optional params.
+Added tests.
+Added support for dynamic widgets + added example of usage.
+
