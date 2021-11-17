@@ -19,6 +19,7 @@ class DropDownWidget extends StatefulWidget {
       required this.isBeforeHeader})
       : super(key: key);
 
+
   final String name;
   final String? description;
   final String id;
@@ -34,7 +35,7 @@ class DropDownWidget extends StatefulWidget {
 /// This is the private State class that goes with MyStatefulWidget.
 class _MyStatefulWidgetState extends State<DropDownWidget> {
   String? dropdownValue;
-
+  bool userValueChosen = false;
   @override
   void initState() {
     dropdownValue = null;
@@ -43,7 +44,12 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
 
   @override
   Widget build(BuildContext context) {
-    dropdownValue ??= widget.chosenValue;
+    if(userValueChosen) {
+      dropdownValue ??= widget.chosenValue;
+    }else{
+      dropdownValue = widget.chosenValue;
+    }
+    userValueChosen = false;
     return LineWrapper(
       isBeforeHeader: widget.isBeforeHeader,
       child: Row(
@@ -80,6 +86,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                 onChanged: (String? newValue) {
                   setState(() {
                     dropdownValue = newValue!;
+                    userValueChosen = true;
                     if(widget.onValueChanged!= null) {
                       widget.onValueChanged!(widget.id, dropdownValue);
                     }

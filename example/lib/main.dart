@@ -60,7 +60,7 @@ class MyHomePage extends StatefulWidget {
         "id": "3",
         "name": "Edit text",
         "type": "edit_text",
-        "chosen_value": "edit value",
+        "chosen_value": "Val",
         "description": "(edit description..)",
       },
       {"type": "header", "name": "Header", "id": "99"},
@@ -133,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
           }
           if (counter % 4 == 3) {
             _onUserController.add({}..["3"] =
-                "editUp" + Random().nextInt(10).toString()); // toggle
+                "Val" + Random().nextInt(10).toString()); // toggle
           }
           if (counter % 4 == 0) {
             _onUserController.add({}..["4"] = list[toggle % 2]); // toggle

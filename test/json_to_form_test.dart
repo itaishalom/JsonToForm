@@ -90,7 +90,7 @@ void main() {
       expect(find.byType(StaticTextValue), findsOneWidget);
       expect(find.byType(DropDownWidget), findsNothing);
     });
-    testWidgets('Verify edit dropdown', (WidgetTester tester) async {
+    testWidgets('Verify dropdown', (WidgetTester tester) async {
       final Map<String, dynamic> json = {
         "widgets": [
           {
@@ -169,6 +169,37 @@ void main() {
       await tester.pump();
       // Expect to find one ImageMessage
       expect(tester.takeException(), isInstanceOf<ParsingException>());
+    });
+    testWidgets('Expect onValueChanged:', (WidgetTester tester) async {
+      String valueAfterChange = "";
+      final Map<String, dynamic> json = {
+        "widgets": [
+          {
+            "id": "3",
+            "name": "Edit text",
+            "type": "edit_text",
+            "chosen_value": "edit value",
+            "description": "(edit description..)",
+          }
+        ]
+      };
+      // Build the Chat widget.
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(child: JsonFormWithTheme(jsonWidgets: json, onValueChanged: (String id, dynamic value){
+            valueAfterChange = value;
+          },)),
+        ),
+      );
+      // Trigger a frame.
+      await tester.pump();
+      // Expect to find one ImageMessage
+      await tester.enterText(find.byKey(const ValueKey("3")), "test");
+      final findText = find.text('test');
+      expect(findText, findsOneWidget);
+      expect(valueAfterChange, "test");
+      await tester.enterText(find.byKey(const ValueKey("3")), "edit value");
+      expect(valueAfterChange, "edit value");
     });
   });
 }

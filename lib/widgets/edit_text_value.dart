@@ -36,16 +36,15 @@ class EditTextValue extends StatefulWidget {
 class _EditTextValueState extends State<EditTextValue> {
   TextEditingController? _controller;
   Timer? _debounce;
+  bool firstTime = true;
 
   @override
   void initState() {
-    _controller = TextEditingController(text: widget.chosenValue);
-    _controller?.addListener(notifyValue);
     super.initState();
   }
 
   void notifyValue() {
-    if(widget.onValueChanged!= null) {
+    if(widget.onValueChanged!= null && (!firstTime || _controller!.text != widget.chosenValue)) {
       if (_debounce?.isActive ?? false) {
         _debounce?.cancel();
       }
@@ -59,6 +58,7 @@ class _EditTextValueState extends State<EditTextValue> {
         widget.onValueChanged!(widget.id, _controller!.text);
       }
     }
+    firstTime = false;
   }
 
   @override
@@ -69,8 +69,15 @@ class _EditTextValueState extends State<EditTextValue> {
     super.dispose();
   }
 
+  void startController(){
+    _controller?.dispose();
+    _controller = TextEditingController(text: widget.chosenValue);
+    _controller?.addListener(notifyValue);
+  }
+
   @override
   Widget build(BuildContext context) {
+    startController();
     return LineWrapper(
       isBeforeHeader: widget.isBeforeHeader,
       child: Row(
@@ -83,7 +90,6 @@ class _EditTextValueState extends State<EditTextValue> {
             height: InheritedJsonFormTheme.of(context).theme.editTextHeight,
                 width: InheritedJsonFormTheme.of(context).theme.editTextWidth,
                 child: TextField(
-                  key: widget.key,
                   autofocus: false,
                   maxLines: 1,
                   textAlign: TextAlign.center,

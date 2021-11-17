@@ -41,7 +41,7 @@ class EditTextParser implements WidgetParser {
         debounceTime: debounceTime,
         description: description,
         chosenValue: chosenValue,
-        key: ValueKey(chosenValue),
+        key: ValueKey(id),
         isBeforeHeader: isBeforeHeader,
         onValueChanged: onValueChanged);
   }

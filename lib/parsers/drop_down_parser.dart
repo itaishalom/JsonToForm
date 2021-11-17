@@ -41,7 +41,7 @@ class DropDownParser implements WidgetParser {
 
   Widget getWidget() {
     return DropDownWidget(
-        key: ValueKey(chosenValue),
+        key: ValueKey(id),
         name: name,
         id: id,
         values: values,
