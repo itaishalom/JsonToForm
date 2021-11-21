@@ -37,14 +37,17 @@ class _EditTextValueState extends State<EditTextValue> {
   TextEditingController? _controller;
   Timer? _debounce;
   bool firstTime = true;
+  late FocusNode myFocusNode;
 
   @override
   void initState() {
+    myFocusNode = FocusNode();
     super.initState();
   }
 
   void notifyValue() {
-    if(widget.onValueChanged!= null && (!firstTime || _controller!.text != widget.chosenValue)) {
+    if (widget.onValueChanged != null &&
+        (!firstTime || _controller!.text != widget.chosenValue)) {
       if (_debounce?.isActive ?? false) {
         _debounce?.cancel();
       }
@@ -66,12 +69,26 @@ class _EditTextValueState extends State<EditTextValue> {
     // Clean up the controller when the widget is removed from the widget tree.
     // This also removes the _printLatestValue listener.
     _controller?.dispose();
+    myFocusNode.dispose();
     super.dispose();
   }
 
-  void startController(){
-    _controller = TextEditingController(text: widget.chosenValue);
-    _controller?.addListener(notifyValue);
+  void startController() {
+    if(!ignoreRebuild) {
+      ignoreRebuild = false;
+      if (_controller != null) {
+        _controller = TextEditingController(text: _controller!.text);
+      } else {
+        _controller = TextEditingController(text: widget.chosenValue);
+      }
+      _controller?.addListener(notifyValue);
+    }
+  }
+
+  bool ignoreRebuild = false;
+
+  requestFocus(BuildContext context){
+    FocusScope.of(context).requestFocus(myFocusNode); ignoreRebuild = true;
   }
 
   @override
@@ -87,27 +104,28 @@ class _EditTextValueState extends State<EditTextValue> {
               name: widget.name, description: widget.description),
           SizedBox(
             height: InheritedJsonFormTheme.of(context).theme.editTextHeight,
-                width: InheritedJsonFormTheme.of(context).theme.editTextWidth,
-                child: TextField(
-                  autofocus: false,
-                  maxLines: 1,
-                  textAlign: TextAlign.center,
-                  obscureText: false,
-                  controller: _controller,
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(12),
-
-                    /// here char limit is 5
-                  ],
-                  style: InheritedJsonFormTheme.of(context).theme.editTextStyle,
-                  cursorColor: InheritedJsonFormTheme.of(context)
-                      .theme
-                      .editTextCursorColor,
-                  //
-                  decoration:
-                      InheritedJsonFormTheme.of(context).theme.inputDecoration,
-                ),
-              ),
+            width: InheritedJsonFormTheme.of(context).theme.editTextWidth,
+            child: TextFormField(
+              onTap:() => requestFocus(context),
+              focusNode: myFocusNode,
+              autofocus: false,
+              maxLines: 1,
+              textAlign: TextAlign.center,
+              obscureText: false,
+              controller: _controller,
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(12),
+              ],
+              style: myFocusNode.hasFocus
+                  ? InheritedJsonFormTheme.of(context).theme.editTextStyleFocus
+                  : InheritedJsonFormTheme.of(context).theme.editTextStyle,
+              cursorColor:
+                  InheritedJsonFormTheme.of(context).theme.editTextCursorColor,
+              //
+              decoration:
+                  InheritedJsonFormTheme.of(context).theme.inputDecoration,
+            ),
+          ),
         ],
       ),
     );

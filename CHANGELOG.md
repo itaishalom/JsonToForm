@@ -24,3 +24,5 @@ More tests
 ## 1.0.2
 More tests and bug fixes
 
+## 1.0.3
+Change color on focus of edit text

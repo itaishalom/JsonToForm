@@ -71,7 +71,8 @@ abstract class JsonFormTheme {
       required this.linePaDecorationAboveHeader,
       required this.editTextCursorColor,
       required this.editTextWidth,
-      required this.backgroundColor});
+      required this.backgroundColor,
+      required this.editTextStyleFocus});
 
   /// Global container params///
 
@@ -128,6 +129,8 @@ abstract class JsonFormTheme {
   /// Edit Text ///
 
   final TextStyle editTextStyle;
+
+  final TextStyle editTextStyleFocus;
 
   final Color editTextCursorColor;
 
@@ -218,6 +221,8 @@ class DefaultTheme extends JsonFormTheme {
       EdgeInsets staticTextPadding = const EdgeInsets.fromLTRB(20, 10, 5, 10),
       TextStyle editTextStyle =
           const TextStyle(color: Color(0xffaa7420), height: 1),
+      TextStyle editTextStyleFocus =
+          const TextStyle(color: Color(0xff007420), height: 1),
       Color editTextCursorColor = const Color(0xff9E753C),
       OutlineInputBorder editTextEnabledBorder = const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(5.0)),
@@ -243,6 +248,7 @@ class DefaultTheme extends JsonFormTheme {
             bottom: BorderSide.none,
           ))})
       : super(
+            editTextStyleFocus: editTextStyleFocus,
             editTextWidth: 70,
             staticContainerDecoration: staticContainerDecoration,
             editTextHeight: editTextHeight,
