@@ -9,4 +9,5 @@ abstract class WidgetParser {
   Map<String, dynamic> toJson();
   int? time;
 
+  setChosenValue(dynamic value);
 }

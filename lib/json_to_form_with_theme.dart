@@ -146,7 +146,7 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
     bool wasUpdated = false;
     for (String id in values.keys) {
       if (parsers[id] != null) {
-        parsers[id]?.chosenValue = values[id];
+        parsers[id]?.setChosenValue(values[id]);
         parsers[id]?.time = DateTime.now().millisecondsSinceEpoch;
         widgetsGlobal[parsers[id]!.index] = parsers[id]!.getWidget();
         wasUpdated = true;

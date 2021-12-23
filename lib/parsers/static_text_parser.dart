@@ -61,6 +61,11 @@ class StaticTextParser implements WidgetParser {
 
   @override
   int index;
+
+  @override
+  setChosenValue(value) {
+    chosenValue = value ?? "";
+  }
 }
 /*
 this.name, this.description, this.id, this.chosenValue, this.values, this.onValueChanged){

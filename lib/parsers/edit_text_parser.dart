@@ -66,4 +66,9 @@ class EditTextParser implements WidgetParser {
         id = json['id'],
         time = json['time'],
         chosenValue = json['chosen_value'] ?? "";
+
+  @override
+  setChosenValue(value) {
+    chosenValue = value ?? "";
+  }
 }

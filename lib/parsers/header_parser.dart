@@ -41,4 +41,9 @@ class HeaderParser implements WidgetParser {
   @override
   int? time;
 
+  @override
+  setChosenValue(value) {
+    // TODO: implement setChosenValue
+  }
+
 }

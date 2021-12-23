@@ -73,4 +73,9 @@ class ToggleParser implements WidgetParser {
 
   @override
   int index;
+
+  @override
+  setChosenValue(value) {
+    chosenValue = value ?? 0;
+  }
 }

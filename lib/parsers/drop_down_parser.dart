@@ -76,4 +76,10 @@ class DropDownParser implements WidgetParser {
 
   @override
   int index;
+
+  @override
+  setChosenValue(value) {
+    // TODO: implement setChosenValue
+    chosenValue = value ?? "";
+  }
 }

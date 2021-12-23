@@ -32,3 +32,6 @@ Add date under the headline!
 
 ## 1.1.1
 Edit text fix
+
+# 1.1.2
+Set value for parser
