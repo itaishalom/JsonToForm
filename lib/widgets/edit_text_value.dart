@@ -76,24 +76,25 @@ class _EditTextValueState extends State<EditTextValue> {
     super.dispose();
   }
 
-  void startController(int? debounceTimeTheme) {
-    debounceTime = debounceTimeTheme;
-    if (!ignoreRebuild) {
-      ignoreRebuild = false;
+  void startController() {
+    if (!focusRequested) {
+      _controller = TextEditingController(text: widget.chosenValue);
+    } else {
+      focusRequested = false;
       if (_controller != null) {
         _controller = TextEditingController(text: _controller!.text);
       } else {
         _controller = TextEditingController(text: widget.chosenValue);
       }
-      _controller?.addListener(notifyValue);
     }
+    _controller?.addListener(notifyValue);
   }
 
-  bool ignoreRebuild = false;
+  bool focusRequested = false;
 
   requestFocus(BuildContext context) {
     FocusScope.of(context).requestFocus(myFocusNode);
-    ignoreRebuild = true;
+    focusRequested = true;
   }
 
   @override
