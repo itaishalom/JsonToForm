@@ -284,5 +284,5 @@ class DefaultTheme extends JsonFormTheme {
             descriptionTextStyle: descriptionTextStyle,
             staticTextStyle: staticTextStyle,
             linePaDecorationAboveHeader: linePaDecorationAboveHeader,
-      debounceTime: 500);
+      debounceTime: null);
 }
