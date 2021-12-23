@@ -26,3 +26,6 @@ More tests and bug fixes
 
 ## 1.0.3
 Change color on focus of edit text
+
+## 1.1.0
+Add date under the headline!
