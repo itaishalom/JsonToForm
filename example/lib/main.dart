@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
 import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(const MyApp());
@@ -47,7 +49,8 @@ class MyHomePage extends StatefulWidget {
         "name": "Toggle",
         "type": "toggle",
         "values": ["On", "Off"],
-        "chosen_value": 1
+        "chosen_value": 1,
+        "time": 1630164109066,
       },
       {
         "id": "2",
@@ -55,12 +58,14 @@ class MyHomePage extends StatefulWidget {
         "type": "static_text",
         "chosen_value": "value",
         "description": "(description..)",
+        "time": 1640164109066,
       },
       {
         "id": "3",
         "name": "Edit text",
         "type": "edit_text",
         "chosen_value": "Val",
+        "time": 1640260609562,
         "description": "(edit description..)",
       },
       {"type": "header", "name": "Header", "id": "99"},
@@ -68,6 +73,7 @@ class MyHomePage extends StatefulWidget {
         "id": "4",
         "name": "Drop down",
         "type": "drop_down",
+        "time": 1640264109066,
         "values": ["Low-Intermediate", "Medium", "High"],
         "chosen_value": "Low-Intermediate"
       },
@@ -76,7 +82,8 @@ class MyHomePage extends StatefulWidget {
         "name": "Dynamic Drop down",
         "type": "drop_down2",
         "values": ["one", "two", "three"],
-        "chosen_value": "one"
+        "chosen_value": "one",
+        "time": 1530164109066,
       }
     ]
   };
@@ -93,12 +100,52 @@ class _MyHomePageState extends State<MyHomePage> {
       StreamController<Map<String, dynamic>>();
 
   Map<String, WidgetParser> dynamics = {};
-  
+
   @override
   void initState() {
-  //  dynamics["drop_down2"] = DropDownParser2(name, description, id, chosenValue, values, onValueChanged, isBeforeHeader, index)
     super.initState();
     onValueChangeStream = _onUserController.stream.asBroadcastStream();
+  }
+
+  String buildDate(DateTime dateTime) {
+    final now = DateTime.now();
+    int diff = now.millisecondsSinceEpoch - dateTime.millisecondsSinceEpoch;
+
+    if (diff < dayInMilliseconds) {
+      return build24String(diff);
+    } else if (diff >= dayInMilliseconds && diff < monthInMilliseconds) {
+      return buildDaysString(diff);
+    } else if (diff >= monthInMilliseconds && diff < yearInMilliseconds) {
+      return buildMonthString(dateTime);
+    }
+    return dateTime.year.toString();
+  }
+
+  String buildDaysString(int diff) {
+    int days = diff ~/ dayInMilliseconds;
+    return "${days}d";
+  }
+
+  String buildMonthString(DateTime dateTime) {
+    return DateFormat.MMMd().format(dateTime);
+  }
+
+  int yearInMilliseconds = 31556952000;
+  int monthInMilliseconds = 2629800000;
+  int weekInMilliseconds = 604800000;
+  int dayInMilliseconds = 86400000;
+  int hourInMilliseconds = 3600000;
+  int minuteInMilliseconds = 60000;
+
+  String build24String(int diff) {
+    int hours = diff ~/ hourInMilliseconds;
+    int minutes = (diff - (hours * hourInMilliseconds)) ~/ minuteInMilliseconds;
+    return "${hours}h ${minutes}m";
+  }
+
+  Widget dateBuilder(int date) {
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(date);
+    return Text(buildDate(dateTime));
   }
 
   List<String> list = ["Medium", "High"];
@@ -114,6 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: JsonFormWithTheme(
           jsonWidgets: widget.json,
+          dateBuilder: dateBuilder,
           dynamicFactory: MyWidgetParserFactory(),
           streamUpdates: onValueChangeStream,
           onValueChanged: (String d, dynamic s) {
@@ -132,8 +180,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 "updated" + Random().nextInt(10).toString()); // toggle
           }
           if (counter % 4 == 3) {
-            _onUserController.add({}..["3"] =
-                "Val" + Random().nextInt(10).toString()); // toggle
+            _onUserController.add(
+                {}..["3"] = "Val" + Random().nextInt(10).toString()); // toggle
           }
           if (counter % 4 == 0) {
             _onUserController.add({}..["4"] = list[toggle % 2]); // toggle

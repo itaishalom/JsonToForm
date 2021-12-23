@@ -22,6 +22,8 @@ import 'package:json_to_form_with_theme/widgets/form.dart';
 typedef OnValueChanged = void Function(String id, dynamic value);
 
 class JsonFormWithTheme extends StatefulWidget {
+  final Widget Function(int date)? dateBuilder;
+
   final OnValueChanged? onValueChanged;
   final HashMap<int, WidgetParser> parsers = HashMap();
   final WidgetParserFactory? dynamicFactory;
@@ -30,14 +32,15 @@ class JsonFormWithTheme extends StatefulWidget {
   final JsonFormTheme theme;
   final Stream<Map<String, dynamic>>? streamUpdates;
 
-  JsonFormWithTheme(
-      {Key? key,
-      required this.jsonWidgets,
-      this.onValueChanged,
-      this.dynamicFactory,
-      this.theme = const DefaultTheme(),
-      this.streamUpdates})
-      : super(key: key);
+  JsonFormWithTheme({
+    Key? key,
+    required this.jsonWidgets,
+    this.onValueChanged,
+    this.dynamicFactory,
+    this.theme = const DefaultTheme(),
+    this.streamUpdates,
+    this.dateBuilder,
+  }) : super(key: key);
 
   @override
   _JsonFormWithThemeState createState() => _JsonFormWithThemeState();
@@ -77,7 +80,7 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
         case "toggle":
           try {
             tempParser = ToggleParser.fromJson(
-                widgetJson, widget.onValueChanged, isBeforeHeader, i);
+                widgetJson, widget.onValueChanged, isBeforeHeader, i, widget.dateBuilder);
           } catch (e) {
             throw const ParsingException("Bad toggle format");
           }
@@ -92,7 +95,7 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
         case "static_text":
           try {
             tempParser = (StaticTextParser.fromJson(
-                widgetJson, widget.onValueChanged, isBeforeHeader, i));
+                widgetJson, widget.onValueChanged, isBeforeHeader, i, widget.dateBuilder));
           } catch (e) {
             throw const ParsingException("Bad static_text format");
           }
@@ -100,7 +103,7 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
         case "drop_down":
           try {
             tempParser = (DropDownParser.fromJson(
-                widgetJson, widget.onValueChanged, isBeforeHeader, i));
+                widgetJson, widget.onValueChanged, isBeforeHeader, i, widget.dateBuilder));
           } catch (e) {
             throw const ParsingException("Bad drop_down format");
           }
@@ -108,27 +111,27 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
         case "edit_text":
           try {
             tempParser = (EditTextParser.fromJson(
-                widgetJson, widget.onValueChanged, isBeforeHeader, i));
+                widgetJson, widget.onValueChanged, isBeforeHeader, i, widget.dateBuilder));
           } catch (e) {
             throw const ParsingException("Bad edit_text format");
           }
           break;
         default:
-          if(widget.dynamicFactory != null){
+          if (widget.dynamicFactory != null) {
             try {
-              tempParser = widget.dynamicFactory!.getWidgetParser(type,i, widgetJson,isBeforeHeader, widget.onValueChanged);
-              if(tempParser == null){
+              tempParser = widget.dynamicFactory!.getWidgetParser(
+                  type, i, widgetJson, isBeforeHeader, widget.onValueChanged, widget.dateBuilder);
+              if (tempParser == null) {
                 throw const ParsingException("Unknown type");
               }
             } catch (e) {
               throw const ParsingException("Unknown type");
             }
-          }else{
+          } else {
             throw const ParsingException("Unknown type");
           }
           break;
       }
-
 
       if (parsers.containsKey(tempParser.id)) {
         throw ParsingException("Duplicate Id ${tempParser.id}");
@@ -144,6 +147,7 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
     for (String id in values.keys) {
       if (parsers[id] != null) {
         parsers[id]?.chosenValue = values[id];
+        parsers[id]?.time = DateTime.now().millisecondsSinceEpoch;
         widgetsGlobal[parsers[id]!.index] = parsers[id]!.getWidget();
         wasUpdated = true;
       }

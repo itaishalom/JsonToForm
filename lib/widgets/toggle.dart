@@ -14,6 +14,8 @@ class Toggle extends StatefulWidget {
       required this.values,
       required this.onValueChanged,
       this.description,
+        this.dateBuilder,
+        this.time,
       required this.isBeforeHeader,
       this.chosenValue})
       : super(key: key);
@@ -25,6 +27,8 @@ class Toggle extends StatefulWidget {
   int? chosenValue;
   final OnValueChanged? onValueChanged;
   final bool isBeforeHeader;
+  final Widget Function(int date)? dateBuilder;
+  int? time;
 
   @override
   _ToggleState createState() => _ToggleState();
@@ -41,7 +45,8 @@ class _ToggleState extends State<Toggle> {
         textDirection: TextDirection.ltr,
         children: <Widget>[
           NameWidgetDescription(
-              name: widget.name, description: widget.description),
+              name: widget.name, description: widget.description,    dateBuilder: widget.dateBuilder,
+              time: widget.time),
           ToggleSwitch(
             doubleTapDisable: true,
             minWidth: InheritedJsonFormTheme.of(context).theme.toggleMinWidth,

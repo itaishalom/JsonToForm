@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:json_to_form_with_theme/exceptions/parsing_exception.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
@@ -11,12 +12,13 @@ class MyWidgetParserFactory implements WidgetParserFactory{
       int index,
       Map<String, dynamic> widgetJson,
       bool isBeforeHeader,
-      OnValueChanged? onValueChanged) {
+      OnValueChanged? onValueChanged,
+      Widget Function(int date)? dateBuilder) {
     switch (type) {
       case "drop_down2":
         try {
           return DropDownParser2.fromJson(
-              widgetJson, onValueChanged, isBeforeHeader, index);
+              widgetJson, onValueChanged, isBeforeHeader, index, dateBuilder);
         } catch (e) {
           throw const ParsingException("Bad drop_down2 format");
         }

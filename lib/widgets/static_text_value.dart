@@ -12,6 +12,8 @@ class StaticTextValue extends StatelessWidget {
       required this.id,
       required this.isBeforeHeader,
       this.description,
+        this.dateBuilder,
+        this.time,
       required this.chosenValue})
       : super(key: key);
 
@@ -20,6 +22,8 @@ class StaticTextValue extends StatelessWidget {
   final String id;
   String chosenValue;
   final bool isBeforeHeader;
+  final Widget Function(int date)? dateBuilder;
+  int? time;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +33,8 @@ class StaticTextValue extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         textDirection: TextDirection.ltr,
         children: <Widget>[
-          NameWidgetDescription(name: name, description: description),
+          NameWidgetDescription(name: name, description: description,    dateBuilder: dateBuilder,
+              time: time),
           Container(
             decoration: InheritedJsonFormTheme.of(context)
                 .theme

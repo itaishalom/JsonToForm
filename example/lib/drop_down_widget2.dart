@@ -16,6 +16,8 @@ class DropDownWidget2 extends StatefulWidget {
       required this.description,
       required this.onValueChanged,
       this.chosenValue,
+        this.dateBuilder,
+        this.time,
       required this.isBeforeHeader})
       : super(key: key);
 
@@ -26,6 +28,8 @@ class DropDownWidget2 extends StatefulWidget {
   String? chosenValue;
   final OnValueChanged? onValueChanged;
   final bool isBeforeHeader;
+  final Widget Function(int date)? dateBuilder;
+  int? time;
 
   @override
   State<DropDownWidget2> createState() => _MyStatefulWidgetState();
@@ -51,7 +55,8 @@ class _MyStatefulWidgetState extends State<DropDownWidget2> {
           textDirection: TextDirection.ltr,
           children: <Widget>[
             NameWidgetDescription(
-                name: widget.name, description: widget.description),
+                name: widget.name, description: widget.description,    dateBuilder: widget.dateBuilder,
+                time: widget.time),
             Container(
               alignment: Alignment.center,
               child: DropdownButton<String>(

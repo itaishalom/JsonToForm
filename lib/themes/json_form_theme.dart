@@ -72,7 +72,8 @@ abstract class JsonFormTheme {
       required this.editTextCursorColor,
       required this.editTextWidth,
       required this.backgroundColor,
-      required this.editTextStyleFocus});
+      required this.editTextStyleFocus,
+      required this.debounceTime});
 
   /// Global container params///
 
@@ -147,6 +148,8 @@ abstract class JsonFormTheme {
   final Widget? dropDownIcon;
 
   final Widget? underLineWidget;
+
+  final int? debounceTime;
 }
 
 /// Default chat theme which extends [JsonFormTheme]
@@ -280,5 +283,6 @@ class DefaultTheme extends JsonFormTheme {
             nameContainerDecoration: nameContainerDecoration,
             descriptionTextStyle: descriptionTextStyle,
             staticTextStyle: staticTextStyle,
-            linePaDecorationAboveHeader: linePaDecorationAboveHeader);
+            linePaDecorationAboveHeader: linePaDecorationAboveHeader,
+      debounceTime: 500);
 }

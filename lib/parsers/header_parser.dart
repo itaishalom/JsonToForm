@@ -38,4 +38,7 @@ class HeaderParser implements WidgetParser {
   @override
   int index;
 
+  @override
+  int? time;
+
 }
