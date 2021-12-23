@@ -63,4 +63,5 @@ class DropDownParser2 implements WidgetParser {
 
   @override
   int index;
+
 }

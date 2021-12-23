@@ -7,7 +7,7 @@ import '../json_to_form_with_theme.dart';
 
 class StaticTextParser implements WidgetParser {
   StaticTextParser(this.name, this.description, this.id, this.chosenValue,
-      this.onValueChanged, this.isBeforeHeader, this.index) {
+      this.onValueChanged, this.isBeforeHeader, this.index, this.dateBuilder) {
     onValueChangedLocal = (String id, dynamic value) {
       chosenValue = value;
       if(onValueChanged != null) {
@@ -23,9 +23,10 @@ class StaticTextParser implements WidgetParser {
   dynamic chosenValue;
   final bool isBeforeHeader;
   OnValueChanged? onValueChangedLocal;
+  final Widget Function(int date)? dateBuilder;
 
   StaticTextParser.fromJson(Map<String, dynamic> json, this.onValueChanged,
-      this.isBeforeHeader, this.index)
+      this.isBeforeHeader, this.index, [this.dateBuilder])
       : name = json['name'],
         description = json['description'],
         id = json['id'],

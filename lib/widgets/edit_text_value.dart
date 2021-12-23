@@ -15,19 +15,21 @@ class EditTextValue extends StatefulWidget {
   final String id;
   String chosenValue;
   final bool isBeforeHeader;
-  final int? debounceTime;
   final OnValueChanged? onValueChanged;
+  final Widget Function(int date)? dateBuilder;
+  int? time;
 
-  EditTextValue(
-      {Key? key,
-      required this.name,
-      required this.id,
-      required this.isBeforeHeader,
-      this.description,
-      required this.onValueChanged,
-      required this.chosenValue,
-      this.debounceTime})
-      : super(key: key);
+  EditTextValue({
+    Key? key,
+    required this.name,
+    required this.id,
+    required this.isBeforeHeader,
+    this.description,
+    required this.onValueChanged,
+    required this.chosenValue,
+    this.dateBuilder,
+    this.time,
+  }) : super(key: key);
 
   @override
   _EditTextValueState createState() => _EditTextValueState();
@@ -38,6 +40,7 @@ class _EditTextValueState extends State<EditTextValue> {
   Timer? _debounce;
   bool firstTime = true;
   late FocusNode myFocusNode;
+  int? debounceTime;
 
   @override
   void initState() {
@@ -51,8 +54,8 @@ class _EditTextValueState extends State<EditTextValue> {
       if (_debounce?.isActive ?? false) {
         _debounce?.cancel();
       }
-      if (widget.debounceTime != null && widget.debounceTime! > 0) {
-        _debounce = Timer(Duration(milliseconds: widget.debounceTime!), () {
+      if (debounceTime != null && debounceTime! > 0) {
+        _debounce = Timer(Duration(milliseconds: debounceTime!), () {
           if (widget.onValueChanged != null) {
             widget.onValueChanged!(widget.id, _controller!.text);
           }
@@ -73,8 +76,9 @@ class _EditTextValueState extends State<EditTextValue> {
     super.dispose();
   }
 
-  void startController() {
-    if(!ignoreRebuild) {
+  void startController(int? debounceTimeTheme) {
+    debounceTime = debounceTimeTheme;
+    if (!ignoreRebuild) {
       ignoreRebuild = false;
       if (_controller != null) {
         _controller = TextEditingController(text: _controller!.text);
@@ -87,13 +91,14 @@ class _EditTextValueState extends State<EditTextValue> {
 
   bool ignoreRebuild = false;
 
-  requestFocus(BuildContext context){
-    FocusScope.of(context).requestFocus(myFocusNode); ignoreRebuild = true;
+  requestFocus(BuildContext context) {
+    FocusScope.of(context).requestFocus(myFocusNode);
+    ignoreRebuild = true;
   }
 
   @override
   Widget build(BuildContext context) {
-    startController();
+    startController(InheritedJsonFormTheme.of(context).theme.debounceTime);
     return LineWrapper(
       isBeforeHeader: widget.isBeforeHeader,
       child: Row(
@@ -101,12 +106,15 @@ class _EditTextValueState extends State<EditTextValue> {
         textDirection: TextDirection.ltr,
         children: <Widget>[
           NameWidgetDescription(
-              name: widget.name, description: widget.description),
+              name: widget.name,
+              description: widget.description,
+              dateBuilder: widget.dateBuilder,
+              time: widget.time),
           SizedBox(
             height: InheritedJsonFormTheme.of(context).theme.editTextHeight,
             width: InheritedJsonFormTheme.of(context).theme.editTextWidth,
             child: TextFormField(
-              onTap:() => requestFocus(context),
+              onTap: () => requestFocus(context),
               focusNode: myFocusNode,
               autofocus: false,
               maxLines: 1,
