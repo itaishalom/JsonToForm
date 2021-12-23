@@ -49,7 +49,8 @@ class MyHomePage extends StatefulWidget {
         "name": "Toggle",
         "type": "toggle",
         "values": ["On", "Off"],
-        "chosen_value": 1
+        "chosen_value": 1,
+        "time": 1630164109066,
       },
       {
         "id": "2",
@@ -57,13 +58,14 @@ class MyHomePage extends StatefulWidget {
         "type": "static_text",
         "chosen_value": "value",
         "description": "(description..)",
+        "time": 1640164109066,
       },
       {
         "id": "3",
         "name": "Edit text",
         "type": "edit_text",
         "chosen_value": "Val",
-        "time" : 1640260609562,
+        "time": 1640260609562,
         "description": "(edit description..)",
       },
       {"type": "header", "name": "Header", "id": "99"},
@@ -71,6 +73,7 @@ class MyHomePage extends StatefulWidget {
         "id": "4",
         "name": "Drop down",
         "type": "drop_down",
+        "time": 1640264109066,
         "values": ["Low-Intermediate", "Medium", "High"],
         "chosen_value": "Low-Intermediate"
       },
@@ -79,7 +82,8 @@ class MyHomePage extends StatefulWidget {
         "name": "Dynamic Drop down",
         "type": "drop_down2",
         "values": ["one", "two", "three"],
-        "chosen_value": "one"
+        "chosen_value": "one",
+        "time": 1530164109066,
       }
     ]
   };
@@ -93,7 +97,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Stream<Map<String, dynamic>>? onValueChangeStream;
   final StreamController<Map<String, dynamic>> _onUserController =
-  StreamController<Map<String, dynamic>>();
+      StreamController<Map<String, dynamic>>();
 
   Map<String, WidgetParser> dynamics = {};
 
@@ -111,19 +115,19 @@ class _MyHomePageState extends State<MyHomePage> {
       return build24String(diff);
     } else if (diff >= dayInMilliseconds && diff < monthInMilliseconds) {
       return buildDaysString(diff);
-    }else if(diff >= monthInMilliseconds && diff < yearInMilliseconds){
+    } else if (diff >= monthInMilliseconds && diff < yearInMilliseconds) {
       return buildMonthString(dateTime);
     }
-   return dateTime.year.toString();
+    return dateTime.year.toString();
   }
 
   String buildDaysString(int diff) {
-    int days = diff % dayInMilliseconds;
+    int days = diff ~/ dayInMilliseconds;
     return "${days}d";
   }
 
   String buildMonthString(DateTime dateTime) {
-    return DateFormat.Md().format(dateTime);
+    return DateFormat.MMMd().format(dateTime);
   }
 
   int yearInMilliseconds = 31556952000;
@@ -133,14 +137,8 @@ class _MyHomePageState extends State<MyHomePage> {
   int hourInMilliseconds = 3600000;
   int minuteInMilliseconds = 60000;
 
-
-
-
   String build24String(int diff) {
-    int hours = diff % hourInMilliseconds;
-    if(hours < hourInMilliseconds){
-      hours = 0;
-    }
+    int hours = diff ~/ hourInMilliseconds;
     int minutes = (diff - (hours * hourInMilliseconds)) ~/ minuteInMilliseconds;
     return "${hours}h ${minutes}m";
   }
@@ -178,14 +176,12 @@ class _MyHomePageState extends State<MyHomePage> {
             _onUserController.add({}..["1"] = toggle % 2); // toggle
           }
           if (counter % 4 == 2) {
-            _onUserController.add({}
-              ..["2"] =
-                  "updated" + Random().nextInt(10).toString()); // toggle
+            _onUserController.add({}..["2"] =
+                "updated" + Random().nextInt(10).toString()); // toggle
           }
           if (counter % 4 == 3) {
-            _onUserController.add({}
-              ..["3"] =
-                  "Val" + Random().nextInt(10).toString()); // toggle
+            _onUserController.add(
+                {}..["3"] = "Val" + Random().nextInt(10).toString()); // toggle
           }
           if (counter % 4 == 0) {
             _onUserController.add({}..["4"] = list[toggle % 2]); // toggle
@@ -196,6 +192,4 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-
-
 }

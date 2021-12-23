@@ -7,5 +7,6 @@ abstract class WidgetParser {
   late int index;
   late dynamic chosenValue;
   Map<String, dynamic> toJson();
+  int? time;
 
 }

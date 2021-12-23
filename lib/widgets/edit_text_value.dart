@@ -54,7 +54,8 @@ class _EditTextValueState extends State<EditTextValue> {
       if (_debounce?.isActive ?? false) {
         _debounce?.cancel();
       }
-      if (debounceTime != null && debounceTime! > 0) {
+      if (debounceTime
+          != null && debounceTime! > 0) {
         _debounce = Timer(Duration(milliseconds: debounceTime!), () {
           if (widget.onValueChanged != null) {
             widget.onValueChanged!(widget.id, _controller!.text);
@@ -99,7 +100,8 @@ class _EditTextValueState extends State<EditTextValue> {
 
   @override
   Widget build(BuildContext context) {
-    startController(InheritedJsonFormTheme.of(context).theme.debounceTime);
+    debounceTime = InheritedJsonFormTheme.of(context).theme.debounceTime;
+    startController();
     return LineWrapper(
       isBeforeHeader: widget.isBeforeHeader,
       child: Row(

@@ -10,7 +10,7 @@ class StaticTextParser implements WidgetParser {
       this.onValueChanged, this.isBeforeHeader, this.index, this.dateBuilder) {
     onValueChangedLocal = (String id, dynamic value) {
       chosenValue = value;
-      if(onValueChanged != null) {
+      if (onValueChanged != null) {
         onValueChanged!(id, value);
       }
     };
@@ -24,12 +24,15 @@ class StaticTextParser implements WidgetParser {
   final bool isBeforeHeader;
   OnValueChanged? onValueChangedLocal;
   final Widget Function(int date)? dateBuilder;
+  int? time;
 
   StaticTextParser.fromJson(Map<String, dynamic> json, this.onValueChanged,
-      this.isBeforeHeader, this.index, [this.dateBuilder])
+      this.isBeforeHeader, this.index,
+      [this.dateBuilder])
       : name = json['name'],
         description = json['description'],
         id = json['id'],
+        time = json['time'],
         chosenValue = json['chosen_value'] ?? "";
 
   Map<String, dynamic> toJson() => {
@@ -37,12 +40,15 @@ class StaticTextParser implements WidgetParser {
         'description': description,
         'id': id,
         'chosen_value': chosenValue,
+        'time': time
       };
 
   Widget getWidget() {
     return StaticTextValue(
         name: name,
         id: id,
+        time: time,
+        dateBuilder: dateBuilder,
         description: description,
         chosenValue: chosenValue,
         isBeforeHeader: isBeforeHeader);
@@ -55,7 +61,6 @@ class StaticTextParser implements WidgetParser {
 
   @override
   int index;
-
 }
 /*
 this.name, this.description, this.id, this.chosenValue, this.values, this.onValueChanged){

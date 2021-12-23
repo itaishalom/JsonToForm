@@ -18,7 +18,7 @@ class MyWidgetParserFactory implements WidgetParserFactory{
       case "drop_down2":
         try {
           return DropDownParser2.fromJson(
-              widgetJson, onValueChanged, isBeforeHeader, index);
+              widgetJson, onValueChanged, isBeforeHeader, index, dateBuilder);
         } catch (e) {
           throw const ParsingException("Bad drop_down2 format");
         }
