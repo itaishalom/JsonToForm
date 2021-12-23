@@ -19,6 +19,7 @@ class EditTextValue extends StatefulWidget {
   final Widget Function(int date)? dateBuilder;
   int? time;
 
+
   EditTextValue({
     Key? key,
     required this.name,
@@ -41,10 +42,16 @@ class _EditTextValueState extends State<EditTextValue> {
   bool firstTime = true;
   late FocusNode myFocusNode;
   int? debounceTime;
+  bool justLostFocus = false;
 
   @override
   void initState() {
     myFocusNode = FocusNode();
+    myFocusNode.addListener(() {
+      if(!myFocusNode.hasFocus){
+        justLostFocus = true;
+      }
+    });
     super.initState();
   }
 
@@ -78,24 +85,22 @@ class _EditTextValueState extends State<EditTextValue> {
   }
 
   void startController() {
-    if (!focusRequested) {
-      _controller = TextEditingController(text: widget.chosenValue);
-    } else {
-      focusRequested = false;
-      if (_controller != null) {
+    _controller ??= TextEditingController(text: widget.chosenValue);
+    if(justLostFocus){
+      justLostFocus = false;
+      return;
+    }
+    if (myFocusNode.hasFocus) {
         _controller = TextEditingController(text: _controller!.text);
-      } else {
-        _controller = TextEditingController(text: widget.chosenValue);
-      }
+      }else{
+      _controller = TextEditingController(text: widget.chosenValue);
     }
     _controller?.addListener(notifyValue);
   }
 
-  bool focusRequested = false;
 
   requestFocus(BuildContext context) {
     FocusScope.of(context).requestFocus(myFocusNode);
-    focusRequested = true;
   }
 
   @override

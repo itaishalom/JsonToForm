@@ -32,6 +32,7 @@ class DropDownParser2 implements WidgetParser {
   final List<String> values;
   OnValueChanged? onValueChangedLocal;
   final Widget Function(int date)? dateBuilder;
+  int? time;
 
   DropDownParser2.fromJson(Map<String, dynamic> json, this.onValueChanged,
       this.isBeforeHeader, this.index,
@@ -77,6 +78,4 @@ class DropDownParser2 implements WidgetParser {
   @override
   int index;
 
-  @override
-  int? time;
 }

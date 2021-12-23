@@ -29,3 +29,6 @@ Change color on focus of edit text
 
 ## 1.1.0
 Add date under the headline!
+
+## 1.1.1
+Edit text fix
