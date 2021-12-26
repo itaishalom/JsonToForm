@@ -44,10 +44,13 @@ class _EditTextValueState extends State<EditTextValue> {
   int? debounceTime;
   bool justLostFocus = false;
   int? thisTime;
+  String? initialText = "";
 
   @override
   void initState() {
+    _controller ??= TextEditingController(text: widget.chosenValue);
     thisTime = widget.time;
+    initialText = widget.chosenValue;
     myFocusNode = FocusNode();
     myFocusNode.addListener(() {
       if(!myFocusNode.hasFocus){
@@ -58,6 +61,10 @@ class _EditTextValueState extends State<EditTextValue> {
   }
 
   void notifyValue() {
+    if(initialText == _controller?.text){
+      return;
+    }
+    initialText =  _controller?.text;
     if (widget.onValueChanged != null &&
         (!firstTime || _controller!.text != widget.chosenValue)) {
       if (_debounce?.isActive ?? false) {
@@ -101,23 +108,28 @@ class _EditTextValueState extends State<EditTextValue> {
   }
 
   void startController() {
-    _controller ??= TextEditingController(text: widget.chosenValue);
     if(justLostFocus){
       justLostFocus = false;
       return;
     }
+
     if (myFocusNode.hasFocus) {
         _controller = TextEditingController(text: _controller!.text);
       }else{
       _controller = TextEditingController(text: widget.chosenValue);
       thisTime = widget.time;
     }
-    _controller?.addListener(notifyValue);
+    _controller?.selection = TextSelection.fromPosition(TextPosition(offset: _controller!.text.length));
+
+    //_controller?.addListener(notifyValue);
   }
 
 
   requestFocus(BuildContext context) {
+    //WidgetsBinding.instance?.addPostFrameCallback((_) => _controller?.text = (_controller!.text));
+
     FocusScope.of(context).requestFocus(myFocusNode);
+
   }
 
   @override
