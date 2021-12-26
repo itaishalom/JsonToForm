@@ -35,3 +35,6 @@ Edit text fix
 
 # 1.1.2
 Set value for parser
+
+# 1.2.0
+Toggle will now receive the value and not the index

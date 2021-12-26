@@ -43,14 +43,18 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
   @override
   void initState() {
     dropdownValue = null;
+    thisTime = widget.time;
     super.initState();
+
   }
+  int? thisTime;
 
   @override
   Widget build(BuildContext context) {
     if(userValueChosen) {
       dropdownValue ??= widget.chosenValue;
     }else{
+      thisTime = widget.time;
       dropdownValue = widget.chosenValue;
     }
     userValueChosen = false;
@@ -62,7 +66,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
           children: <Widget>[
             NameWidgetDescription(
                 name: widget.name, description: widget.description,    dateBuilder: widget.dateBuilder,
-                time: widget.time),
+                time: thisTime),
             Container(
               alignment: Alignment.center,
               child: DropdownButton<String>(
@@ -94,6 +98,9 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                     userValueChosen = true;
                     if(widget.onValueChanged!= null) {
                       widget.onValueChanged!(widget.id, dropdownValue);
+                    }
+                    if(thisTime!=null) {
+                      thisTime = DateTime.now().millisecondsSinceEpoch;
                     }
                   });
                 },

@@ -14,8 +14,8 @@ class Toggle extends StatefulWidget {
       required this.values,
       required this.onValueChanged,
       this.description,
-        this.dateBuilder,
-        this.time,
+      this.dateBuilder,
+      this.time,
       required this.isBeforeHeader,
       this.chosenValue})
       : super(key: key);
@@ -24,7 +24,7 @@ class Toggle extends StatefulWidget {
   final String name;
   final String id;
   final List<String> values;
-  int? chosenValue;
+  String? chosenValue;
   final OnValueChanged? onValueChanged;
   final bool isBeforeHeader;
   final Widget Function(int date)? dateBuilder;
@@ -35,8 +35,38 @@ class Toggle extends StatefulWidget {
 }
 
 class _ToggleState extends State<Toggle> {
+  int? thisTime;
+
+  @override
+  void initState() {
+    thisTime = widget.time;
+    stringToIndex();
+
+    super.initState();
+  }
+
+  stringToIndex() {
+    if (widget.chosenValue == null || widget.chosenValue!.isEmpty) {
+      updatedIndex = null;
+    } else {
+      updatedIndex = widget.values.indexOf(widget.chosenValue!);
+      if (updatedIndex == -1) {
+        updatedIndex = null;
+      }
+    }
+
+  }
+
+  bool changedLocally = false;
+  int? updatedIndex;
+
   @override
   Widget build(BuildContext context) {
+    if (!changedLocally) {
+      stringToIndex();
+      thisTime = widget.time;
+    }
+    changedLocally = false;
     return LineWrapper(
       isBeforeHeader: widget.isBeforeHeader,
       child: Row(
@@ -45,14 +75,16 @@ class _ToggleState extends State<Toggle> {
         textDirection: TextDirection.ltr,
         children: <Widget>[
           NameWidgetDescription(
-              name: widget.name, description: widget.description,    dateBuilder: widget.dateBuilder,
-              time: widget.time),
+              name: widget.name,
+              description: widget.description,
+              dateBuilder: widget.dateBuilder,
+              time: thisTime),
           ToggleSwitch(
             doubleTapDisable: true,
             minWidth: InheritedJsonFormTheme.of(context).theme.toggleMinWidth,
             minHeight: InheritedJsonFormTheme.of(context).theme.toggleMinHeight,
             fontSize: InheritedJsonFormTheme.of(context).theme.toggleFontSize,
-            initialLabelIndex: widget.chosenValue,
+            initialLabelIndex: updatedIndex,
             cornerRadius: 4.0,
             activeBgColor: [
               InheritedJsonFormTheme.of(context).theme.toggleActiveColor
@@ -68,7 +100,29 @@ class _ToggleState extends State<Toggle> {
             labels: widget.values,
             onToggle: (index) {
               if (widget.onValueChanged != null) {
-                widget.onValueChanged!(widget.id, index);
+                changedLocally = true;
+                if (updatedIndex == index) {
+                  widget.onValueChanged!(widget.id, null);
+                  updatedIndex = null;
+                  if (thisTime != null) {
+                    thisTime = DateTime.now().millisecondsSinceEpoch;
+                        setState(() {
+                      thisTime = DateTime.now().millisecondsSinceEpoch;
+                    });
+                  }
+                  return;
+                } else if (index == null) {
+                  widget.onValueChanged!(widget.id, null);
+                } else {
+                  widget.onValueChanged!(widget.id, widget.values[index]);
+                }
+                updatedIndex = index;
+                if (thisTime != null) {
+                  thisTime = DateTime.now().millisecondsSinceEpoch;
+                  setState(() {
+                    thisTime = DateTime.now().millisecondsSinceEpoch;
+                  });
+                }
               }
             },
           )

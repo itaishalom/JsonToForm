@@ -43,9 +43,11 @@ class _EditTextValueState extends State<EditTextValue> {
   late FocusNode myFocusNode;
   int? debounceTime;
   bool justLostFocus = false;
+  int? thisTime;
 
   @override
   void initState() {
+    thisTime = widget.time;
     myFocusNode = FocusNode();
     myFocusNode.addListener(() {
       if(!myFocusNode.hasFocus){
@@ -66,10 +68,24 @@ class _EditTextValueState extends State<EditTextValue> {
         _debounce = Timer(Duration(milliseconds: debounceTime!), () {
           if (widget.onValueChanged != null) {
             widget.onValueChanged!(widget.id, _controller!.text);
+            if(thisTime!= null) {
+              setState(() {
+                thisTime = DateTime
+                    .now()
+                    .millisecondsSinceEpoch;
+              });
+            }
           }
         });
       } else {
         widget.onValueChanged!(widget.id, _controller!.text);
+        if(thisTime!= null) {
+          setState(() {
+            thisTime = DateTime
+                .now()
+                .millisecondsSinceEpoch;
+          });
+        }
       }
     }
     firstTime = false;
@@ -94,6 +110,7 @@ class _EditTextValueState extends State<EditTextValue> {
         _controller = TextEditingController(text: _controller!.text);
       }else{
       _controller = TextEditingController(text: widget.chosenValue);
+      thisTime = widget.time;
     }
     _controller?.addListener(notifyValue);
   }
@@ -117,7 +134,7 @@ class _EditTextValueState extends State<EditTextValue> {
               name: widget.name,
               description: widget.description,
               dateBuilder: widget.dateBuilder,
-              time: widget.time),
+              time: thisTime),
           SizedBox(
             height: InheritedJsonFormTheme.of(context).theme.editTextHeight,
             width: InheritedJsonFormTheme.of(context).theme.editTextWidth,

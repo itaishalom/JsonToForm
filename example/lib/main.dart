@@ -42,6 +42,8 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key) {}
 
+
+
   final Map<String, dynamic> json = {
     "widgets": [
       {
@@ -49,7 +51,7 @@ class MyHomePage extends StatefulWidget {
         "name": "Toggle",
         "type": "toggle",
         "values": ["On", "Off"],
-        "chosen_value": 1,
+        "chosen_value": "Off",
         "time": 1630164109066,
       },
       {
@@ -149,6 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   List<String> list = ["Medium", "High"];
+  final toggleList = ["On", "Off"];
 
   int counter = 0;
   int toggle = 1;
@@ -173,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
           counter++;
           if (counter % 4 == 1) {
             toggle++;
-            _onUserController.add({}..["1"] = toggle % 2); // toggle
+            _onUserController.add({}..["1"] = toggleList[toggle % 2]); // toggle
           }
           if (counter % 4 == 2) {
             _onUserController.add({}..["2"] =

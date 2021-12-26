@@ -22,11 +22,10 @@ void main() {
             "name": "Toggle",
             "type": "toggle",
             "values": ["On", "Off"],
-            "chosen_value": 1
+            "chosen_value": "Off"
           },
         ]
       };
-      // Build the Chat widget.
       await tester.pumpWidget(
         MaterialApp(
           home: Material(child: JsonFormWithTheme(jsonWidgets: json)),
@@ -34,7 +33,6 @@ void main() {
       );
       // Trigger a frame.
       await tester.pump();
-      // Expect to find one ImageMessage
       expect(find.byType(Toggle), findsOneWidget);
       expect(find.byType(EditTextValue), findsNothing);
       expect(find.byType(Header), findsNothing);
@@ -52,7 +50,6 @@ void main() {
           }
         ]
       };
-      // Build the Chat widget.
       await tester.pumpWidget(
         MaterialApp(
           home: Material(child: JsonFormWithTheme(jsonWidgets: json)),
@@ -60,7 +57,6 @@ void main() {
       );
       // Trigger a frame.
       await tester.pump();
-      // Expect to find one ImageMessage
       expect(find.byType(Toggle), findsNothing);
       expect(find.byType(EditTextValue), findsOneWidget);
       expect(find.byType(Header), findsNothing);
@@ -78,7 +74,6 @@ void main() {
           },
         ]
       };
-      // Build the Chat widget.
       await tester.pumpWidget(
         MaterialApp(
           home: Material(child: JsonFormWithTheme(jsonWidgets: json)),
@@ -86,7 +81,6 @@ void main() {
       );
       // Trigger a frame.
       await tester.pump();
-      // Expect to find one ImageMessage
       expect(find.byType(Toggle), findsNothing);
       expect(find.byType(EditTextValue), findsNothing);
       expect(find.byType(Header), findsNothing);
@@ -105,15 +99,12 @@ void main() {
           },
         ]
       };
-      // Build the Chat widget.
       await tester.pumpWidget(
         MaterialApp(
           home: Material(child: JsonFormWithTheme(jsonWidgets: json)),
         ),
       );
-      // Trigger a frame.
       await tester.pump();
-      // Expect to find one ImageMessage
       expect(find.byType(Toggle), findsNothing);
       expect(find.byType(EditTextValue), findsNothing);
       expect(find.byType(Header), findsNothing);
@@ -139,7 +130,6 @@ void main() {
           },
         ]
       };
-      // Build the Chat widget.
       await tester.pumpWidget(
         MaterialApp(
           home: Material(child: JsonFormWithTheme(jsonWidgets: json)),
@@ -147,7 +137,6 @@ void main() {
       );
       // Trigger a frame.
       await tester.pump();
-      // Expect to find one ImageMessage
       expect(tester.takeException(), isInstanceOf<ParsingException>());
     });
 
@@ -162,7 +151,6 @@ void main() {
           },
         ]
       };
-      // Build the Chat widget.
       await tester.pumpWidget(
         MaterialApp(
           home: Material(child: JsonFormWithTheme(jsonWidgets: json)),
@@ -170,7 +158,6 @@ void main() {
       );
       // Trigger a frame.
       await tester.pump();
-      // Expect to find one ImageMessage
       expect(tester.takeException(), isInstanceOf<ParsingException>());
     });
     testWidgets('Expect onValueChanged:', (WidgetTester tester) async {
@@ -186,7 +173,6 @@ void main() {
           }
         ]
       };
-      // Build the Chat widget.
       await tester.pumpWidget(
         MaterialApp(
           home: Material(child: JsonFormWithTheme(jsonWidgets: json, onValueChanged: (String id, dynamic value){
@@ -196,7 +182,6 @@ void main() {
       );
       // Trigger a frame.
       await tester.pump();
-      // Expect to find one ImageMessage
       await tester.enterText(find.byKey(const ValueKey("3")), "test");
       final findText = find.text('test');
       expect(findText, findsOneWidget);
@@ -224,7 +209,6 @@ void main() {
           }
         ]
       };
-      // Build the Chat widget.
       await tester.pumpWidget(
         MaterialApp(
           home: Material(child: JsonFormWithTheme(jsonWidgets: json, streamUpdates: onValueChangeStream)),
@@ -234,7 +218,6 @@ void main() {
       await tester.pump();
       _onUserController.add({}..["3"] =
           valueAfterChange); // toggle
-      // Expect to find one ImageMessage
 
 
       await tester.pump(const Duration(seconds: 5));

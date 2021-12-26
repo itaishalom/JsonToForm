@@ -31,7 +31,7 @@ const secondaryDark = Color(0xff6a2250);
 
 const inactiveToggleTextColor = Color(0xffE8EAED);
 
-const inactiveToggleBgColor = Color(0xfffB2B2B);
+const inactiveToggleBgColor = Color(0x2ffB2B2B);
 
 const inactiveToggleActiveBgColor = Color(0xffaD5C14);
 //
