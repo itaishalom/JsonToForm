@@ -49,8 +49,10 @@ class _EditTextValueState extends State<EditTextValue> {
   @override
   void initState() {
     _controller ??= TextEditingController(text: widget.chosenValue);
+    _controller?.addListener(notifyValue);
     thisTime = widget.time;
     initialText = widget.chosenValue;
+
     myFocusNode = FocusNode();
     myFocusNode.addListener(() {
       if(!myFocusNode.hasFocus){
@@ -114,14 +116,14 @@ class _EditTextValueState extends State<EditTextValue> {
     }
 
     if (myFocusNode.hasFocus) {
-        _controller = TextEditingController(text: _controller!.text);
+        _controller?.text = ( _controller!.text);
       }else{
-      _controller = TextEditingController(text: widget.chosenValue);
+      _controller?.text  = ( widget.chosenValue);
       thisTime = widget.time;
     }
     _controller?.selection = TextSelection.fromPosition(TextPosition(offset: _controller!.text.length));
 
-    //_controller?.addListener(notifyValue);
+  //  _controller?.addListener(notifyValue);
   }
 
 
