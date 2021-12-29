@@ -46,13 +46,23 @@ class MyHomePage extends StatefulWidget {
 
   final Map<String, dynamic> json = {
     "widgets": [
+      {"type": "header", "name": "Header", "id": "29"},
       {
         "id": "1",
-        "name": "Toggle",
+        "name": "DVT",
         "type": "toggle",
         "values": ["On", "Off"],
         "chosen_value": "Off",
         "time": 1630164109066,
+      },
+      {"type": "header", "name": "Header2", "id": "39"},
+      {
+        "id": "56",
+        "name": "ADVT",
+        "type": "toggle",
+        "values": ["On", "Off"],
+        "chosen_value": "Off",
+        "time": 1630164109056,
       },
       {
         "id": "2",

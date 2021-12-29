@@ -61,6 +61,9 @@ class _EditTextValueState extends State<EditTextValue> {
       myFocusNode.addListener(() {
         if (!myFocusNode.hasFocus) {
           justLostFocus = true;
+          setState(() {
+
+          });
         }
       });
     }
@@ -134,6 +137,9 @@ class _EditTextValueState extends State<EditTextValue> {
     //WidgetsBinding.instance?.addPostFrameCallback((_) => _controller?.text = (_controller!.text));
     if (!widget.isReadOnly) {
       FocusScope.of(context).requestFocus(myFocusNode);
+      setState(() {
+
+      });
     }
   }
 

@@ -46,3 +46,7 @@ Edit text fix
 Better support long headers,
 Edit text is now can be read only,
 New themes
+
+# 1.2.3
+Fix color of the edit text when unfocus.
+New component! Long edit text.

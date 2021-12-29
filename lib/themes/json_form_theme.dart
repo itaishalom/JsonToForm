@@ -193,7 +193,7 @@ class DefaultTheme extends JsonFormTheme {
         fontSize: 13,
         color: Color(0xffA9AAAD),
         fontWeight: FontWeight.w400,
-        height: 1.333,
+        height: 1.6,
       ),
       TextStyle titleTextStyle = const TextStyle(
         fontFamily: 'Avenir',
