@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
 import 'package:json_to_form_with_theme/widgets/edit_text_value.dart';
-import 'package:json_to_form_with_theme/widgets/static_text_value.dart';
-import 'package:json_to_form_with_theme/widgets/toggle.dart';
 
 import '../json_to_form_with_theme.dart';
 
@@ -20,11 +18,16 @@ class EditTextParser implements WidgetParser {
   final OnValueChanged? onValueChanged;
   final String? description;
   final String name;
+  bool readOnly = false;
+  bool long = false;
+  @override
   final String id;
+  @override
   dynamic chosenValue;
   final bool isBeforeHeader;
   OnValueChanged? onValueChangedLocal;
   final Widget Function(int date)? dateBuilder;
+  @override
   int? time;
 
   Map<String, dynamic> toJson() => {
@@ -32,7 +35,10 @@ class EditTextParser implements WidgetParser {
         'description': description,
         'id': id,
         'chosen_value': chosenValue,
-        'time': time
+        'read_only': readOnly,
+        'long': long,
+        'time': time,
+        'long': long
       };
 
   @override
@@ -46,6 +52,8 @@ class EditTextParser implements WidgetParser {
         isBeforeHeader: isBeforeHeader,
         onValueChanged: onValueChanged,
         time: time,
+        long: long,
+        isReadOnly: readOnly,
         dateBuilder: dateBuilder);
   }
 
@@ -65,6 +73,8 @@ class EditTextParser implements WidgetParser {
         description = json['description'],
         id = json['id'],
         time = json['time'],
+        long = json["long"] ?? false,
+        readOnly = json['read_only'] ?? false,
         chosenValue = json['chosen_value'] ?? "";
 
   @override

@@ -18,7 +18,8 @@ class EditTextValue extends StatefulWidget {
   final OnValueChanged? onValueChanged;
   final Widget Function(int date)? dateBuilder;
   int? time;
-
+  final bool isReadOnly;
+  final bool long;
 
   EditTextValue({
     Key? key,
@@ -28,6 +29,8 @@ class EditTextValue extends StatefulWidget {
     this.description,
     required this.onValueChanged,
     required this.chosenValue,
+    this.isReadOnly = false,
+    this.long = false,
     this.dateBuilder,
     this.time,
   }) : super(key: key);
@@ -50,49 +53,46 @@ class _EditTextValueState extends State<EditTextValue> {
   void initState() {
     _controller ??= TextEditingController(text: widget.chosenValue);
     _controller?.addListener(notifyValue);
+
     thisTime = widget.time;
     initialText = widget.chosenValue;
-
-    myFocusNode = FocusNode();
-    myFocusNode.addListener(() {
-      if(!myFocusNode.hasFocus){
-        justLostFocus = true;
-      }
-    });
+    if (!widget.isReadOnly) {
+      myFocusNode = FocusNode();
+      myFocusNode.addListener(() {
+        if (!myFocusNode.hasFocus) {
+          justLostFocus = true;
+        }
+      });
+    }
     super.initState();
   }
 
   void notifyValue() {
-    if(initialText == _controller?.text){
+    if (initialText == _controller?.text) {
       return;
     }
-    initialText =  _controller?.text;
+    initialText = _controller?.text;
     if (widget.onValueChanged != null &&
         (!firstTime || _controller!.text != widget.chosenValue)) {
       if (_debounce?.isActive ?? false) {
         _debounce?.cancel();
       }
-      if (debounceTime
-          != null && debounceTime! > 0) {
+      if (debounceTime != null && debounceTime! > 0) {
         _debounce = Timer(Duration(milliseconds: debounceTime!), () {
           if (widget.onValueChanged != null) {
             widget.onValueChanged!(widget.id, _controller!.text);
-            if(thisTime!= null) {
+            if (thisTime != null) {
               setState(() {
-                thisTime = DateTime
-                    .now()
-                    .millisecondsSinceEpoch;
+                thisTime = DateTime.now().millisecondsSinceEpoch;
               });
             }
           }
         });
       } else {
         widget.onValueChanged!(widget.id, _controller!.text);
-        if(thisTime!= null) {
+        if (thisTime != null) {
           setState(() {
-            thisTime = DateTime
-                .now()
-                .millisecondsSinceEpoch;
+            thisTime = DateTime.now().millisecondsSinceEpoch;
           });
         }
       }
@@ -105,76 +105,102 @@ class _EditTextValueState extends State<EditTextValue> {
     // Clean up the controller when the widget is removed from the widget tree.
     // This also removes the _printLatestValue listener.
     _controller?.dispose();
-    myFocusNode.dispose();
+    if(!widget.isReadOnly) {
+      myFocusNode.dispose();
+    }
     super.dispose();
   }
 
   void startController() {
-    if(justLostFocus){
-      justLostFocus = false;
-      return;
-    }
+    if (!widget.isReadOnly) {
+      if (justLostFocus) {
+        justLostFocus = false;
+        return;
+      }
 
-    if (myFocusNode.hasFocus) {
-        _controller?.text = ( _controller!.text);
-      }else{
-      _controller?.text  = ( widget.chosenValue);
-      thisTime = widget.time;
+      if (myFocusNode.hasFocus) {
+        _controller?.text = (_controller!.text);
+      } else {
+        _controller?.text = (widget.chosenValue);
+        thisTime = widget.time;
+      }
+      _controller?.selection = TextSelection.fromPosition(
+          TextPosition(offset: _controller!.text.length));
     }
-    _controller?.selection = TextSelection.fromPosition(TextPosition(offset: _controller!.text.length));
-
-  //  _controller?.addListener(notifyValue);
+    //  _controller?.addListener(notifyValue);
   }
-
 
   requestFocus(BuildContext context) {
     //WidgetsBinding.instance?.addPostFrameCallback((_) => _controller?.text = (_controller!.text));
-
-    FocusScope.of(context).requestFocus(myFocusNode);
-
+    if (!widget.isReadOnly) {
+      FocusScope.of(context).requestFocus(myFocusNode);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     debounceTime = InheritedJsonFormTheme.of(context).theme.debounceTime;
     startController();
+    Widget text = Container(
+        margin: widget.long
+            ? InheritedJsonFormTheme.of(context).theme.editTextLongMargins
+            : InheritedJsonFormTheme.of(context).theme.editTextMargins,
+        child: TextFormField(
+          onTap: () => requestFocus(context),
+          focusNode: widget.isReadOnly ? null : myFocusNode,
+          autofocus: false,
+          readOnly: widget.isReadOnly,
+          maxLines: widget.long ? 10 : 1,
+          inputFormatters: widget.long
+              ? []
+              : [
+                  LengthLimitingTextInputFormatter(12),
+                ],
+          textAlign: widget.long ? TextAlign.start : TextAlign.center,
+          obscureText: false,
+          controller: _controller,
+          style: !widget.isReadOnly
+              ? (myFocusNode.hasFocus
+                  ? InheritedJsonFormTheme.of(context).theme.editTextStyleFocus
+                  : InheritedJsonFormTheme.of(context).theme.editTextStyle)
+              : InheritedJsonFormTheme.of(context).theme.editTextStyle,
+          cursorColor:
+              InheritedJsonFormTheme.of(context).theme.editTextCursorColor,
+          //
+          decoration: widget.isReadOnly
+              ? InheritedJsonFormTheme.of(context).theme.inputDecorationReadOnly
+              : InheritedJsonFormTheme.of(context).theme.inputDecoration,
+        ));
+
+    List<Widget> innerWidgets = [
+      NameWidgetDescription(
+          name: widget.name,
+          description: widget.description,
+          dateBuilder: widget.dateBuilder,
+          time: thisTime,
+      componentSameLine: !widget.long,),
+    ];
+    if (widget.long) {
+      innerWidgets.add(text);
+    } else {
+      innerWidgets.add(SizedBox(
+          height: InheritedJsonFormTheme.of(context).theme.editTextHeight,
+          width: InheritedJsonFormTheme.of(context).theme.editTextWidth,
+          child: text));
+    }
     return LineWrapper(
       isBeforeHeader: widget.isBeforeHeader,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        textDirection: TextDirection.ltr,
-        children: <Widget>[
-          NameWidgetDescription(
-              name: widget.name,
-              description: widget.description,
-              dateBuilder: widget.dateBuilder,
-              time: thisTime),
-          SizedBox(
-            height: InheritedJsonFormTheme.of(context).theme.editTextHeight,
-            width: InheritedJsonFormTheme.of(context).theme.editTextWidth,
-            child: TextFormField(
-              onTap: () => requestFocus(context),
-              focusNode: myFocusNode,
-              autofocus: false,
-              maxLines: 1,
-              textAlign: TextAlign.center,
-              obscureText: false,
-              controller: _controller,
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(12),
-              ],
-              style: myFocusNode.hasFocus
-                  ? InheritedJsonFormTheme.of(context).theme.editTextStyleFocus
-                  : InheritedJsonFormTheme.of(context).theme.editTextStyle,
-              cursorColor:
-                  InheritedJsonFormTheme.of(context).theme.editTextCursorColor,
-              //
-              decoration:
-                  InheritedJsonFormTheme.of(context).theme.inputDecoration,
+      child: widget.long
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              textDirection: TextDirection.ltr,
+              children: <Widget>[...innerWidgets],
+            )
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              textDirection: TextDirection.ltr,
+              children: <Widget>[...innerWidgets],
             ),
-          ),
-        ],
-      ),
     );
   }
 }

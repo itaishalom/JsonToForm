@@ -41,3 +41,8 @@ Toggle will now receive the value and not the index
 
 # 1.2.1
 Edit text fix
+
+# 1.2.2
+Better support long headers,
+Edit text is now can be read only,
+New themes

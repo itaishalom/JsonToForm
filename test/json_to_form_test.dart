@@ -62,6 +62,7 @@ void main() {
       expect(find.byType(Header), findsNothing);
       expect(find.byType(DropDownWidget), findsNothing);
     });
+
     testWidgets('Verify  static text', (WidgetTester tester) async {
       final Map<String, dynamic> json = {
         "widgets": [
@@ -190,6 +191,36 @@ void main() {
       expect(valueAfterChange, "edit value");
     });
 
+    testWidgets('Expect onValueChanged: - not changed, read only', (WidgetTester tester) async {
+      String valueAfterChange = "";
+      final Map<String, dynamic> json = {
+        "widgets": [
+          {
+            "id": "3",
+            "name": "Edit text",
+            "type": "edit_text",
+            "chosen_value": "edit value",
+            "description": "(edit description..)",
+            "read_only": true
+          }
+        ]
+      };
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(child: JsonFormWithTheme(jsonWidgets: json, onValueChanged: (String id, dynamic value){
+            valueAfterChange = value;
+          },)),
+        ),
+      );
+      // Trigger a frame.
+      await tester.pump();
+      await tester.enterText(find.byKey(const ValueKey("3")), "test");
+      final findText = find.text('test');
+      expect(findText, findsNothing);
+      expect(valueAfterChange, "");
+      await tester.enterText(find.byKey(const ValueKey("3")), "edit value");
+      expect(valueAfterChange, "");
+    });
 
     testWidgets('Change value from outside', (WidgetTester tester) async {
 

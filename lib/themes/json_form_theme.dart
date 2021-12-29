@@ -73,6 +73,9 @@ abstract class JsonFormTheme {
       required this.editTextWidth,
       required this.backgroundColor,
       required this.editTextStyleFocus,
+        required this.inputDecorationReadOnly,
+        required this.editTextMargins,
+        required this.editTextLongMargins,
       required this.debounceTime});
 
   /// Global container params///
@@ -141,6 +144,11 @@ abstract class JsonFormTheme {
 
   final InputDecoration inputDecoration;
 
+  final InputDecoration inputDecorationReadOnly;
+
+  final EdgeInsets editTextLongMargins;
+
+  final EdgeInsets editTextMargins;
   /////////////////
 
   /// DropDown Widget ////
@@ -241,6 +249,21 @@ class DefaultTheme extends JsonFormTheme {
             borderRadius: BorderRadius.all(Radius.circular(5.0)),
             borderSide: BorderSide(color: Color(0xff51753C), width: 2.0)),
       ),
+        InputDecoration inputDecorationReadOnly = const InputDecoration(
+          isDense: true,
+          contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+          fillColor: Colors.white,
+          enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              borderSide: BorderSide(color: Colors.transparent, width: 2.0)),
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              borderSide: BorderSide(color: Colors.transparent, width: 2.0)),
+        ),
+
+
+        editTextLongMargins = const EdgeInsets.only(top: 10),
+        editTextMargins = const EdgeInsets.only(),
       editTextHeight = 35.0,
       BoxDecoration staticContainerDecoration = const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -284,5 +307,8 @@ class DefaultTheme extends JsonFormTheme {
             descriptionTextStyle: descriptionTextStyle,
             staticTextStyle: staticTextStyle,
             linePaDecorationAboveHeader: linePaDecorationAboveHeader,
+      inputDecorationReadOnly:inputDecorationReadOnly,
+      editTextMargins: editTextMargins,
+      editTextLongMargins: editTextLongMargins,
       debounceTime: null);
 }
