@@ -166,13 +166,13 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
       }
       if (wasUpdated) {
         setState(() {
-          shouldRebuildParsers = false;
+          ignoreRebuild = true;
         });
       }
     }
   }
 
-  bool shouldRebuildParsers = true;
+  bool ignoreRebuild = false;
 
   @override
   void dispose() {
@@ -182,10 +182,10 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
 
   @override
   Widget build(BuildContext context) {
-    if(shouldRebuildParsers) {
+    if(!ignoreRebuild) {
       buildWidgetsFromJson();
     }
-    shouldRebuildParsers = false;
+    ignoreRebuild = false;
     return InheritedJsonFormTheme(
         theme: widget.theme,
         child: Scaffold(

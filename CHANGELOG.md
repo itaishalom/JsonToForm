@@ -60,3 +60,6 @@ Support refresh
 
 # 1.2.6
 Support refresh - fix
+
+# 1.2.7
+Support refresh - fix2
