@@ -50,7 +50,13 @@ class EditTextParser implements WidgetParser {
         chosenValue: chosenValue,
         key: ValueKey(id),
         isBeforeHeader: isBeforeHeader,
-        onValueChanged: onValueChanged,
+        onValueChanged: (String id, dynamic value) {
+
+          chosenValue = value;
+          if (onValueChanged != null) {
+            onValueChanged!(id, value);
+          }
+        },
         time: time,
         long: long,
         isReadOnly: readOnly,

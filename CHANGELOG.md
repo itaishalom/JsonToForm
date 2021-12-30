@@ -63,3 +63,6 @@ Support refresh - fix
 
 # 1.2.7
 Support refresh - fix2
+
+# 1.2.9
+Edit text bug fix
