@@ -52,6 +52,8 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
   late final StreamSubscription<Map<String, dynamic>>? _valueChange;
 
   buildWidgetsFromJson() {
+    parsers = HashMap();
+    widgetsGlobal = [];
     List<dynamic>? widgets = widget.jsonWidgets['widgets'];
     if (widgets == null) {
       throw const ParsingException("No widgets found");
