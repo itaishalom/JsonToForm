@@ -66,3 +66,6 @@ Support refresh - fix2
 
 # 1.2.9
 Edit text bug fix
+
+# 1.2.10
+Edit text bug fix
