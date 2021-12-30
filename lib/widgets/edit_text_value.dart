@@ -157,6 +157,7 @@ class _EditTextValueState extends State<EditTextValue> {
           autofocus: false,
           readOnly: widget.isReadOnly,
           maxLines: widget.long ? 10 : 1,
+          minLines: 1,
           inputFormatters: widget.long
               ? []
               : [
@@ -199,6 +200,7 @@ class _EditTextValueState extends State<EditTextValue> {
       child: widget.long
           ? Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               textDirection: TextDirection.ltr,
               children: <Widget>[...innerWidgets],
             )

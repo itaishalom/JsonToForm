@@ -82,11 +82,11 @@ class MyHomePage extends StatefulWidget {
       },
       {
         "id": "3",
-        "name": "Edit text",
+        "name": "Blood Pressure with a long long long",
         "type": "edit_text",
         "chosen_value": "Val",
         "time": 1640260609562,
-        "description": "(edit description..) this a long description! realy",
+        "description": "mmHg - with a long description",
       },
       {
         "id": "13",

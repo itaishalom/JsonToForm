@@ -24,7 +24,6 @@ class NameWidgetDescription extends StatelessWidget {
         name,
         style: InheritedJsonFormTheme.of(context).theme.titleTextStyle,
       ),
-      description != null ? const SizedBox(width: 4) : const SizedBox.shrink(),
       description != null
           ? Text(
               description!,
@@ -34,8 +33,9 @@ class NameWidgetDescription extends StatelessWidget {
     ];
 
     return Container(
-        constraints: componentSameLine?
-            BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.65) : null,
+        constraints: componentSameLine
+            ? BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.65)
+            : null,
         padding: InheritedJsonFormTheme.of(context).theme.nameContainerPadding,
         decoration:
             InheritedJsonFormTheme.of(context).theme.nameContainerDecoration,
@@ -43,13 +43,10 @@ class NameWidgetDescription extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            componentSameLine
-                ? Wrap(
-                    children: children,
-                  )
-                : Row(
-                    children: children,
-                  ),
+            Wrap(
+              spacing: 4,
+              children: children,
+            ),
             (dateBuilder != null && time != null)
                 ? StreamBuilder(
                     stream: Stream.periodic(const Duration(minutes: 1)),
