@@ -51,7 +51,7 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
   List<Widget> widgetsGlobal = [];
   late final StreamSubscription<Map<String, dynamic>>? _valueChange;
 
-  buildWidgetsFromJson(){
+  buildWidgetsFromJson() {
     List<dynamic>? widgets = widget.jsonWidgets['widgets'];
     if (widgets == null) {
       throw const ParsingException("No widgets found");
@@ -77,8 +77,8 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
       switch (type) {
         case "toggle":
           try {
-            tempParser = ToggleParser.fromJson(
-                widgetJson, widget.onValueChanged, isBeforeHeader, i, widget.dateBuilder);
+            tempParser = ToggleParser.fromJson(widgetJson,
+                widget.onValueChanged, isBeforeHeader, i, widget.dateBuilder);
           } catch (e) {
             throw const ParsingException("Bad toggle format");
           }
@@ -92,24 +92,24 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
           break;
         case "static_text":
           try {
-            tempParser = (StaticTextParser.fromJson(
-                widgetJson, widget.onValueChanged, isBeforeHeader, i, widget.dateBuilder));
+            tempParser = (StaticTextParser.fromJson(widgetJson,
+                widget.onValueChanged, isBeforeHeader, i, widget.dateBuilder));
           } catch (e) {
             throw const ParsingException("Bad static_text format");
           }
           break;
         case "drop_down":
           try {
-            tempParser = (DropDownParser.fromJson(
-                widgetJson, widget.onValueChanged, isBeforeHeader, i, widget.dateBuilder));
+            tempParser = (DropDownParser.fromJson(widgetJson,
+                widget.onValueChanged, isBeforeHeader, i, widget.dateBuilder));
           } catch (e) {
             throw const ParsingException("Bad drop_down format");
           }
           break;
         case "edit_text":
           try {
-            tempParser = (EditTextParser.fromJson(
-                widgetJson, widget.onValueChanged, isBeforeHeader, i, widget.dateBuilder));
+            tempParser = (EditTextParser.fromJson(widgetJson,
+                widget.onValueChanged, isBeforeHeader, i, widget.dateBuilder));
           } catch (e) {
             throw const ParsingException("Bad edit_text format");
           }
@@ -118,7 +118,12 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
           if (widget.dynamicFactory != null) {
             try {
               tempParser = widget.dynamicFactory!.getWidgetParser(
-                  type, i, widgetJson, isBeforeHeader, widget.onValueChanged, widget.dateBuilder);
+                  type,
+                  i,
+                  widgetJson,
+                  isBeforeHeader,
+                  widget.onValueChanged,
+                  widget.dateBuilder);
               if (tempParser == null) {
                 throw const ParsingException("Unknown type");
               }
@@ -151,15 +156,21 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
     for (String id in values.keys) {
       if (parsers[id] != null) {
         parsers[id]?.setChosenValue(values[id]);
-        parsers[id]?.time = DateTime.now().millisecondsSinceEpoch;
+        parsers[id]?.time = DateTime
+            .now()
+            .millisecondsSinceEpoch;
         widgetsGlobal[parsers[id]!.index] = parsers[id]!.getWidget();
         wasUpdated = true;
       }
       if (wasUpdated) {
-        setState(() {});
+        setState(() {
+          shouldRebuildParsers = false;
+        });
       }
     }
   }
+
+  bool shouldRebuildParsers = true;
 
   @override
   void dispose() {
@@ -169,7 +180,10 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
 
   @override
   Widget build(BuildContext context) {
-    buildWidgetsFromJson();
+    if(shouldRebuildParsers) {
+      buildWidgetsFromJson();
+    }
+    shouldRebuildParsers = false;
     return InheritedJsonFormTheme(
         theme: widget.theme,
         child: Scaffold(
@@ -182,7 +196,7 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
               child: CustomScrollView(slivers: <Widget>[
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
+                        (BuildContext context, int index) {
                       return widgetsGlobal[index];
                     },
                     childCount: widgetsGlobal.length,

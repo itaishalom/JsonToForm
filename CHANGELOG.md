@@ -57,3 +57,6 @@ Fix description space.
 
 # 1.2.5
 Support refresh
+
+# 1.2.6
+Support refresh - fix
