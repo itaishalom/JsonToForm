@@ -51,9 +51,7 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
   List<Widget> widgetsGlobal = [];
   late final StreamSubscription<Map<String, dynamic>>? _valueChange;
 
-  @override
-  void initState() {
-    _valueChange = widget.streamUpdates?.listen(_onRemoteValueChanged);
+  buildWidgetsFromJson(){
     List<dynamic>? widgets = widget.jsonWidgets['widgets'];
     if (widgets == null) {
       throw const ParsingException("No widgets found");
@@ -139,6 +137,12 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
       parsers[tempParser.id] = tempParser;
       widgetsGlobal.add(tempParser.getWidget());
     }
+  }
+
+  @override
+  void initState() {
+    _valueChange = widget.streamUpdates?.listen(_onRemoteValueChanged);
+
     super.initState();
   }
 
@@ -165,6 +169,7 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
 
   @override
   Widget build(BuildContext context) {
+    buildWidgetsFromJson();
     return InheritedJsonFormTheme(
         theme: widget.theme,
         child: Scaffold(

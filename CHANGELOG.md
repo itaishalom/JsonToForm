@@ -51,6 +51,9 @@ New themes
 Fix color of the edit text when unfocus.
 New component! Long edit text.
 
-# 1.2.40
+# 1.2.4
 Long text will shrink and extend upon the text's length,
 Fix description space.
+
+# 1.2.5
+Support refresh
