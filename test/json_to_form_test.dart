@@ -178,6 +178,7 @@ void main() {
         MaterialApp(
           home: Material(child: JsonFormWithTheme(jsonWidgets: json, onValueChanged: (String id, dynamic value){
             valueAfterChange = value;
+            return Future.value(true);
           },)),
         ),
       );
@@ -209,6 +210,7 @@ void main() {
         MaterialApp(
           home: Material(child: JsonFormWithTheme(jsonWidgets: json, onValueChanged: (String id, dynamic value){
             valueAfterChange = value;
+            return Future.value(true);
           },)),
         ),
       );

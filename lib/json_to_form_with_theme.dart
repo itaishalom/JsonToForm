@@ -19,7 +19,7 @@ import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
 import 'package:json_to_form_with_theme/widgets/form.dart';
 
-typedef OnValueChanged = void Function(String id, dynamic value);
+typedef OnValueChanged =  Future<bool> Function(String id, dynamic value) ;
 
 class JsonFormWithTheme extends StatefulWidget {
   final Widget Function(int date)? dateBuilder;
@@ -127,13 +127,13 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
                   widget.onValueChanged,
                   widget.dateBuilder);
               if (tempParser == null) {
-                throw const ParsingException("Unknown type");
+                throw  ParsingException("Unknown type $type");
               }
             } catch (e) {
-              throw const ParsingException("Unknown type");
+              throw  ParsingException("Unknown type $type");
             }
           } else {
-            throw const ParsingException("Unknown type");
+            throw  ParsingException("Unknown type $type");
           }
           break;
       }

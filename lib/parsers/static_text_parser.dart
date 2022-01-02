@@ -8,12 +8,6 @@ import '../json_to_form_with_theme.dart';
 class StaticTextParser implements WidgetParser {
   StaticTextParser(this.name, this.description, this.id, this.chosenValue,
       this.onValueChanged, this.isBeforeHeader, this.index, this.dateBuilder) {
-    onValueChangedLocal = (String id, dynamic value) {
-      chosenValue = value;
-      if (onValueChanged != null) {
-        onValueChanged!(id, value);
-      }
-    };
   }
 
   final OnValueChanged? onValueChanged;

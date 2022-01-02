@@ -70,7 +70,7 @@ class _EditTextValueState extends State<EditTextValue> {
     super.initState();
   }
 
-  void notifyValue() {
+  Future<void> notifyValue() async {
     if (initialText == _controller?.text) {
       return;
     }
@@ -81,10 +81,10 @@ class _EditTextValueState extends State<EditTextValue> {
         _debounce?.cancel();
       }
       if (debounceTime != null && debounceTime! > 0) {
-        _debounce = Timer(Duration(milliseconds: debounceTime!), () {
+        _debounce = Timer(Duration(milliseconds: debounceTime!), () async {
           if (widget.onValueChanged != null) {
-            widget.onValueChanged!(widget.id, _controller!.text);
-            if (thisTime != null) {
+            bool res = await widget.onValueChanged!(widget.id, _controller!.text);
+            if (res && thisTime != null) {
               setState(() {
                 thisTime = DateTime.now().millisecondsSinceEpoch;
               });
@@ -92,8 +92,8 @@ class _EditTextValueState extends State<EditTextValue> {
           }
         });
       } else {
-        widget.onValueChanged!(widget.id, _controller!.text);
-        if (thisTime != null) {
+        bool res = await widget.onValueChanged!(widget.id, _controller!.text);
+        if (res && thisTime != null) {
           setState(() {
             thisTime = DateTime.now().millisecondsSinceEpoch;
           });

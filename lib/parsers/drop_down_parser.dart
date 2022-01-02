@@ -14,14 +14,7 @@ class DropDownParser implements WidgetParser {
       this.onValueChanged,
       this.isBeforeHeader,
       this.index,
-      this.dateBuilder) {
-    onValueChangedLocal = (String id, dynamic value) {
-      chosenValue = value;
-      if (onValueChanged != null) {
-        onValueChanged!(id, value);
-      }
-    };
-  }
+      this.dateBuilder) ;
 
   final OnValueChanged? onValueChanged;
   final bool isBeforeHeader;

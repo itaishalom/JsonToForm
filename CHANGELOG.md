@@ -69,3 +69,7 @@ Edit text bug fix
 
 # 1.2.10
 Edit text bug fix
+
+# 1.2.11
+Time will be updated after conformation
+Better log on the exceptions.

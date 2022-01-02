@@ -204,8 +204,10 @@ class _MyHomePageState extends State<MyHomePage> {
           dateBuilder: dateBuilder,
           dynamicFactory: MyWidgetParserFactory(),
           streamUpdates: onValueChangeStream,
-          onValueChanged: (String d, dynamic s) {
+          onValueChanged: (String d, dynamic s) async {
             print("Update id $d to value $s");
+            await Future.delayed(const Duration(seconds: 1));
+            return Future.value(true);
           },
           theme: const DefaultTheme()),
       floatingActionButton: FloatingActionButton(

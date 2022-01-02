@@ -98,13 +98,14 @@ class _ToggleState extends State<Toggle> {
                 .toggleInactiveTextColor,
             totalSwitches: widget.values.length,
             labels: widget.values,
-            onToggle: (index) {
+            onToggle: (index) async {
               if (widget.onValueChanged != null) {
+                bool res=  false;
                 changedLocally = true;
                 if (updatedIndex == index) {
-                  widget.onValueChanged!(widget.id, null);
+                  res = await widget.onValueChanged!(widget.id, null);
                   updatedIndex = null;
-                  if (thisTime != null) {
+                  if (res && thisTime != null) {
                     thisTime = DateTime.now().millisecondsSinceEpoch;
                         setState(() {
                       thisTime = DateTime.now().millisecondsSinceEpoch;
@@ -112,12 +113,12 @@ class _ToggleState extends State<Toggle> {
                   }
                   return;
                 } else if (index == null) {
-                  widget.onValueChanged!(widget.id, null);
+                  res = await widget.onValueChanged!(widget.id, null);
                 } else {
-                  widget.onValueChanged!(widget.id, widget.values[index]);
+                   res = await widget.onValueChanged!(widget.id, widget.values[index]);
                 }
                 updatedIndex = index;
-                if (thisTime != null) {
+                if (res && thisTime != null) {
                   thisTime = DateTime.now().millisecondsSinceEpoch;
                   setState(() {
                     thisTime = DateTime.now().millisecondsSinceEpoch;

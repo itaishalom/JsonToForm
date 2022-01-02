@@ -15,11 +15,12 @@ class ToggleParser implements WidgetParser {
       this.isBeforeHeader,
       this.index,
       this.dateBuilder) {
-    onValueChangedLocal = (String id, dynamic value) {
+    onValueChangedLocal = (String id, dynamic value) async{
       chosenValue = value;
       if (onValueChanged != null) {
-        onValueChanged!(id, value);
+        return await onValueChanged!(id, value);
       }
+      return Future.value(true);
     };
   }
 

@@ -7,11 +7,12 @@ import '../json_to_form_with_theme.dart';
 class EditTextParser implements WidgetParser {
   EditTextParser(this.name, this.description, this.id, this.chosenValue,
       this.onValueChanged, this.isBeforeHeader, this.index, this.dateBuilder) {
-    onValueChangedLocal = (String id, dynamic value) {
+    onValueChangedLocal = (String id, dynamic value) async {
       chosenValue = value;
       if (onValueChanged != null) {
-        onValueChanged!(id, value);
+        return await onValueChanged!(id, value);
       }
+      return Future.value(false);
     };
   }
 
@@ -50,13 +51,14 @@ class EditTextParser implements WidgetParser {
         chosenValue: chosenValue,
         key: ValueKey(id),
         isBeforeHeader: isBeforeHeader,
-        onValueChanged: (String id, dynamic value) {
+        onValueChanged: (String id, dynamic value) async{
           if (chosenValue != value) {
             chosenValue = value;
             if (onValueChanged != null) {
-              onValueChanged!(id, value);
+             return await onValueChanged!(id, value);
             }
           }
+          return false;
         },
         time: time,
         long: long,

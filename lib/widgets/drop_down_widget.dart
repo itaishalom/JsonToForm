@@ -16,11 +16,10 @@ class DropDownWidget extends StatefulWidget {
       required this.description,
       required this.onValueChanged,
       this.chosenValue,
-        this.dateBuilder,
-        this.time,
+      this.dateBuilder,
+      this.time,
       required this.isBeforeHeader})
       : super(key: key);
-
 
   final String name;
   final String? description;
@@ -40,20 +39,21 @@ class DropDownWidget extends StatefulWidget {
 class _MyStatefulWidgetState extends State<DropDownWidget> {
   String? dropdownValue;
   bool userValueChosen = false;
+
   @override
   void initState() {
     dropdownValue = null;
     thisTime = widget.time;
     super.initState();
-
   }
+
   int? thisTime;
 
   @override
   Widget build(BuildContext context) {
-    if(userValueChosen) {
+    if (userValueChosen) {
       dropdownValue ??= widget.chosenValue;
-    }else{
+    } else {
       thisTime = widget.time;
       dropdownValue = widget.chosenValue;
     }
@@ -65,7 +65,9 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
           textDirection: TextDirection.ltr,
           children: <Widget>[
             NameWidgetDescription(
-                name: widget.name, description: widget.description,    dateBuilder: widget.dateBuilder,
+                name: widget.name,
+                description: widget.description,
+                dateBuilder: widget.dateBuilder,
                 time: thisTime),
             Container(
               alignment: Alignment.center,
@@ -92,17 +94,22 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                   color: Color(0xff8A8B8F),
                   fontSize: 16,
                 ),
-                onChanged: (String? newValue) {
+                onChanged: (String? newValue) async {
                   setState(() {
                     dropdownValue = newValue!;
                     userValueChosen = true;
-                    if(widget.onValueChanged!= null) {
-                      widget.onValueChanged!(widget.id, dropdownValue);
-                    }
-                    if(thisTime!=null) {
-                      thisTime = DateTime.now().millisecondsSinceEpoch;
-                    }
                   });
+                  bool res = true;
+                  if (widget.onValueChanged != null) {
+                    res =
+                        await widget.onValueChanged!(widget.id, dropdownValue);
+                  }
+                  if (res && thisTime != null) {
+                    setState(() {
+                      userValueChosen = true;
+                      thisTime = DateTime.now().millisecondsSinceEpoch;
+                    });
+                  }
                 },
                 selectedItemBuilder: (BuildContext context) {
                   return widget.values.map((String value) {
