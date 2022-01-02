@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 
 import '../json_to_form_with_theme.dart';
+import '../stream_cache.dart';
 import 'line_wrapper.dart';
 import 'name_description_widget.dart';
 
@@ -20,20 +21,26 @@ class EditTextValue extends StatefulWidget {
   int? time;
   final bool isReadOnly;
   final bool long;
+   StreamController<String?>? streamUpdates;
+   StreamController<bool?>? streamRefresh;
 
-  EditTextValue({
-    Key? key,
-    required this.name,
-    required this.id,
-    required this.isBeforeHeader,
-    this.description,
-    required this.onValueChanged,
-    required this.chosenValue,
-    this.isReadOnly = false,
-    this.long = false,
-    this.dateBuilder,
-    this.time,
-  }) : super(key: key);
+  EditTextValue(
+      {Key? key,
+      required this.name,
+      required this.id,
+      required this.isBeforeHeader,
+      this.description,
+      required this.onValueChanged,
+      required this.chosenValue,
+      this.isReadOnly = false,
+      this.long = false,
+      this.dateBuilder,
+      this.time,
+      })
+      : super(key: key){
+    streamUpdates = StreamCache.getStream(id);
+    streamRefresh = StreamCache.getStreamRefresh(id);
+  }
 
   @override
   _EditTextValueState createState() => _EditTextValueState();
@@ -45,12 +52,24 @@ class _EditTextValueState extends State<EditTextValue> {
   bool firstTime = true;
   late FocusNode myFocusNode;
   int? debounceTime;
-  bool justLostFocus = false;
   int? thisTime;
   String? initialText = "";
+  late final StreamSubscription<String?>? _valueChange;
+  bool forceRefresh = false;
 
   @override
   void initState() {
+    widget.streamUpdates?.stream
+        .asBroadcastStream()
+        .listen(_onRemoteValueChanged);
+    widget.streamRefresh?.stream.asBroadcastStream().listen((event) {
+      setState(() {
+        forceRefresh = true;
+      });
+
+    });
+
+    //_valueChange = widget.streamUpdates.listen(_onRemoteValueChanged);
     _controller ??= TextEditingController(text: widget.chosenValue);
     _controller?.addListener(notifyValue);
 
@@ -61,16 +80,38 @@ class _EditTextValueState extends State<EditTextValue> {
       myFocusNode.addListener(() {
         if (!myFocusNode.hasFocus) {
           justLostFocus = true;
-          setState(() {
-
-          });
+          setState(() {});
         }
       });
     }
     super.initState();
   }
 
+  bool justLostFocus = false;
+  bool updateFromRemote = false;
+  bool setPositionRemote = false;
+
+  void _onRemoteValueChanged(String? event) {
+    updateFromRemote = true;
+    setPositionRemote = true;
+    setState(() {
+      _controller?.text = (event ?? "");
+      _controller?.selection = TextSelection.fromPosition(
+          TextPosition(offset: _controller!.text.length));
+      thisTime = DateTime.now().millisecondsSinceEpoch;
+      initialText = _controller?.text;
+    });
+  }
+
   Future<void> notifyValue() async {
+    if (updateFromRemote) {
+      updateFromRemote = false;
+      return;
+    }
+    if (setPositionRemote) {
+      setPositionRemote = false;
+      return;
+    }
     if (initialText == _controller?.text) {
       return;
     }
@@ -83,7 +124,8 @@ class _EditTextValueState extends State<EditTextValue> {
       if (debounceTime != null && debounceTime! > 0) {
         _debounce = Timer(Duration(milliseconds: debounceTime!), () async {
           if (widget.onValueChanged != null) {
-            bool res = await widget.onValueChanged!(widget.id, _controller!.text);
+            bool res =
+                await widget.onValueChanged!(widget.id, _controller!.text);
             if (res && thisTime != null) {
               setState(() {
                 thisTime = DateTime.now().millisecondsSinceEpoch;
@@ -108,45 +150,41 @@ class _EditTextValueState extends State<EditTextValue> {
     // Clean up the controller when the widget is removed from the widget tree.
     // This also removes the _printLatestValue listener.
     _controller?.dispose();
-    if(!widget.isReadOnly) {
+    if (!widget.isReadOnly) {
       myFocusNode.dispose();
     }
+    StreamCache.closeStream(widget.id);
+    StreamCache.closeRefreshStream(widget.id);
     super.dispose();
   }
 
   void startController() {
     if (!widget.isReadOnly) {
-      if (justLostFocus) {
-        justLostFocus = false;
-        return;
-      }
-
-      if (myFocusNode.hasFocus) {
-        _controller?.text = (_controller!.text);
-      } else {
-        _controller?.text = (widget.chosenValue);
-        thisTime = widget.time;
-      }
-      _controller?.selection = TextSelection.fromPosition(
-          TextPosition(offset: _controller!.text.length));
+      _controller?.text = (widget.chosenValue);
+      thisTime = widget.time;
     }
-    //  _controller?.addListener(notifyValue);
+    _controller?.selection = TextSelection.fromPosition(
+        TextPosition(offset: _controller!.text.length));
   }
+
+  //  _controller?.addListener(notifyValue);
 
   requestFocus(BuildContext context) {
     //WidgetsBinding.instance?.addPostFrameCallback((_) => _controller?.text = (_controller!.text));
     if (!widget.isReadOnly) {
       FocusScope.of(context).requestFocus(myFocusNode);
-      setState(() {
-
-      });
+      setState(() {});
     }
   }
 
   @override
   Widget build(BuildContext context) {
     debounceTime = InheritedJsonFormTheme.of(context).theme.debounceTime;
-    startController();
+    if (forceRefresh) {
+      forceRefresh = false;
+      startController();
+      thisTime = widget.time;
+    }
     Widget text = Container(
         margin: widget.long
             ? InheritedJsonFormTheme.of(context).theme.editTextLongMargins
@@ -181,11 +219,12 @@ class _EditTextValueState extends State<EditTextValue> {
 
     List<Widget> innerWidgets = [
       NameWidgetDescription(
-          name: widget.name,
-          description: widget.description,
-          dateBuilder: widget.dateBuilder,
-          time: thisTime,
-      componentSameLine: !widget.long,),
+        name: widget.name,
+        description: widget.description,
+        dateBuilder: widget.dateBuilder,
+        time: thisTime,
+        componentSameLine: !widget.long,
+      ),
     ];
     if (widget.long) {
       innerWidgets.add(text);

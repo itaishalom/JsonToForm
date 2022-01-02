@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
 import 'package:json_to_form_with_theme/widgets/edit_text_value.dart';
 
 import '../json_to_form_with_theme.dart';
+import '../stream_cache.dart';
 
 class EditTextParser implements WidgetParser {
   EditTextParser(this.name, this.description, this.id, this.chosenValue,
@@ -31,6 +34,7 @@ class EditTextParser implements WidgetParser {
   @override
   int? time;
 
+
   Map<String, dynamic> toJson() => {
         'name': name,
         'description': description,
@@ -43,7 +47,10 @@ class EditTextParser implements WidgetParser {
       };
 
   @override
-  Widget getWidget() {
+  Widget getWidget(bool refresh) {
+    if(refresh) {
+      StreamCache.getStreamRefresh(id).add(true);
+    }
     return EditTextValue(
         name: name,
         id: id,
@@ -89,5 +96,6 @@ class EditTextParser implements WidgetParser {
   @override
   setChosenValue(value) {
     chosenValue = value ?? "";
+    StreamCache.getStream(id).add(chosenValue);
   }
 }

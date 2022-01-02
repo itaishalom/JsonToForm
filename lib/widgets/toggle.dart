@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 import 'package:json_to_form_with_theme/widgets/line_wrapper.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
+import '../stream_cache.dart';
 import 'name_description_widget.dart';
 
 class Toggle extends StatefulWidget {
@@ -18,7 +21,10 @@ class Toggle extends StatefulWidget {
       this.time,
       required this.isBeforeHeader,
       this.chosenValue})
-      : super(key: key);
+      : super(key: key){
+    streamUpdates = StreamCache.getStream(id);
+    streamRefresh = StreamCache.getStreamRefresh(id);
+  }
 
   final String? description;
   final String name;
@@ -29,16 +35,23 @@ class Toggle extends StatefulWidget {
   final bool isBeforeHeader;
   final Widget Function(int date)? dateBuilder;
   int? time;
-
+  StreamController<String?>? streamUpdates;
+  StreamController<bool?>? streamRefresh;
   @override
   _ToggleState createState() => _ToggleState();
 }
 
 class _ToggleState extends State<Toggle> {
   int? thisTime;
-
+  bool forceRefresh = false;
   @override
   void initState() {
+    widget.streamUpdates?.stream.asBroadcastStream().listen(_onRemoteValueChanged);
+    widget.streamRefresh?.stream.asBroadcastStream().listen((event) {
+      setState(() {
+        forceRefresh = true;
+      });
+    });
     thisTime = widget.time;
     stringToIndex();
 
@@ -54,7 +67,6 @@ class _ToggleState extends State<Toggle> {
         updatedIndex = null;
       }
     }
-
   }
 
   bool changedLocally = false;
@@ -62,7 +74,8 @@ class _ToggleState extends State<Toggle> {
 
   @override
   Widget build(BuildContext context) {
-    if (!changedLocally) {
+    if(forceRefresh){
+      forceRefresh = false;
       stringToIndex();
       thisTime = widget.time;
     }
@@ -130,5 +143,26 @@ class _ToggleState extends State<Toggle> {
         ],
       ),
     );
+  }
+  @override
+  void dispose() {
+    StreamCache.closeRefreshStream(widget.id);
+    StreamCache.closeStream(widget.id);
+    super.dispose();
+  }
+
+
+  void _onRemoteValueChanged(String? event) {
+    setState(() {
+      if(event== null){
+        updatedIndex = null;
+      }else {
+        updatedIndex = widget.values.indexOf(event);
+        if (updatedIndex == -1) {
+          updatedIndex = null;
+        }
+      }
+      thisTime = DateTime.now().millisecondsSinceEpoch;
+    });
   }
 }

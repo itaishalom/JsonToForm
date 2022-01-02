@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
 import 'package:json_to_form_with_theme/widgets/drop_down_widget.dart';
 
 import '../json_to_form_with_theme.dart';
+import '../stream_cache.dart';
 
 class DropDownParser implements WidgetParser {
   DropDownParser(
@@ -14,7 +17,7 @@ class DropDownParser implements WidgetParser {
       this.onValueChanged,
       this.isBeforeHeader,
       this.index,
-      this.dateBuilder) ;
+      this.dateBuilder);
 
   final OnValueChanged? onValueChanged;
   final bool isBeforeHeader;
@@ -45,7 +48,10 @@ class DropDownParser implements WidgetParser {
         'chosen_value': chosenValue,
       };
 
-  Widget getWidget() {
+  Widget getWidget(bool refresh) {
+    if(refresh) {
+      StreamCache.getStreamRefresh(id).add(true);
+    }
     return DropDownWidget(
         key: ValueKey(id),
         name: name,
@@ -70,9 +76,12 @@ class DropDownParser implements WidgetParser {
   @override
   int index;
 
+  StreamController<String?>? _onUserController;
+
+
   @override
   setChosenValue(value) {
-    // TODO: implement setChosenValue
     chosenValue = value ?? "";
+    StreamCache.getStream(id).add(chosenValue);
   }
 }

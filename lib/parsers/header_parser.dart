@@ -20,7 +20,7 @@ class HeaderParser implements WidgetParser {
         'id': id,
       };
 
-  Widget getWidget() {
+  Widget getWidget(bool refresh) {
     return Header(
       name: name,
       id: id,

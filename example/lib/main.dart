@@ -44,6 +44,21 @@ class MyHomePage extends StatefulWidget {
 
 
 
+
+
+  final String title;
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  Stream<Map<String, dynamic>>? onValueChangeStream;
+  final StreamController<Map<String, dynamic>> _onUserController =
+      StreamController<Map<String, dynamic>>();
+
+  Map<String, WidgetParser> dynamics = {};
+
   final Map<String, dynamic> json = {
     "widgets": [
       {"type": "header", "name": "Header", "id": "29"},
@@ -88,25 +103,8 @@ class MyHomePage extends StatefulWidget {
         "time": 1640260609562,
         "description": "mmHg - with a long description",
       },
-      {
-        "id": "13",
-        "name": "Edit text",
-        "type": "edit_text",
-        "chosen_value": "Val",
-        "read_only": true,
-        "time": 1640260609562,
-        "description": "(edit description..)",
-      },
-      {
-        "id": "14",
-        "name": "Edit text",
-        "type": "edit_text",
-        "chosen_value": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut libero eu justo ullamcorper tristique. Vivamus sed ex quis nisl sodales sollicitudin. Vestibulum maximus, urna non venenatis condimentum, nibh nunc egestas felis, vel posuere est felis sit amet metus. Donec consequat vel felis luctus dignissim. Praesent sagittis, nulla id volutpat iaculis, nunc neque pretium augue, non viverra enim lorem eu tortor. Ut finibus dignissim tellus et luctus. Donec sit amet porttitor ante.",
-        "read_only": false,
-        'long': true,
-        "time": 1640260609562,
-        "description": "(edit description..)",
-      },
+
+
       {"type": "header", "name": "Header", "id": "99"},
       {
         "id": "4",
@@ -126,19 +124,6 @@ class MyHomePage extends StatefulWidget {
       }
     ]
   };
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  Stream<Map<String, dynamic>>? onValueChangeStream;
-  final StreamController<Map<String, dynamic>> _onUserController =
-      StreamController<Map<String, dynamic>>();
-
-  Map<String, WidgetParser> dynamics = {};
 
   @override
   void initState() {
@@ -188,10 +173,34 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   List<String> list = ["Medium", "High"];
-  final toggleList = ["On", "Off"];
+  List<String> toggleList = ["On", "Off"];
 
   int counter = 0;
   int toggle = 1;
+
+  bool changeToGoodBad = true;
+  Future<dynamic> _refresh() {
+    //"chosen_value": "Low-Intermediate"
+    if(changeToGoodBad) {
+      toggleList = ['Good', "Bad"];
+      json['widgets'][1]['values'] = toggleList;
+      json['widgets'][1]['chosen_value'] = "Bad";
+      json['widgets'][6]['chosen_value'] = "good";
+      json['widgets'][8]['chosen_value'] = "Medium";
+    }else{
+      toggleList = ["On", "Off"];
+      json['widgets'][1]['chosen_value'] = "On";
+      json['widgets'][1]['values'] = toggleList;
+      json['widgets'][6]['chosen_value'] = "bad";
+      json['widgets'][8]['chosen_value'] = "High";
+    }
+
+    changeToGoodBad = !changeToGoodBad;
+    setState(() {
+
+    });
+    return Future.delayed(const Duration(seconds: 0));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -199,17 +208,20 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: const Text('Floating Action Button'),
       ),
-      body: JsonFormWithTheme(
-          jsonWidgets: widget.json,
-          dateBuilder: dateBuilder,
-          dynamicFactory: MyWidgetParserFactory(),
-          streamUpdates: onValueChangeStream,
-          onValueChanged: (String d, dynamic s) async {
-            print("Update id $d to value $s");
-            await Future.delayed(const Duration(seconds: 1));
-            return Future.value(true);
-          },
-          theme: const DefaultTheme()),
+      body:  RefreshIndicator(
+      onRefresh: _refresh,
+        child: JsonFormWithTheme(
+            jsonWidgets: json,
+            dateBuilder: dateBuilder,
+            dynamicFactory: MyWidgetParserFactory(),
+            streamUpdates: onValueChangeStream,
+            onValueChanged: (String d, dynamic s) async {
+              print("Update id $d to value $s");
+              await Future.delayed(const Duration(seconds: 1));
+              return Future.value(true);
+            },
+            theme: const DefaultTheme()),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           counter++;

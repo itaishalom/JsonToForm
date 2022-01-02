@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 
+import '../stream_cache.dart';
 import 'line_wrapper.dart';
 import 'name_description_widget.dart';
 
@@ -19,7 +22,10 @@ class DropDownWidget extends StatefulWidget {
       this.dateBuilder,
       this.time,
       required this.isBeforeHeader})
-      : super(key: key);
+      : super(key: key){
+    streamUpdates = StreamCache.getStream(id);
+    streamRefresh = StreamCache.getStreamRefresh(id);
+  }
 
   final String name;
   final String? description;
@@ -30,6 +36,8 @@ class DropDownWidget extends StatefulWidget {
   final bool isBeforeHeader;
   final Widget Function(int date)? dateBuilder;
   int? time;
+   StreamController<String?>? streamUpdates;
+  StreamController<bool?>? streamRefresh;
 
   @override
   State<DropDownWidget> createState() => _MyStatefulWidgetState();
@@ -38,26 +46,48 @@ class DropDownWidget extends StatefulWidget {
 /// This is the private State class that goes with MyStatefulWidget.
 class _MyStatefulWidgetState extends State<DropDownWidget> {
   String? dropdownValue;
-  bool userValueChosen = false;
+
+  late final StreamSubscription<String?>? _valueChange;
+  bool forceRefresh = false;
 
   @override
   void initState() {
-    dropdownValue = null;
+    widget.streamUpdates?.stream.asBroadcastStream().listen(_onRemoteValueChanged);
+    widget.streamRefresh?.stream.asBroadcastStream().listen((event) {
+      setState(() {
+        forceRefresh = true;
+      });
+    });
+    dropdownValue = widget.chosenValue;
     thisTime = widget.time;
     super.initState();
   }
+
+
+  void _onRemoteValueChanged(String? event) {
+    setState(() {
+      dropdownValue = event;
+      thisTime = DateTime.now().millisecondsSinceEpoch;
+    });
+  }
+
+  @override
+  dispose(){
+    StreamCache.closeStream(widget.id);
+    StreamCache.closeRefreshStream(widget.id);
+    super.dispose();
+  }
+
 
   int? thisTime;
 
   @override
   Widget build(BuildContext context) {
-    if (userValueChosen) {
-      dropdownValue ??= widget.chosenValue;
-    } else {
-      thisTime = widget.time;
+    if(forceRefresh){
+      forceRefresh = false;
       dropdownValue = widget.chosenValue;
+      thisTime = widget.time;
     }
-    userValueChosen = false;
     return LineWrapper(
       isBeforeHeader: widget.isBeforeHeader,
       child: Row(
@@ -97,7 +127,6 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                 onChanged: (String? newValue) async {
                   setState(() {
                     dropdownValue = newValue!;
-                    userValueChosen = true;
                   });
                   bool res = true;
                   if (widget.onValueChanged != null) {
@@ -106,7 +135,6 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                   }
                   if (res && thisTime != null) {
                     setState(() {
-                      userValueChosen = true;
                       thisTime = DateTime.now().millisecondsSinceEpoch;
                     });
                   }

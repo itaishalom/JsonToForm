@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
 import 'package:json_to_form_with_theme/widgets/toggle.dart';
 
 import '../json_to_form_with_theme.dart';
+import '../stream_cache.dart';
 
 class ToggleParser implements WidgetParser {
   ToggleParser(
@@ -15,7 +18,7 @@ class ToggleParser implements WidgetParser {
       this.isBeforeHeader,
       this.index,
       this.dateBuilder) {
-    onValueChangedLocal = (String id, dynamic value) async{
+    onValueChangedLocal = (String id, dynamic value) async {
       chosenValue = value;
       if (onValueChanged != null) {
         return await onValueChanged!(id, value);
@@ -54,7 +57,10 @@ class ToggleParser implements WidgetParser {
         'chosen_value': chosenValue,
       };
 
-  Widget getWidget() {
+  Widget getWidget(bool refresh) {
+    if(refresh) {
+      StreamCache.getStreamRefresh(id).add(true);
+    }
     return Toggle(
         name: name,
         isBeforeHeader: isBeforeHeader,
@@ -78,5 +84,6 @@ class ToggleParser implements WidgetParser {
   @override
   setChosenValue(value) {
     chosenValue = value;
+    StreamCache.getStream(id).add(chosenValue);
   }
 }

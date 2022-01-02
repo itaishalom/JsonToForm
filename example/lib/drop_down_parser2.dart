@@ -54,7 +54,7 @@ class DropDownParser2 implements WidgetParser {
         'chosen_value': chosenValue,
       };
 
-  Widget getWidget() {
+  Widget getWidget(bool refresh) {
     return DropDownWidget2(
         key: ValueKey(chosenValue),
         name: name,

@@ -18,6 +18,7 @@ import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 
 import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
 import 'package:json_to_form_with_theme/widgets/form.dart';
+import 'package:sizer/sizer.dart';
 
 typedef OnValueChanged =  Future<bool> Function(String id, dynamic value) ;
 
@@ -142,7 +143,7 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
         throw ParsingException("Duplicate Id ${tempParser.id}");
       }
       parsers[tempParser.id] = tempParser;
-      widgetsGlobal.add(tempParser.getWidget());
+      widgetsGlobal.add(tempParser.getWidget(true));
     }
   }
 
@@ -161,14 +162,15 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
         parsers[id]?.time = DateTime
             .now()
             .millisecondsSinceEpoch;
-        widgetsGlobal[parsers[id]!.index] = parsers[id]!.getWidget();
+          widgetsGlobal[parsers[id]!.index] = parsers[id]!.getWidget(false);
+
         wasUpdated = true;
       }
-      if (wasUpdated) {
+ /*     if (wasUpdated) {
         setState(() {
           ignoreRebuild = true;
         });
-      }
+      }*/
     }
   }
 
@@ -184,27 +186,33 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
   Widget build(BuildContext context) {
     if(!ignoreRebuild) {
       buildWidgetsFromJson();
+    }else{
     }
     ignoreRebuild = false;
-    return InheritedJsonFormTheme(
-        theme: widget.theme,
-        child: Scaffold(
-            backgroundColor: widget.theme.backgroundColor,
-            body: GestureDetector(
-              onTap: () {
-                FocusScope.of(context).unfocus();
-                TextEditingController().clear();
-              },
-              child: CustomScrollView(slivers: <Widget>[
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                        (BuildContext context, int index) {
-                      return widgetsGlobal[index];
-                    },
-                    childCount: widgetsGlobal.length,
-                  ),
-                )
-              ]),
-            )));
+    return Sizer(
+      builder: (BuildContext context, Orientation orientation, DeviceType deviceType) {
+        return InheritedJsonFormTheme(
+            theme: widget.theme,
+            child: Scaffold(
+                backgroundColor: widget.theme.backgroundColor,
+                body: GestureDetector(
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                    TextEditingController().clear();
+                  },
+                  child: CustomScrollView(slivers: <Widget>[
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                            (BuildContext context, int index) {
+                          return widgetsGlobal[index];
+                        },
+                        childCount: widgetsGlobal.length,
+                      ),
+                    )
+                  ]),
+                )));
+      },
+
+    );
   }
 }
