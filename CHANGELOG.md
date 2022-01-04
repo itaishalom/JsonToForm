@@ -77,3 +77,6 @@ Better log on the exceptions.
 # 1.2.12
 Support refresh
 Better performance
+
+# 1.2.13
+Prevent memory leak
