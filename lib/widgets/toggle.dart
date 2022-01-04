@@ -21,7 +21,7 @@ class Toggle extends StatefulWidget {
       this.time,
       required this.isBeforeHeader,
       this.chosenValue})
-      : super(key: key){
+      : super(key: key) {
     streamUpdates = StreamCache.getStream(id);
     streamRefresh = StreamCache.getStreamRefresh(id);
   }
@@ -37,6 +37,7 @@ class Toggle extends StatefulWidget {
   int? time;
   StreamController<String?>? streamUpdates;
   StreamController<bool?>? streamRefresh;
+
   @override
   _ToggleState createState() => _ToggleState();
 }
@@ -44,14 +45,20 @@ class Toggle extends StatefulWidget {
 class _ToggleState extends State<Toggle> {
   int? thisTime;
   bool forceRefresh = false;
+
   @override
   void initState() {
-    widget.streamUpdates?.stream.asBroadcastStream().listen(_onRemoteValueChanged);
+    widget.streamUpdates?.stream
+        .asBroadcastStream()
+        .listen(_onRemoteValueChanged);
     widget.streamRefresh?.stream.asBroadcastStream().listen((event) {
-      setState(() {
-        forceRefresh = true;
-      });
+      if (mounted) {
+        setState(() {
+          forceRefresh = true;
+        });
+      }
     });
+
     thisTime = widget.time;
     stringToIndex();
 
@@ -74,7 +81,7 @@ class _ToggleState extends State<Toggle> {
 
   @override
   Widget build(BuildContext context) {
-    if(forceRefresh){
+    if (forceRefresh) {
       forceRefresh = false;
       stringToIndex();
       thisTime = widget.time;
@@ -113,14 +120,14 @@ class _ToggleState extends State<Toggle> {
             labels: widget.values,
             onToggle: (index) async {
               if (widget.onValueChanged != null) {
-                bool res=  false;
+                bool res = false;
                 changedLocally = true;
                 if (updatedIndex == index) {
                   res = await widget.onValueChanged!(widget.id, null);
                   updatedIndex = null;
-                  if (res && thisTime != null) {
+                  if (res && thisTime != null && mounted) {
                     thisTime = DateTime.now().millisecondsSinceEpoch;
-                        setState(() {
+                    setState(() {
                       thisTime = DateTime.now().millisecondsSinceEpoch;
                     });
                   }
@@ -128,10 +135,11 @@ class _ToggleState extends State<Toggle> {
                 } else if (index == null) {
                   res = await widget.onValueChanged!(widget.id, null);
                 } else {
-                   res = await widget.onValueChanged!(widget.id, widget.values[index]);
+                  res = await widget.onValueChanged!(
+                      widget.id, widget.values[index]);
                 }
                 updatedIndex = index;
-                if (res && thisTime != null) {
+                if (res && thisTime != null && mounted) {
                   thisTime = DateTime.now().millisecondsSinceEpoch;
                   setState(() {
                     thisTime = DateTime.now().millisecondsSinceEpoch;
@@ -144,6 +152,7 @@ class _ToggleState extends State<Toggle> {
       ),
     );
   }
+
   @override
   void dispose() {
     StreamCache.closeRefreshStream(widget.id);
@@ -151,18 +160,19 @@ class _ToggleState extends State<Toggle> {
     super.dispose();
   }
 
-
   void _onRemoteValueChanged(String? event) {
-    setState(() {
-      if(event== null){
-        updatedIndex = null;
-      }else {
-        updatedIndex = widget.values.indexOf(event);
-        if (updatedIndex == -1) {
+    if (mounted) {
+      setState(() {
+        if (event == null) {
           updatedIndex = null;
+        } else {
+          updatedIndex = widget.values.indexOf(event);
+          if (updatedIndex == -1) {
+            updatedIndex = null;
+          }
         }
-      }
-      thisTime = DateTime.now().millisecondsSinceEpoch;
-    });
+        thisTime = DateTime.now().millisecondsSinceEpoch;
+      });
+    }
   }
 }

@@ -63,10 +63,11 @@ class _EditTextValueState extends State<EditTextValue> {
         .asBroadcastStream()
         .listen(_onRemoteValueChanged);
     widget.streamRefresh?.stream.asBroadcastStream().listen((event) {
-      setState(() {
-        forceRefresh = true;
-      });
-
+      if( mounted) {
+        setState(() {
+          forceRefresh = true;
+        });
+      }
     });
 
     //_valueChange = widget.streamUpdates.listen(_onRemoteValueChanged);
@@ -80,7 +81,9 @@ class _EditTextValueState extends State<EditTextValue> {
       myFocusNode.addListener(() {
         if (!myFocusNode.hasFocus) {
           justLostFocus = true;
-          setState(() {});
+          if(mounted) {
+            setState(() {});
+          }
         }
       });
     }
@@ -94,13 +97,17 @@ class _EditTextValueState extends State<EditTextValue> {
   void _onRemoteValueChanged(String? event) {
     updateFromRemote = true;
     setPositionRemote = true;
-    setState(() {
-      _controller?.text = (event ?? "");
-      _controller?.selection = TextSelection.fromPosition(
-          TextPosition(offset: _controller!.text.length));
-      thisTime = DateTime.now().millisecondsSinceEpoch;
-      initialText = _controller?.text;
-    });
+    if(mounted) {
+      setState(() {
+        _controller?.text = (event ?? "");
+        _controller?.selection = TextSelection.fromPosition(
+            TextPosition(offset: _controller!.text.length));
+        thisTime = DateTime
+            .now()
+            .millisecondsSinceEpoch;
+        initialText = _controller?.text;
+      });
+    }
   }
 
   Future<void> notifyValue() async {
@@ -126,7 +133,7 @@ class _EditTextValueState extends State<EditTextValue> {
           if (widget.onValueChanged != null) {
             bool res =
                 await widget.onValueChanged!(widget.id, _controller!.text);
-            if (res && thisTime != null) {
+            if (res && thisTime != null && mounted) {
               setState(() {
                 thisTime = DateTime.now().millisecondsSinceEpoch;
               });
@@ -135,7 +142,7 @@ class _EditTextValueState extends State<EditTextValue> {
         });
       } else {
         bool res = await widget.onValueChanged!(widget.id, _controller!.text);
-        if (res && thisTime != null) {
+        if (res && thisTime != null && mounted) {
           setState(() {
             thisTime = DateTime.now().millisecondsSinceEpoch;
           });

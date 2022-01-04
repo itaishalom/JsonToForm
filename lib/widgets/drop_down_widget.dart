@@ -125,15 +125,17 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                   fontSize: 16,
                 ),
                 onChanged: (String? newValue) async {
-                  setState(() {
-                    dropdownValue = newValue!;
-                  });
+                  if( mounted) {
+                    setState(() {
+                      dropdownValue = newValue!;
+                    });
+                  }
                   bool res = true;
                   if (widget.onValueChanged != null) {
                     res =
                         await widget.onValueChanged!(widget.id, dropdownValue);
                   }
-                  if (res && thisTime != null) {
+                  if (res && thisTime != null && mounted) {
                     setState(() {
                       thisTime = DateTime.now().millisecondsSinceEpoch;
                     });
