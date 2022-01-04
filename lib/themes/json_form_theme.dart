@@ -73,9 +73,10 @@ abstract class JsonFormTheme {
       required this.editTextWidth,
       required this.backgroundColor,
       required this.editTextStyleFocus,
-        required this.inputDecorationReadOnly,
-        required this.editTextMargins,
-        required this.editTextLongMargins,
+      required this.inputDecorationReadOnly,
+      required this.editTextMargins,
+      required this.editTextLongMargins,
+      required this.headerContainerMargins,
       required this.debounceTime});
 
   /// Global container params///
@@ -102,6 +103,8 @@ abstract class JsonFormTheme {
 
   //HeaderBoxPadding
   final EdgeInsets headerContainerPadding;
+
+  final EdgeInsets headerContainerMargins;
 
   final BoxDecoration headerContainerDecoration;
 
@@ -149,6 +152,7 @@ abstract class JsonFormTheme {
   final EdgeInsets editTextLongMargins;
 
   final EdgeInsets editTextMargins;
+
   /////////////////
 
   /// DropDown Widget ////
@@ -249,21 +253,19 @@ class DefaultTheme extends JsonFormTheme {
             borderRadius: BorderRadius.all(Radius.circular(5.0)),
             borderSide: BorderSide(color: Color(0xff51753C), width: 2.0)),
       ),
-        InputDecoration inputDecorationReadOnly = const InputDecoration(
-          isDense: true,
-          contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-          fillColor: Colors.white,
-          enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              borderSide: BorderSide(color: Colors.transparent, width: 2.0)),
-          focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              borderSide: BorderSide(color: Colors.transparent, width: 2.0)),
-        ),
-
-
-        editTextLongMargins = const EdgeInsets.only(top: 10),
-        editTextMargins = const EdgeInsets.only(),
+      InputDecoration inputDecorationReadOnly = const InputDecoration(
+        isDense: true,
+        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+        fillColor: Colors.white,
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            borderSide: BorderSide(color: Colors.transparent, width: 2.0)),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            borderSide: BorderSide(color: Colors.transparent, width: 2.0)),
+      ),
+      editTextLongMargins = const EdgeInsets.only(top: 10),
+      editTextMargins = const EdgeInsets.only(),
       editTextHeight = 35.0,
       BoxDecoration staticContainerDecoration = const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -289,6 +291,7 @@ class DefaultTheme extends JsonFormTheme {
             backgroundColor: backgroundColor,
             headerContainerPadding:
                 const EdgeInsets.only(left: 20, right: 10, top: 10, bottom: 10),
+            headerContainerMargins: const EdgeInsets.only(left: 0),
             headerContainerDecoration: headerContainerDecoration,
             headerTextStyle: headerTextStyle,
             titleTextStyle: titleTextStyle,
@@ -307,8 +310,8 @@ class DefaultTheme extends JsonFormTheme {
             descriptionTextStyle: descriptionTextStyle,
             staticTextStyle: staticTextStyle,
             linePaDecorationAboveHeader: linePaDecorationAboveHeader,
-      inputDecorationReadOnly:inputDecorationReadOnly,
-      editTextMargins: editTextMargins,
-      editTextLongMargins: editTextLongMargins,
-      debounceTime: null);
+            inputDecorationReadOnly: inputDecorationReadOnly,
+            editTextMargins: editTextMargins,
+            editTextLongMargins: editTextLongMargins,
+            debounceTime: null);
 }

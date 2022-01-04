@@ -80,3 +80,6 @@ Better performance
 
 # 1.2.13
 Prevent memory leak
+
+# 1.2.14
+Header margins added
