@@ -67,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
         "name": "DVT",
         "type": "toggle",
         "values": ["On", "Off"],
-        "chosen_value": "Off",
+        "chosen_value": null,
         "time": 1630164109066,
       },
       {"type": "header", "name": "Header2", "id": "39"},

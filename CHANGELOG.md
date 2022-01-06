@@ -83,3 +83,6 @@ Prevent memory leak
 
 # 1.2.14
 Header margins added
+
+# 1.2.15
+Time will be updated even if started with null;

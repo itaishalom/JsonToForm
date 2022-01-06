@@ -135,7 +135,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                     res =
                         await widget.onValueChanged!(widget.id, dropdownValue);
                   }
-                  if (res && thisTime != null && mounted) {
+                  if (res && mounted) {
                     setState(() {
                       thisTime = DateTime.now().millisecondsSinceEpoch;
                     });

@@ -133,7 +133,7 @@ class _EditTextValueState extends State<EditTextValue> {
           if (widget.onValueChanged != null) {
             bool res =
                 await widget.onValueChanged!(widget.id, _controller!.text);
-            if (res && thisTime != null && mounted) {
+            if (res &&  mounted) {
               setState(() {
                 thisTime = DateTime.now().millisecondsSinceEpoch;
               });
@@ -142,7 +142,7 @@ class _EditTextValueState extends State<EditTextValue> {
         });
       } else {
         bool res = await widget.onValueChanged!(widget.id, _controller!.text);
-        if (res && thisTime != null && mounted) {
+        if (res &&  mounted) {
           setState(() {
             thisTime = DateTime.now().millisecondsSinceEpoch;
           });

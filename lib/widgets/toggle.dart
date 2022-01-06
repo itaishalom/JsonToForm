@@ -125,7 +125,7 @@ class _ToggleState extends State<Toggle> {
                 if (updatedIndex == index) {
                   res = await widget.onValueChanged!(widget.id, null);
                   updatedIndex = null;
-                  if (res && thisTime != null && mounted) {
+                  if (res && mounted) {
                     thisTime = DateTime.now().millisecondsSinceEpoch;
                     setState(() {
                       thisTime = DateTime.now().millisecondsSinceEpoch;
@@ -139,7 +139,7 @@ class _ToggleState extends State<Toggle> {
                       widget.id, widget.values[index]);
                 }
                 updatedIndex = index;
-                if (res && thisTime != null && mounted) {
+                if (res && mounted) {
                   thisTime = DateTime.now().millisecondsSinceEpoch;
                   setState(() {
                     thisTime = DateTime.now().millisecondsSinceEpoch;
