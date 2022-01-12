@@ -86,3 +86,6 @@ Header margins added
 
 # 1.2.15
 Time will be updated even if started with null;
+
+# 1.2.16
+Drop down parser better ui

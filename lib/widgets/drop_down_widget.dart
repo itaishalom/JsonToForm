@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
+import 'package:sizer/sizer.dart';
 
 import '../stream_cache.dart';
 import 'line_wrapper.dart';
@@ -22,7 +23,7 @@ class DropDownWidget extends StatefulWidget {
       this.dateBuilder,
       this.time,
       required this.isBeforeHeader})
-      : super(key: key){
+      : super(key: key) {
     streamUpdates = StreamCache.getStream(id);
     streamRefresh = StreamCache.getStreamRefresh(id);
   }
@@ -36,7 +37,7 @@ class DropDownWidget extends StatefulWidget {
   final bool isBeforeHeader;
   final Widget Function(int date)? dateBuilder;
   int? time;
-   StreamController<String?>? streamUpdates;
+  StreamController<String?>? streamUpdates;
   StreamController<bool?>? streamRefresh;
 
   @override
@@ -52,7 +53,9 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
 
   @override
   void initState() {
-    widget.streamUpdates?.stream.asBroadcastStream().listen(_onRemoteValueChanged);
+    widget.streamUpdates?.stream
+        .asBroadcastStream()
+        .listen(_onRemoteValueChanged);
     widget.streamRefresh?.stream.asBroadcastStream().listen((event) {
       setState(() {
         forceRefresh = true;
@@ -63,7 +66,6 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
     super.initState();
   }
 
-
   void _onRemoteValueChanged(String? event) {
     setState(() {
       dropdownValue = event;
@@ -72,18 +74,17 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
   }
 
   @override
-  dispose(){
+  dispose() {
     StreamCache.closeStream(widget.id);
     StreamCache.closeRefreshStream(widget.id);
     super.dispose();
   }
 
-
   int? thisTime;
 
   @override
   Widget build(BuildContext context) {
-    if(forceRefresh){
+    if (forceRefresh) {
       forceRefresh = false;
       dropdownValue = widget.chosenValue;
       thisTime = widget.time;
@@ -100,10 +101,12 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                 dateBuilder: widget.dateBuilder,
                 time: thisTime),
             Container(
-              alignment: Alignment.center,
+              constraints: BoxConstraints(maxWidth: 30.w),
               child: DropdownButton<String>(
                 dropdownColor: const Color(0xff222222),
                 value: dropdownValue,
+                isExpanded: true,
+                alignment: Alignment.centerRight,
                 icon: InheritedJsonFormTheme.of(context).theme.dropDownIcon !=
                         null
                     ? InheritedJsonFormTheme.of(context).theme.dropDownIcon!
@@ -121,29 +124,17 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                         height: 2,
                       ),
                 style: const TextStyle(
+                  overflow: TextOverflow.clip,
                   color: Color(0xff8A8B8F),
                   fontSize: 16,
                 ),
                 onChanged: (String? newValue) async {
-                  if( mounted) {
-                    setState(() {
-                      dropdownValue = newValue!;
-                    });
-                  }
-                  bool res = true;
-                  if (widget.onValueChanged != null) {
-                    res =
-                        await widget.onValueChanged!(widget.id, dropdownValue);
-                  }
-                  if (res && mounted) {
-                    setState(() {
-                      thisTime = DateTime.now().millisecondsSinceEpoch;
-                    });
-                  }
+                  await onChanged(newValue);
                 },
                 selectedItemBuilder: (BuildContext context) {
                   return widget.values.map((String value) {
-                    return Center(
+                    return Container(
+                      alignment: Alignment.centerRight,
                       child: Text(
                         dropdownValue!,
                         style: const TextStyle(color: Colors.white),
@@ -155,12 +146,30 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                     widget.values.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value),
+                    child: Text(value,
+                        style: const TextStyle(color: Colors.white)),
                   );
                 }).toList(),
               ),
             )
           ]),
     );
+  }
+
+  onChanged(String? newValue) async {
+    if (mounted) {
+      setState(() {
+        dropdownValue = newValue!;
+      });
+    }
+    bool res = true;
+    if (widget.onValueChanged != null) {
+      res = await widget.onValueChanged!(widget.id, dropdownValue);
+    }
+    if (res && mounted) {
+      setState(() {
+        thisTime = DateTime.now().millisecondsSinceEpoch;
+      });
+    }
   }
 }

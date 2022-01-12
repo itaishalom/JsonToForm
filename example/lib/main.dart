@@ -111,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
         "name": "Drop down",
         "type": "drop_down",
         "time": 1640264109066,
-        "values": ["Low-Intermediate", "Medium", "High"],
+        "values": ["Low-Intermediate", "Medium", "High", ""],
         "chosen_value": "Low-Intermediate"
       },
       {
