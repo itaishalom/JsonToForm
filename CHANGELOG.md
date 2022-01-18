@@ -92,3 +92,6 @@ Drop down parser better ui
 
 # 1.2.17
 Support keyboard types
+
+# 1.2.18
+Build fix
