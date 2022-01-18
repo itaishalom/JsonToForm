@@ -204,7 +204,7 @@ class _EditTextValueState extends State<EditTextValue> {
           maxLines: widget.long ? 10 : 1,
           minLines: 1,
           keyboardType
-              : widget.long ? InheritedJsonFormTheme.of(context).theme.keyboardTypeLong : InheritedJsonFormTheme.of(context).theme.keyboardTypeShort
+              : widget.long ? InheritedJsonFormTheme.of(context).theme.keyboardTypeLong : InheritedJsonFormTheme.of(context).theme.keyboardTypeShort,
           inputFormatters: widget.long
               ? []
               : [
