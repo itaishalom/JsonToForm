@@ -95,3 +95,7 @@ Support keyboard types
 
 # 1.2.18
 Build fix
+
+
+# 1.2.19
+Toggle fix

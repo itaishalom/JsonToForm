@@ -123,8 +123,8 @@ class _ToggleState extends State<Toggle> {
                 bool res = false;
                 changedLocally = true;
                 if (updatedIndex == index) {
-                  res = await widget.onValueChanged!(widget.id, null);
                   updatedIndex = null;
+                  res = await widget.onValueChanged!(widget.id, null);
                   if (res && mounted) {
                     thisTime = DateTime.now().millisecondsSinceEpoch;
                     setState(() {
@@ -135,10 +135,10 @@ class _ToggleState extends State<Toggle> {
                 } else if (index == null) {
                   res = await widget.onValueChanged!(widget.id, null);
                 } else {
+                  updatedIndex = index;
                   res = await widget.onValueChanged!(
                       widget.id, widget.values[index]);
                 }
-                updatedIndex = index;
                 if (res && mounted) {
                   thisTime = DateTime.now().millisecondsSinceEpoch;
                   setState(() {
