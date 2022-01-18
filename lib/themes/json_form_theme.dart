@@ -77,7 +77,9 @@ abstract class JsonFormTheme {
       required this.editTextMargins,
       required this.editTextLongMargins,
       required this.headerContainerMargins,
-      required this.debounceTime});
+      required this.debounceTime,
+      required this.keyboardTypeLong,
+        required this.keyboardTypeShort});
 
   /// Global container params///
 
@@ -162,6 +164,10 @@ abstract class JsonFormTheme {
   final Widget? underLineWidget;
 
   final int? debounceTime;
+
+  final TextInputType? keyboardTypeShort;
+
+  final TextInputType? keyboardTypeLong;
 }
 
 /// Default chat theme which extends [JsonFormTheme]
@@ -276,6 +282,8 @@ class DefaultTheme extends JsonFormTheme {
             bottom: BorderSide.none,
           ))})
       : super(
+    keyboardTypeLong: null,
+            keyboardTypeShort: null,
             editTextStyleFocus: editTextStyleFocus,
             editTextWidth: 70,
             staticContainerDecoration: staticContainerDecoration,

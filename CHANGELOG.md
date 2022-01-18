@@ -89,3 +89,6 @@ Time will be updated even if started with null;
 
 # 1.2.16
 Drop down parser better ui
+
+# 1.2.17
+Support keyboard types
