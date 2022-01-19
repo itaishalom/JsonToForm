@@ -78,6 +78,7 @@ abstract class JsonFormTheme {
     required this.headerContainerMargins,
     required this.debounceTime,
     this.overflow = false,
+    required this.dropDownWith,
     required this.keyboardTypeLong,
     required this.keyboardTypeShort});
 
@@ -170,6 +171,8 @@ abstract class JsonFormTheme {
   final TextInputType? keyboardTypeLong;
 
   final bool overflow;
+
+  final int dropDownWith;
 
 }
 
@@ -284,6 +287,7 @@ class DefaultTheme extends JsonFormTheme {
           bottom: BorderSide.none,
         ))})
       : super(
+      dropDownWith: 30,
       overflow: true,
       keyboardTypeLong: null,
       keyboardTypeShort: null,

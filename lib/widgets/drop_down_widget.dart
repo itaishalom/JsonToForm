@@ -101,7 +101,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                 dateBuilder: widget.dateBuilder,
                 time: thisTime),
             Container(
-              constraints: BoxConstraints(maxWidth: 30.w),
+              constraints: BoxConstraints(maxWidth: InheritedJsonFormTheme.of(context).theme.dropDownWith.w),
               child: DropdownButton<String>(
                 dropdownColor: const Color(0xff222222),
                 value: dropdownValue,

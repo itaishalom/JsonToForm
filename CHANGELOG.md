@@ -103,3 +103,5 @@ Toggle fix
 # 1.3.0
 Overflow feature - still beta
 
+# 1.3.1
+Width of dropdown configurable
