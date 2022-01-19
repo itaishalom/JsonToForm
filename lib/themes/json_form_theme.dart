@@ -172,7 +172,7 @@ abstract class JsonFormTheme {
 
   final bool overflow;
 
-  final int dropDownWith;
+  final double dropDownWith;
 
 }
 

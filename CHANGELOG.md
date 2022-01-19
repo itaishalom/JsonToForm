@@ -105,3 +105,6 @@ Overflow feature - still beta
 
 # 1.3.1
 Width of dropdown configurable
+
+1.3.2
+Width of dropdown configurable changed to double
