@@ -99,3 +99,7 @@ Build fix
 
 # 1.2.19
 Toggle fix
+
+# 1.3.0
+Overflow feature - still beta
+

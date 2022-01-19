@@ -192,15 +192,16 @@ void main() {
       expect(valueAfterChange, "edit value");
     });
 
-    testWidgets('Expect onValueChanged: - not changed, read only', (WidgetTester tester) async {
+    testWidgets('Expect onValueChanged: - not changed, read only short', (WidgetTester tester) async {
       String valueAfterChange = "";
+      String intialValue = "edit";
       final Map<String, dynamic> json = {
         "widgets": [
           {
             "id": "3",
             "name": "Edit text",
             "type": "edit_text",
-            "chosen_value": "edit value",
+            "chosen_value": intialValue,
             "description": "(edit description..)",
             "read_only": true
           }
@@ -220,24 +221,58 @@ void main() {
       final findText = find.text('test');
       expect(findText, findsNothing);
       expect(valueAfterChange, "");
-      await tester.enterText(find.byKey(const ValueKey("3")), "edit value");
+      await tester.enterText(find.byKey(const ValueKey("3")), intialValue);
       expect(valueAfterChange, "");
     });
 
-    testWidgets('Change value from outside', (WidgetTester tester) async {
-
-      Stream<Map<String, dynamic>>? onValueChangeStream;
-      final StreamController<Map<String, dynamic>> _onUserController =
-      StreamController<Map<String, dynamic>>();
-      onValueChangeStream = _onUserController.stream.asBroadcastStream();
-      String valueAfterChange = "Hello world";
+    testWidgets('Expect onValueChanged: - not changed, read only long', (WidgetTester tester) async {
+      String valueAfterChange = "";
+      String intialValue = "edit-value";
+      String intialValueCut = "edit-..";
       final Map<String, dynamic> json = {
         "widgets": [
           {
             "id": "3",
             "name": "Edit text",
             "type": "edit_text",
-            "chosen_value": "edit value",
+            "chosen_value": intialValue,
+            "description": "(edit description..)",
+            "read_only": true
+          }
+        ]
+      };
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(child: JsonFormWithTheme(jsonWidgets: json, onValueChanged: (String id, dynamic value){
+            valueAfterChange = value;
+            return Future.value(true);
+          },)),
+        ),
+      );
+      // Trigger a frame.
+      await tester.pump();
+      await tester.enterText(find.byKey(const ValueKey("3")), "test");
+      final findText = find.text('test');
+      expect(findText, findsNothing);
+      expect(valueAfterChange, "");
+      await tester.enterText(find.byKey(const ValueKey("3")), intialValueCut);
+      expect(valueAfterChange, "");
+    });
+
+    testWidgets('Change value from outside - short Text', (WidgetTester tester) async {
+
+      Stream<Map<String, dynamic>>? onValueChangeStream;
+      final StreamController<Map<String, dynamic>> _onUserController =
+      StreamController<Map<String, dynamic>>();
+      onValueChangeStream = _onUserController.stream.asBroadcastStream();
+      String valueAfterChange = "Moro";
+      final Map<String, dynamic> json = {
+        "widgets": [
+          {
+            "id": "3",
+            "name": "Edit text",
+            "type": "edit_text",
+            "chosen_value": "zoro",
             "description": "(edit description..)",
           }
         ]
@@ -255,7 +290,43 @@ void main() {
 
       await tester.pump(const Duration(seconds: 5));
       final findText = find.text(valueAfterChange);
-      debugDumpApp();
+      //debugDumpApp();
+      expect(findText, findsOneWidget);
+    });
+
+    testWidgets('Change value from outside - long Text', (WidgetTester tester) async {
+
+      Stream<Map<String, dynamic>>? onValueChangeStream;
+      final StreamController<Map<String, dynamic>> _onUserController =
+      StreamController<Map<String, dynamic>>();
+      onValueChangeStream = _onUserController.stream.asBroadcastStream();
+      String valueAfterChange = "MoroDoro";
+      String valueAfterChangeCut = "MoroD..";
+      final Map<String, dynamic> json = {
+        "widgets": [
+          {
+            "id": "3",
+            "name": "Edit text",
+            "type": "edit_text",
+            "chosen_value": "zoroLoro",
+            "description": "(edit description..)",
+          }
+        ]
+      };
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(child: JsonFormWithTheme(jsonWidgets: json, streamUpdates: onValueChangeStream)),
+        ),
+      );
+      // Trigger a frame.
+      await tester.pump();
+      _onUserController.add({}..["3"] =
+          valueAfterChange); // toggle
+
+
+      await tester.pump(const Duration(seconds: 5));
+      final findText = find.text(valueAfterChangeCut);
+     // debugDumpApp();
       expect(findText, findsOneWidget);
     });
   });

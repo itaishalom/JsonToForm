@@ -99,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
         "id": "3",
         "name": "Blood Pressure with a long long long",
         "type": "edit_text",
-        "chosen_value": "Val",
+        "chosen_value": "ValAAAAAA",
         "time": 1640260609562,
         "description": "mmHg - with a long description",
       },
@@ -185,7 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
       toggleList = ['Good', "Bad"];
       json['widgets'][1]['values'] = toggleList;
       json['widgets'][1]['chosen_value'] = "Bad";
-      json['widgets'][6]['chosen_value'] = "good";
+      json['widgets'][6]['chosen_value'] = "goodReally";
       json['widgets'][8]['chosen_value'] = "Medium";
     }else{
       toggleList = ["On", "Off"];
@@ -235,7 +235,7 @@ class _MyHomePageState extends State<MyHomePage> {
           }
           if (counter % 4 == 3) {
             _onUserController.add(
-                {}..["3"] = "Val" + Random().nextInt(10).toString()); // toggle
+                {}..["3"] = "Val" + Random().nextInt(100000).toString()); // toggle
           }
           if (counter % 4 == 0) {
             _onUserController.add({}..["4"] = list[toggle % 2]); // toggle

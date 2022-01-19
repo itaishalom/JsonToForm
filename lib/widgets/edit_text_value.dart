@@ -21,23 +21,22 @@ class EditTextValue extends StatefulWidget {
   int? time;
   final bool isReadOnly;
   final bool long;
-   StreamController<String?>? streamUpdates;
-   StreamController<bool?>? streamRefresh;
+  StreamController<String?>? streamUpdates;
+  StreamController<bool?>? streamRefresh;
 
-  EditTextValue(
-      {Key? key,
-      required this.name,
-      required this.id,
-      required this.isBeforeHeader,
-      this.description,
-      required this.onValueChanged,
-      required this.chosenValue,
-      this.isReadOnly = false,
-      this.long = false,
-      this.dateBuilder,
-      this.time,
-      })
-      : super(key: key){
+  EditTextValue({
+    Key? key,
+    required this.name,
+    required this.id,
+    required this.isBeforeHeader,
+    this.description,
+    required this.onValueChanged,
+    required this.chosenValue,
+    this.isReadOnly = false,
+    this.long = false,
+    this.dateBuilder,
+    this.time,
+  }) : super(key: key) {
     streamUpdates = StreamCache.getStream(id);
     streamRefresh = StreamCache.getStreamRefresh(id);
   }
@@ -56,6 +55,7 @@ class _EditTextValueState extends State<EditTextValue> {
   String? initialText = "";
   late final StreamSubscription<String?>? _valueChange;
   bool forceRefresh = false;
+  String notCutValue = "";
 
   @override
   void initState() {
@@ -63,17 +63,13 @@ class _EditTextValueState extends State<EditTextValue> {
         .asBroadcastStream()
         .listen(_onRemoteValueChanged);
     widget.streamRefresh?.stream.asBroadcastStream().listen((event) {
-      if( mounted) {
+      if (mounted) {
         setState(() {
           forceRefresh = true;
         });
       }
     });
-
-    //_valueChange = widget.streamUpdates.listen(_onRemoteValueChanged);
-    _controller ??= TextEditingController(text: widget.chosenValue);
-    _controller?.addListener(notifyValue);
-
+    notCutValue = widget.chosenValue;
     thisTime = widget.time;
     initialText = widget.chosenValue;
     if (!widget.isReadOnly) {
@@ -81,8 +77,21 @@ class _EditTextValueState extends State<EditTextValue> {
       myFocusNode.addListener(() {
         if (!myFocusNode.hasFocus) {
           justLostFocus = true;
-          if(mounted) {
-            setState(() {});
+          if (mounted) {
+            notCutValue = _controller!.text;
+            if (shouldCut(_controller!.text)) {
+              setState(() {
+                _controller!.text = generateDottedText(_controller!.text);
+              });
+            }
+          }
+        } else {
+          if (shouldCut(notCutValue)) {
+            setState(() {
+              _controller!.text = notCutValue;
+            });
+          } else {
+            notCutValue = _controller!.text;
           }
         }
       });
@@ -90,6 +99,36 @@ class _EditTextValueState extends State<EditTextValue> {
     super.initState();
   }
 
+  String generateDottedText(String longText) {
+    if(longText.length > 5) {
+      return longText.substring(0, 5) + ".." ;
+    }
+    return longText;
+  }
+
+  bool shouldCutLight() {
+    return !widget.long && InheritedJsonFormTheme.of(context).theme.overflow;
+  }
+
+  bool shouldCut(String text) {
+    bool res = (shouldCutLight() && text.length > 5);
+    if (res) {
+      cutIgnore = true;
+    }
+    return res;
+  }
+
+  initTextController() {
+    if (shouldCut(widget.chosenValue)) {
+      _controller ??=
+          TextEditingController(text: generateDottedText(widget.chosenValue));
+    } else {
+      _controller ??= TextEditingController(text: (widget.chosenValue));
+    }
+    _controller?.addListener(notifyValue);
+  }
+
+  bool cutIgnore = false;
   bool justLostFocus = false;
   bool updateFromRemote = false;
   bool setPositionRemote = false;
@@ -97,20 +136,30 @@ class _EditTextValueState extends State<EditTextValue> {
   void _onRemoteValueChanged(String? event) {
     updateFromRemote = true;
     setPositionRemote = true;
-    if(mounted) {
+    notCutValue = event ?? "";
+    if (mounted) {
       setState(() {
-        _controller?.text = (event ?? "");
+        if (shouldCut(notCutValue)) {
+          _controller?.text = generateDottedText(notCutValue);
+        } else {
+          _controller?.text = notCutValue;
+        }
         _controller?.selection = TextSelection.fromPosition(
             TextPosition(offset: _controller!.text.length));
-        thisTime = DateTime
-            .now()
-            .millisecondsSinceEpoch;
+        thisTime = DateTime.now().millisecondsSinceEpoch;
         initialText = _controller?.text;
       });
     }
   }
 
+  bool controllerLoaded = false;
+
   Future<void> notifyValue() async {
+    if (cutIgnore) {
+      cutIgnore = false;
+      return;
+    }
+
     if (updateFromRemote) {
       updateFromRemote = false;
       return;
@@ -121,6 +170,12 @@ class _EditTextValueState extends State<EditTextValue> {
     }
     if (initialText == _controller?.text) {
       return;
+    }
+    if (shouldCutLight()) {
+      if ((initialText == notCutValue) &&
+          (_controller?.text == generateDottedText(notCutValue))) {
+        return;
+      }
     }
     initialText = _controller?.text;
     if (widget.onValueChanged != null &&
@@ -133,7 +188,7 @@ class _EditTextValueState extends State<EditTextValue> {
           if (widget.onValueChanged != null) {
             bool res =
                 await widget.onValueChanged!(widget.id, _controller!.text);
-            if (res &&  mounted) {
+            if (res && mounted) {
               setState(() {
                 thisTime = DateTime.now().millisecondsSinceEpoch;
               });
@@ -142,7 +197,7 @@ class _EditTextValueState extends State<EditTextValue> {
         });
       } else {
         bool res = await widget.onValueChanged!(widget.id, _controller!.text);
-        if (res &&  mounted) {
+        if (res && mounted) {
           setState(() {
             thisTime = DateTime.now().millisecondsSinceEpoch;
           });
@@ -167,7 +222,12 @@ class _EditTextValueState extends State<EditTextValue> {
 
   void startController() {
     if (!widget.isReadOnly) {
-      _controller?.text = (widget.chosenValue);
+      if (shouldCut(widget.chosenValue)) {
+        notCutValue = widget.chosenValue;
+        _controller!.text = generateDottedText(widget.chosenValue);
+      } else {
+        _controller!.text = (widget.chosenValue);
+      }
       thisTime = widget.time;
     }
     _controller?.selection = TextSelection.fromPosition(
@@ -186,6 +246,10 @@ class _EditTextValueState extends State<EditTextValue> {
 
   @override
   Widget build(BuildContext context) {
+    if (!controllerLoaded) {
+      initTextController();
+      controllerLoaded = true;
+    }
     debounceTime = InheritedJsonFormTheme.of(context).theme.debounceTime;
     if (forceRefresh) {
       forceRefresh = false;
@@ -196,15 +260,17 @@ class _EditTextValueState extends State<EditTextValue> {
         margin: widget.long
             ? InheritedJsonFormTheme.of(context).theme.editTextLongMargins
             : InheritedJsonFormTheme.of(context).theme.editTextMargins,
-        child: TextFormField(
+        child: TextField(
           onTap: () => requestFocus(context),
           focusNode: widget.isReadOnly ? null : myFocusNode,
           autofocus: false,
+          clipBehavior: Clip.antiAlias,
           readOnly: widget.isReadOnly,
           maxLines: widget.long ? 10 : 1,
           minLines: 1,
-          keyboardType
-              : widget.long ? InheritedJsonFormTheme.of(context).theme.keyboardTypeLong : InheritedJsonFormTheme.of(context).theme.keyboardTypeShort,
+          keyboardType: widget.long
+              ? InheritedJsonFormTheme.of(context).theme.keyboardTypeLong
+              : InheritedJsonFormTheme.of(context).theme.keyboardTypeShort,
           inputFormatters: widget.long
               ? []
               : [
