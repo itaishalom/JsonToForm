@@ -84,6 +84,6 @@ class ToggleParser implements WidgetParser {
   @override
   setChosenValue(value) {
     chosenValue = value;
-    StreamCache.getStream(id).add(chosenValue);
+//    StreamCache.getStream(id).add(chosenValue);
   }
 }

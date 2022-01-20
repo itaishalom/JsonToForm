@@ -89,6 +89,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
       dropdownValue = widget.chosenValue;
       thisTime = widget.time;
     }
+    forceRefresh = true;
     return LineWrapper(
       isBeforeHeader: widget.isBeforeHeader,
       child: Row(
@@ -101,7 +102,9 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                 dateBuilder: widget.dateBuilder,
                 time: thisTime),
             Container(
-              constraints: BoxConstraints(maxWidth: InheritedJsonFormTheme.of(context).theme.dropDownWith.w),
+              constraints: BoxConstraints(
+                  maxWidth:
+                      InheritedJsonFormTheme.of(context).theme.dropDownWith.w),
               child: DropdownButton<String>(
                 dropdownColor: const Color(0xff222222),
                 value: dropdownValue,
@@ -156,9 +159,13 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
     );
   }
 
+
+
   onChanged(String? newValue) async {
+
     if (mounted) {
       setState(() {
+        forceRefresh = false;
         dropdownValue = newValue!;
       });
     }
@@ -168,6 +175,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
     }
     if (res && mounted) {
       setState(() {
+        forceRefresh = false;
         thisTime = DateTime.now().millisecondsSinceEpoch;
       });
     }

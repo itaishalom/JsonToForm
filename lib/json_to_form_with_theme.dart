@@ -20,7 +20,7 @@ import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
 import 'package:json_to_form_with_theme/widgets/form.dart';
 import 'package:sizer/sizer.dart';
 
-typedef OnValueChanged =  Future<bool> Function(String id, dynamic value) ;
+typedef OnValueChanged = Future<bool> Function(String id, dynamic value);
 
 class JsonFormWithTheme extends StatefulWidget {
   final Widget Function(int date)? dateBuilder;
@@ -50,6 +50,9 @@ class JsonFormWithTheme extends StatefulWidget {
 class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
   HashMap<String, WidgetParser> parsers = HashMap();
   List<Widget> widgetsGlobal = [];
+  HashMap<int, ValueNotifier<dynamic>> _notifieries = HashMap();
+  HashMap<String, int> idToIndex = HashMap();
+  HashMap<int, String> IndexToId = HashMap();
   late final StreamSubscription<Map<String, dynamic>>? _valueChange;
 
   buildWidgetsFromJson() {
@@ -128,13 +131,13 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
                   widget.onValueChanged,
                   widget.dateBuilder);
               if (tempParser == null) {
-                throw  ParsingException("Unknown type $type");
+                throw ParsingException("Unknown type $type");
               }
             } catch (e) {
-              throw  ParsingException("Unknown type $type");
+              throw ParsingException("Unknown type $type");
             }
           } else {
-            throw  ParsingException("Unknown type $type");
+            throw ParsingException("Unknown type $type");
           }
           break;
       }
@@ -144,6 +147,10 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
       }
       parsers[tempParser.id] = tempParser;
       widgetsGlobal.add(tempParser.getWidget(true));
+      idToIndex[tempParser.id] = widgetsGlobal.length-1;
+
+      IndexToId[widgetsGlobal.length-1] = tempParser.id;
+      _notifieries[widgetsGlobal.length-1] = ValueNotifier(null);
     }
   }
 
@@ -158,15 +165,17 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
     bool wasUpdated = false;
     for (String id in values.keys) {
       if (parsers[id] != null) {
-        parsers[id]?.setChosenValue(values[id]);
+          parsers[id]?.setChosenValue(values[id]);
+/*
         parsers[id]?.time = DateTime
             .now()
             .millisecondsSinceEpoch;
           widgetsGlobal[parsers[id]!.index] = parsers[id]!.getWidget(false);
-
+*/
+        _notifieries[idToIndex[id]]?.value = (values[id]);
         wasUpdated = true;
       }
- /*     if (wasUpdated) {
+      /*     if (wasUpdated) {
         setState(() {
           ignoreRebuild = true;
         });
@@ -184,35 +193,44 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
 
   @override
   Widget build(BuildContext context) {
-    if(!ignoreRebuild) {
+    if (!ignoreRebuild) {
       buildWidgetsFromJson();
-    }else{
-    }
+    } else {}
     ignoreRebuild = false;
-    return Sizer(
-      builder: (BuildContext context, Orientation orientation, DeviceType deviceType) {
-        return InheritedJsonFormTheme(
-            theme: widget.theme,
-            child: Scaffold(
-                backgroundColor: widget.theme.backgroundColor,
-                body: GestureDetector(
-                  onTap: () {
-                    FocusScope.of(context).unfocus();
-                    TextEditingController().clear();
-                  },
-                  child: CustomScrollView(slivers: <Widget>[
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                            (BuildContext context, int index) {
-                          return widgetsGlobal[index];
-                        },
-                        childCount: widgetsGlobal.length,
-                      ),
-                    )
-                  ]),
-                )));
-      },
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: widget.theme.backgroundColor,
+      body: Sizer(
+        builder: (BuildContext context, Orientation orientation,
+            DeviceType deviceType) {
+          return InheritedJsonFormTheme(
+              theme: widget.theme,
+              child: GestureDetector(
+                    onTap: () {
+                      FocusScope.of(context).unfocus();
+                      TextEditingController().clear();
+                    },
+                    child: CustomScrollView(slivers: <Widget>[
+                      SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (BuildContext context, int index) {
+                            return ValueListenableBuilder(
+                              builder:
+                                  (BuildContext context, value, Widget? child) {
 
+                            //    parsers[ IndexToId[index]]?.setChosenValue(value);
+                                return parsers[IndexToId[index]]!.getWidget(false); widgetsGlobal[index];
+                              },
+                              valueListenable: _notifieries[index]!,
+                            );
+                          },
+                          childCount: widgetsGlobal.length,
+                        ),
+                      )
+                    ]),
+                  ));
+        },
+      ),
     );
   }
 }

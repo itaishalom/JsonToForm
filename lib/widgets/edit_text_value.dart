@@ -81,6 +81,8 @@ class _EditTextValueState extends State<EditTextValue> {
             notCutValue = _controller!.text;
             if (shouldCut(_controller!.text)) {
               setState(() {
+                forceRefresh = false;
+                controllerLoaded = true;
                 _controller!.text = generateDottedText(_controller!.text);
               });
             }
@@ -88,6 +90,8 @@ class _EditTextValueState extends State<EditTextValue> {
         } else {
           if (shouldCut(notCutValue)) {
             setState(() {
+              forceRefresh = false;
+              controllerLoaded = true;
               _controller!.text = notCutValue;
             });
           } else {
@@ -139,6 +143,8 @@ class _EditTextValueState extends State<EditTextValue> {
     notCutValue = event ?? "";
     if (mounted) {
       setState(() {
+        forceRefresh = false;
+        controllerLoaded = true;
         if (shouldCut(notCutValue)) {
           _controller?.text = generateDottedText(notCutValue);
         } else {
@@ -155,6 +161,8 @@ class _EditTextValueState extends State<EditTextValue> {
   bool controllerLoaded = false;
 
   Future<void> notifyValue() async {
+    forceRefresh = false;
+    controllerLoaded = true;
     if (cutIgnore) {
       cutIgnore = false;
       return;
@@ -190,6 +198,8 @@ class _EditTextValueState extends State<EditTextValue> {
                 await widget.onValueChanged!(widget.id, _controller!.text);
             if (res && mounted) {
               setState(() {
+                forceRefresh = false;
+                controllerLoaded = true;
                 thisTime = DateTime.now().millisecondsSinceEpoch;
               });
             }
@@ -199,6 +209,8 @@ class _EditTextValueState extends State<EditTextValue> {
         bool res = await widget.onValueChanged!(widget.id, _controller!.text);
         if (res && mounted) {
           setState(() {
+            forceRefresh = false;
+            controllerLoaded = true;
             thisTime = DateTime.now().millisecondsSinceEpoch;
           });
         }
@@ -240,7 +252,7 @@ class _EditTextValueState extends State<EditTextValue> {
     //WidgetsBinding.instance?.addPostFrameCallback((_) => _controller?.text = (_controller!.text));
     if (!widget.isReadOnly) {
       FocusScope.of(context).requestFocus(myFocusNode);
-      setState(() {});
+      setState(() {controllerLoaded = true;});
     }
   }
 
@@ -250,12 +262,14 @@ class _EditTextValueState extends State<EditTextValue> {
       initTextController();
       controllerLoaded = true;
     }
+    controllerLoaded = false;
     debounceTime = InheritedJsonFormTheme.of(context).theme.debounceTime;
     if (forceRefresh) {
       forceRefresh = false;
       startController();
       thisTime = widget.time;
     }
+    forceRefresh = true;
     Widget text = Container(
         margin: widget.long
             ? InheritedJsonFormTheme.of(context).theme.editTextLongMargins

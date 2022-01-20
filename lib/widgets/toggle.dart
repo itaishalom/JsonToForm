@@ -86,6 +86,7 @@ class _ToggleState extends State<Toggle> {
       stringToIndex();
       thisTime = widget.time;
     }
+    forceRefresh = true;
     changedLocally = false;
     return LineWrapper(
       isBeforeHeader: widget.isBeforeHeader,
@@ -119,6 +120,7 @@ class _ToggleState extends State<Toggle> {
             totalSwitches: widget.values.length,
             labels: widget.values,
             onToggle: (index) async {
+              forceRefresh = false;
               if (widget.onValueChanged != null) {
                 bool res = false;
                 changedLocally = true;
@@ -128,6 +130,7 @@ class _ToggleState extends State<Toggle> {
                   if (res && mounted) {
                     thisTime = DateTime.now().millisecondsSinceEpoch;
                     setState(() {
+                      forceRefresh = false;
                       thisTime = DateTime.now().millisecondsSinceEpoch;
                     });
                   }
@@ -142,6 +145,7 @@ class _ToggleState extends State<Toggle> {
                 if (res && mounted) {
                   thisTime = DateTime.now().millisecondsSinceEpoch;
                   setState(() {
+                    forceRefresh = false;
                     thisTime = DateTime.now().millisecondsSinceEpoch;
                   });
                 }

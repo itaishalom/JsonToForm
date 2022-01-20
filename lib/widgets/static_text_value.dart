@@ -78,6 +78,7 @@ class _StaticTextValueState extends State<StaticTextValue> {
       value = widget.chosenValue;
       thisTime = widget.time;
     }
+    forceRefresh = true;
     return LineWrapper(
       isBeforeHeader: widget.isBeforeHeader,
       child: Row(
