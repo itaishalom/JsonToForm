@@ -6,7 +6,6 @@ import 'package:json_to_form_with_theme/widgets/static_text_value.dart';
 import 'package:json_to_form_with_theme/widgets/toggle.dart';
 
 import '../json_to_form_with_theme.dart';
-import '../stream_cache.dart';
 
 class StaticTextParser implements WidgetParser {
   StaticTextParser(this.name, this.description, this.id, this.chosenValue,
@@ -41,9 +40,6 @@ class StaticTextParser implements WidgetParser {
       };
 
   Widget getWidget(bool refresh) {
-    if(refresh) {
-      StreamCache.getStreamRefresh(id).add(true);
-    }
     return StaticTextValue(
         name: name,
         id: id,
@@ -65,7 +61,6 @@ class StaticTextParser implements WidgetParser {
   @override
   setChosenValue(value) {
     chosenValue = value ?? "";
-    StreamCache.getStream(id).add(chosenValue);
   }
 }
 /*

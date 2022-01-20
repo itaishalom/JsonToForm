@@ -6,7 +6,6 @@ import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 import 'package:json_to_form_with_theme/widgets/line_wrapper.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
-import '../stream_cache.dart';
 import 'name_description_widget.dart';
 
 class Toggle extends StatefulWidget {
@@ -22,8 +21,6 @@ class Toggle extends StatefulWidget {
       required this.isBeforeHeader,
       this.chosenValue})
       : super(key: key) {
-    streamUpdates = StreamCache.getStream(id);
-    streamRefresh = StreamCache.getStreamRefresh(id);
   }
 
   final String? description;
@@ -35,8 +32,6 @@ class Toggle extends StatefulWidget {
   final bool isBeforeHeader;
   final Widget Function(int date)? dateBuilder;
   int? time;
-  StreamController<String?>? streamUpdates;
-  StreamController<bool?>? streamRefresh;
 
   @override
   _ToggleState createState() => _ToggleState();
@@ -47,18 +42,19 @@ class _ToggleState extends State<Toggle> {
   bool forceRefresh = false;
 
   @override
-  void initState() {
-    widget.streamUpdates?.stream
-        .asBroadcastStream()
-        .listen(_onRemoteValueChanged);
-    widget.streamRefresh?.stream.asBroadcastStream().listen((event) {
-      if (mounted) {
-        setState(() {
-          forceRefresh = true;
-        });
-      }
-    });
+  void didUpdateWidget(covariant Toggle oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    forceRefresh = true;
+  }
 
+  @override
+  void didChangeDependencies() {
+    UpdateStreamWidget.of(context)!.dataClassStream.listen(_onRemoteValueChanged);
+    super.didChangeDependencies();
+  }
+
+  @override
+  void initState() {
     thisTime = widget.time;
     stringToIndex();
 
@@ -153,20 +149,16 @@ class _ToggleState extends State<Toggle> {
     );
   }
 
-  @override
-  void dispose() {
-    StreamCache.closeRefreshStream(widget.id);
-    StreamCache.closeStream(widget.id);
-    super.dispose();
-  }
-
-  void _onRemoteValueChanged(String? event) {
+  void _onRemoteValueChanged(DataClass event) {
+    if(event.id != widget.id){
+      return;
+    }
     if (mounted) {
       setState(() {
-        if (event == null) {
+        if (event.value == null) {
           updatedIndex = null;
         } else {
-          updatedIndex = widget.values.indexOf(event);
+          updatedIndex = widget.values.indexOf(event.value);
           if (updatedIndex == -1) {
             updatedIndex = null;
           }

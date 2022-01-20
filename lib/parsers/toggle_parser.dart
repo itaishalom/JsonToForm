@@ -5,7 +5,6 @@ import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
 import 'package:json_to_form_with_theme/widgets/toggle.dart';
 
 import '../json_to_form_with_theme.dart';
-import '../stream_cache.dart';
 
 class ToggleParser implements WidgetParser {
   ToggleParser(
@@ -58,9 +57,6 @@ class ToggleParser implements WidgetParser {
       };
 
   Widget getWidget(bool refresh) {
-    if(refresh) {
-      StreamCache.getStreamRefresh(id).add(true);
-    }
     return Toggle(
         name: name,
         isBeforeHeader: isBeforeHeader,
@@ -84,6 +80,5 @@ class ToggleParser implements WidgetParser {
   @override
   setChosenValue(value) {
     chosenValue = value;
-    StreamCache.getStream(id).add(chosenValue);
   }
 }

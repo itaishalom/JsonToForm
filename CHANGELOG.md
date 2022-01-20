@@ -108,3 +108,6 @@ Width of dropdown configurable
 
 1.3.2
 Width of dropdown configurable changed to double
+
+#1.4
+Multiple bug fixes

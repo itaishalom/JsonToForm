@@ -6,7 +6,6 @@ import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 import 'package:sizer/sizer.dart';
 
-import '../stream_cache.dart';
 import 'line_wrapper.dart';
 import 'name_description_widget.dart';
 
@@ -24,8 +23,6 @@ class DropDownWidget extends StatefulWidget {
       this.time,
       required this.isBeforeHeader})
       : super(key: key) {
-    streamUpdates = StreamCache.getStream(id);
-    streamRefresh = StreamCache.getStreamRefresh(id);
   }
 
   final String name;
@@ -37,8 +34,6 @@ class DropDownWidget extends StatefulWidget {
   final bool isBeforeHeader;
   final Widget Function(int date)? dateBuilder;
   int? time;
-  StreamController<String?>? streamUpdates;
-  StreamController<bool?>? streamRefresh;
 
   @override
   State<DropDownWidget> createState() => _MyStatefulWidgetState();
@@ -52,33 +47,34 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
   bool forceRefresh = false;
 
   @override
+  void didUpdateWidget(covariant DropDownWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    forceRefresh = true;
+  }
+  @override
+  void didChangeDependencies() {
+    UpdateStreamWidget.of(context)!.dataClassStream.listen(_onRemoteValueChanged);
+    super.didChangeDependencies();
+  }
+
+  @override
   void initState() {
-    widget.streamUpdates?.stream
-        .asBroadcastStream()
-        .listen(_onRemoteValueChanged);
-    widget.streamRefresh?.stream.asBroadcastStream().listen((event) {
-      setState(() {
-        forceRefresh = true;
-      });
-    });
     dropdownValue = widget.chosenValue;
     thisTime = widget.time;
     super.initState();
   }
 
-  void _onRemoteValueChanged(String? event) {
-    setState(() {
-      dropdownValue = event;
-      thisTime = DateTime.now().millisecondsSinceEpoch;
-    });
+  void _onRemoteValueChanged(DataClass dataClass) {
+    if(dataClass.id == widget.id) {
+      setState(() {
+        dropdownValue = dataClass.value;
+        thisTime = DateTime
+            .now()
+            .millisecondsSinceEpoch;
+      });
+    }
   }
 
-  @override
-  dispose() {
-    StreamCache.closeStream(widget.id);
-    StreamCache.closeRefreshStream(widget.id);
-    super.dispose();
-  }
 
   int? thisTime;
 

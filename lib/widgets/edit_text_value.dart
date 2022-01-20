@@ -6,7 +6,6 @@ import 'package:flutter/widgets.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 
 import '../json_to_form_with_theme.dart';
-import '../stream_cache.dart';
 import 'line_wrapper.dart';
 import 'name_description_widget.dart';
 
@@ -21,8 +20,6 @@ class EditTextValue extends StatefulWidget {
   int? time;
   final bool isReadOnly;
   final bool long;
-  StreamController<String?>? streamUpdates;
-  StreamController<bool?>? streamRefresh;
 
   EditTextValue({
     Key? key,
@@ -37,8 +34,6 @@ class EditTextValue extends StatefulWidget {
     this.dateBuilder,
     this.time,
   }) : super(key: key) {
-    streamUpdates = StreamCache.getStream(id);
-    streamRefresh = StreamCache.getStreamRefresh(id);
   }
 
   @override
@@ -58,17 +53,19 @@ class _EditTextValueState extends State<EditTextValue> {
   String notCutValue = "";
 
   @override
+  void didChangeDependencies() {
+    UpdateStreamWidget.of(context)!.dataClassStream.listen(_onRemoteValueChanged);
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didUpdateWidget(covariant EditTextValue oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    forceRefresh = true;
+  }
+
+  @override
   void initState() {
-    widget.streamUpdates?.stream
-        .asBroadcastStream()
-        .listen(_onRemoteValueChanged);
-    widget.streamRefresh?.stream.asBroadcastStream().listen((event) {
-      if (mounted) {
-        setState(() {
-          forceRefresh = true;
-        });
-      }
-    });
     notCutValue = widget.chosenValue;
     thisTime = widget.time;
     initialText = widget.chosenValue;
@@ -133,10 +130,13 @@ class _EditTextValueState extends State<EditTextValue> {
   bool updateFromRemote = false;
   bool setPositionRemote = false;
 
-  void _onRemoteValueChanged(String? event) {
+  void _onRemoteValueChanged(DataClass event) {
+    if(event.id != widget.id){
+      return;
+    }
     updateFromRemote = true;
     setPositionRemote = true;
-    notCutValue = event ?? "";
+    notCutValue = event.value ?? "";
     if (mounted) {
       setState(() {
         if (shouldCut(notCutValue)) {
@@ -215,10 +215,9 @@ class _EditTextValueState extends State<EditTextValue> {
     if (!widget.isReadOnly) {
       myFocusNode.dispose();
     }
-    StreamCache.closeStream(widget.id);
-    StreamCache.closeRefreshStream(widget.id);
     super.dispose();
   }
+
 
   void startController() {
     if (!widget.isReadOnly) {
@@ -226,12 +225,16 @@ class _EditTextValueState extends State<EditTextValue> {
         notCutValue = widget.chosenValue;
         _controller!.text = generateDottedText(widget.chosenValue);
       } else {
+        notCutValue = widget.chosenValue;
+        updateFromRemote = true;
         _controller!.text = (widget.chosenValue);
       }
       thisTime = widget.time;
     }
+    setPositionRemote = true;
     _controller?.selection = TextSelection.fromPosition(
         TextPosition(offset: _controller!.text.length));
+    initialText = notCutValue;
   }
 
   //  _controller?.addListener(notifyValue);

@@ -2,7 +2,6 @@ library json_to_form_with_theme;
 
 import 'dart:async';
 import 'dart:collection';
-import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,12 +14,10 @@ import 'package:json_to_form_with_theme/parsers/toggle_parser.dart';
 import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
 import 'package:json_to_form_with_theme/parsers/widget_parser_factory.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
-
 import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
-import 'package:json_to_form_with_theme/widgets/form.dart';
 import 'package:sizer/sizer.dart';
 
-typedef OnValueChanged =  Future<bool> Function(String id, dynamic value) ;
+typedef OnValueChanged = Future<bool> Function(String id, dynamic value);
 
 class JsonFormWithTheme extends StatefulWidget {
   final Widget Function(int date)? dateBuilder;
@@ -51,6 +48,8 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
   HashMap<String, WidgetParser> parsers = HashMap();
   List<Widget> widgetsGlobal = [];
   late final StreamSubscription<Map<String, dynamic>>? _valueChange;
+  final StreamController<DataClass> _onDataClassReady =
+      StreamController<DataClass>();
 
   buildWidgetsFromJson() {
     parsers = HashMap();
@@ -59,7 +58,6 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
     if (widgets == null) {
       throw const ParsingException("No widgets found");
     }
-    widgetsGlobal = [];
     for (int i = 0; i < widgets.length; i++) {
       var widgetJson = widgets[i];
       String? type = widgetJson["type"];
@@ -128,13 +126,13 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
                   widget.onValueChanged,
                   widget.dateBuilder);
               if (tempParser == null) {
-                throw  ParsingException("Unknown type $type");
+                throw ParsingException("Unknown type $type");
               }
             } catch (e) {
-              throw  ParsingException("Unknown type $type");
+              throw ParsingException("Unknown type $type");
             }
           } else {
-            throw  ParsingException("Unknown type $type");
+            throw ParsingException("Unknown type $type");
           }
           break;
       }
@@ -150,27 +148,17 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
   @override
   void initState() {
     _valueChange = widget.streamUpdates?.listen(_onRemoteValueChanged);
-
+    dataClassStream = _onDataClassReady.stream.asBroadcastStream();
     super.initState();
   }
 
+  late Stream<DataClass> dataClassStream;
+
   void _onRemoteValueChanged(Map<String, dynamic> values) {
-    bool wasUpdated = false;
     for (String id in values.keys) {
       if (parsers[id] != null) {
-        parsers[id]?.setChosenValue(values[id]);
-        parsers[id]?.time = DateTime
-            .now()
-            .millisecondsSinceEpoch;
-          widgetsGlobal[parsers[id]!.index] = parsers[id]!.getWidget(false);
-
-        wasUpdated = true;
+        _onDataClassReady.add(DataClass(id: id, value: values[id]));
       }
- /*     if (wasUpdated) {
-        setState(() {
-          ignoreRebuild = true;
-        });
-      }*/
     }
   }
 
@@ -179,18 +167,19 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
   @override
   void dispose() {
     _valueChange?.cancel();
+    _onDataClassReady.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if(!ignoreRebuild) {
+    if (!ignoreRebuild) {
       buildWidgetsFromJson();
-    }else{
-    }
+    } else {}
     ignoreRebuild = false;
     return Sizer(
-      builder: (BuildContext context, Orientation orientation, DeviceType deviceType) {
+      builder: (BuildContext context, Orientation orientation,
+          DeviceType deviceType) {
         return InheritedJsonFormTheme(
             theme: widget.theme,
             child: Scaffold(
@@ -203,8 +192,10 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
                   child: CustomScrollView(slivers: <Widget>[
                     SliverList(
                       delegate: SliverChildBuilderDelegate(
-                            (BuildContext context, int index) {
-                          return widgetsGlobal[index];
+                        (BuildContext context, int index) {
+                          return UpdateStreamWidget(
+                              child: widgetsGlobal[index],
+                              dataClassStream: dataClassStream);
                         },
                         childCount: widgetsGlobal.length,
                       ),
@@ -212,7 +203,32 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
                   ]),
                 )));
       },
-
     );
+  }
+}
+
+class DataClass {
+  String id;
+  dynamic value;
+
+  DataClass({required this.id, required this.value});
+}
+
+class UpdateStreamWidget extends InheritedWidget {
+  const UpdateStreamWidget({
+    Key? key,
+    required this.dataClassStream,
+    required Widget child,
+  }) : super(key: key, child: child);
+
+  final Stream<DataClass> dataClassStream;
+
+  static UpdateStreamWidget? of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<UpdateStreamWidget>();
+  }
+
+  @override
+  bool updateShouldNotify(covariant UpdateStreamWidget oldWidget) {
+    return oldWidget.dataClassStream != dataClassStream;
   }
 }

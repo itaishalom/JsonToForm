@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 
-import '../stream_cache.dart';
 import 'line_wrapper.dart';
 import 'name_description_widget.dart';
 
@@ -19,12 +19,8 @@ class StaticTextValue extends StatefulWidget {
       this.time,
       required this.chosenValue})
       : super(key: key) {
-    streamUpdates = StreamCache.getStream(id);
-    streamRefresh = StreamCache.getStreamRefresh(id);
   }
 
-  StreamController<bool?>? streamRefresh;
-  StreamController<String?>? streamUpdates;
   final String? description;
   final String name;
   final String id;
@@ -45,31 +41,31 @@ class _StaticTextValueState extends State<StaticTextValue> {
   void initState() {
     value = widget.chosenValue;
     thisTime = widget.time;
-    widget.streamUpdates?.stream
-        .asBroadcastStream()
-        .listen(_onRemoteValueChanged);
-    widget.streamRefresh?.stream.asBroadcastStream().listen((event) {
-      setState(() {
-        forceRefresh = true;
-      });
-    });
-
     super.initState();
   }
-
-  void _onRemoteValueChanged(String? event) {
-    setState(() {
-      value = event ?? "";
-      thisTime = DateTime.now().millisecondsSinceEpoch;
-    });
+  @override
+  void didUpdateWidget(covariant StaticTextValue oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    forceRefresh = true;
   }
 
   @override
-  void dispose() {
-    StreamCache.closeRefreshStream(widget.id);
-    StreamCache.closeStream(widget.id);
-    super.dispose();
+  void didChangeDependencies() {
+    UpdateStreamWidget.of(context)!.dataClassStream.listen(_onRemoteValueChanged);
+    super.didChangeDependencies();
   }
+
+  void _onRemoteValueChanged(DataClass event) {
+    if (event.id == widget.id) {
+      setState(() {
+        value = event.value ?? "";
+        thisTime = DateTime
+            .now()
+            .millisecondsSinceEpoch;
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {

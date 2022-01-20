@@ -5,7 +5,6 @@ import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
 import 'package:json_to_form_with_theme/widgets/drop_down_widget.dart';
 
 import '../json_to_form_with_theme.dart';
-import '../stream_cache.dart';
 
 class DropDownParser implements WidgetParser {
   DropDownParser(
@@ -49,9 +48,6 @@ class DropDownParser implements WidgetParser {
       };
 
   Widget getWidget(bool refresh) {
-    if(refresh) {
-      StreamCache.getStreamRefresh(id).add(true);
-    }
     return DropDownWidget(
         key: ValueKey(id),
         name: name,
@@ -82,6 +78,5 @@ class DropDownParser implements WidgetParser {
   @override
   setChosenValue(value) {
     chosenValue = value ?? "";
-    StreamCache.getStream(id).add(chosenValue);
   }
 }
