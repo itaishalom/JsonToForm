@@ -111,3 +111,6 @@ Width of dropdown configurable changed to double
 
 #1.4.0
 Multiple bug fixes
+
+#1.4.1
+Prevent dispose when widget get out of scroll view

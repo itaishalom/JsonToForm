@@ -10,6 +10,7 @@ class Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+        width: double.infinity,
       padding: InheritedJsonFormTheme.of(context).theme.headerContainerPadding,
       margin: InheritedJsonFormTheme.of(context).theme.headerContainerMargins,
       decoration:

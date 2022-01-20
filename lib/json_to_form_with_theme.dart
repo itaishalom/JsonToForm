@@ -189,18 +189,14 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
                     FocusScope.of(context).unfocus();
                     TextEditingController().clear();
                   },
-                  child: CustomScrollView(slivers: <Widget>[
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (BuildContext context, int index) {
-                          return UpdateStreamWidget(
-                              child: widgetsGlobal[index],
-                              dataClassStream: dataClassStream);
-                        },
-                        childCount: widgetsGlobal.length,
+                  child: UpdateStreamWidget(
+                    dataClassStream: dataClassStream,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: widgetsGlobal,
                       ),
-                    )
-                  ]),
+                    ),
+                  ),
                 )));
       },
     );
