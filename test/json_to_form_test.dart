@@ -436,5 +436,139 @@ void main() {
       await tester.pump(const Duration(seconds: 5));
       expect(find.text('test'), findsOneWidget);
     });
+    testWidgets('Verify dropdown updates - long list with multiple refreshes', (WidgetTester tester) async {
+
+
+      Stream<Map<String, dynamic>>? onValueChangeStream;
+      final StreamController<Map<String, dynamic>> _onUserController =
+      StreamController<Map<String, dynamic>>();
+      String valueAfterChange = "XXX";
+      onValueChangeStream = _onUserController.stream.asBroadcastStream();
+      String dropId= "drpId";
+      final Map<String, dynamic> json = {
+        "widgets": [
+          {
+            "id": dropId,
+            "name": "Drop down",
+            "type": "drop_down",
+            "values": ["XXX", "YYY", "ZZZ"],
+            "chosen_value": "ZZZ"
+          },
+        ]
+      };
+      for(int i = 0; i < 50; i++){
+        json["widgets"].add ( {
+          "id": "abc"+i.toString(),
+          "name": "Edit text",
+          "type": "edit_text",
+          "chosen_value": i.toString(),
+          "description": "(edit description..)",
+        });
+      }
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(child: JsonFormWithTheme(streamUpdates: onValueChangeStream, jsonWidgets: json, onValueChanged: (String id, dynamic value){
+            valueAfterChange = value;
+            return Future.value(true);
+          })),
+        ),
+      );
+      await tester.pump();
+      _onUserController.add({}..[dropId] =
+          valueAfterChange); //
+      await tester.pump(const Duration(seconds: 5));
+
+
+      Key scrollKey = const Key('scrollView');
+      ValueKey innerDropDown =  ValueKey(dropId);
+      final dropdownItem = find.text('valueAfterChange').last;
+
+
+      expect(find.text(valueAfterChange), findsNWidgets(3));
+      expect(find.text("ZZZ"), findsNothing);
+
+      await tester.drag(find.byKey(scrollKey), const Offset(0.0, -3000));
+      await tester.pump(const Duration(seconds: 5));
+
+      await tester.drag(find.byKey(scrollKey), const Offset(0.0, 3000));
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
+
+
+
+      expect(find.text(valueAfterChange), findsNWidgets(3));
+      expect(find.text("ZZZ"), findsNothing);
+      await tester.pump();
+
+
+      expect((tester.widget(find.byKey(ValueKey(dropId +"inner"))) as DropdownButton).value,
+          equals('XXX'));
+      // Here before the menu is open we have one widget with text 'Lesser'
+
+      await tester.tap(find.byKey(ValueKey(dropId +"inner")));
+      // Calling pump twice once comple the the action and
+      // again to finish the animation of closing the menu.
+      await tester.pump();
+      await tester.pump(Duration(seconds: 1));
+
+      // after opening the menu we have two widgets with text 'Greater'
+      // one in index stack of the dropdown button and one in the menu .
+      // apparently the last one is from the menu.
+      await tester.tap(find.text('YYY').last);
+      await tester.pump();
+      await tester.pump(Duration(seconds: 1));
+
+      /// We directly verify the value updated in the onchaged function.
+      expect(valueAfterChange, 'YYY');
+
+
+
+      await tester.tap(find.byKey(ValueKey(dropId +"inner")));
+      // Calling pump twice once comple the the action and
+      // again to finish the animation of closing the menu.
+      await tester.pump();
+      await tester.pump(Duration(seconds: 1));
+
+      // after opening the menu we have two widgets with text 'Greater'
+      // one in index stack of the dropdown button and one in the menu .
+      // apparently the last one is from the menu.
+      await tester.tap(find.text('ZZZ').last);
+      await tester.pump();
+      await tester.pump(Duration(seconds: 1));
+
+      /// We directly verify the value updated in the onchaged function.
+      expect(valueAfterChange, 'ZZZ');
+
+      await tester.drag(find.byKey(scrollKey), const Offset(0.0, -3000));
+      await tester.pump(const Duration(seconds: 5));
+
+      await tester.drag(find.byKey(scrollKey), const Offset(0.0, 3000));
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
+
+      expect((tester.widget(find.byKey(ValueKey(dropId +"inner"))) as DropdownButton).value,
+          equals('ZZZ'));
+
+      _onUserController.add({}..[dropId] =
+          "XXX"); //
+      await tester.pump(const Duration(seconds: 5));
+
+      expect((tester.widget(find.byKey(ValueKey(dropId +"inner"))) as DropdownButton).value,
+          equals('XXX'));
+
+      await tester.drag(find.byKey(scrollKey), const Offset(0.0, -3000));
+      await tester.pump(const Duration(seconds: 5));
+
+      await tester.drag(find.byKey(scrollKey), const Offset(0.0, 3000));
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
+
+      expect((tester.widget(find.byKey(ValueKey(dropId +"inner"))) as DropdownButton).value,
+          equals('XXX'));
+    });
+
   });
+
+
 }

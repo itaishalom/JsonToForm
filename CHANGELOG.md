@@ -118,5 +118,8 @@ Prevent dispose when widget get out of scroll view
 2.0.0
 Updates and bug fixes + new tests
 
-2.0.1
+#2.0.1
 Don't cut the text if edit text on focus
+
+#2.0.1
+Drop Down tests

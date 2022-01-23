@@ -106,6 +106,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                   maxWidth:
                       InheritedJsonFormTheme.of(context).theme.dropDownWith.w),
               child: DropdownButton<String>(
+                key: ValueKey(widget.id +"inner"),
                 dropdownColor: const Color(0xff222222),
                 value: dropdownValue,
                 isExpanded: true,
