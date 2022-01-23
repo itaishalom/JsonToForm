@@ -16,25 +16,32 @@ class EditTextValue extends StatefulWidget {
   String chosenValue;
   final bool isBeforeHeader;
   final OnValueChanged? onValueChanged;
+  final Function getUpdatedValue;
+  final Function getUpdatedTime;
   final Widget Function(int date)? dateBuilder;
   int? time;
   final bool isReadOnly;
   final bool long;
+  Function(int) onTimeUpdated;
 
   EditTextValue({
     Key? key,
     required this.name,
+    required this.onTimeUpdated,
     required this.id,
     required this.isBeforeHeader,
     this.description,
+    required this.getUpdatedTime,
     required this.onValueChanged,
+    required this.getUpdatedValue,
     required this.chosenValue,
+
     this.isReadOnly = false,
     this.long = false,
     this.dateBuilder,
+
     this.time,
-  }) : super(key: key) {
-  }
+  }) : super(key: key);
 
   @override
   _EditTextValueState createState() => _EditTextValueState();
@@ -48,7 +55,6 @@ class _EditTextValueState extends State<EditTextValue> {
   int? debounceTime;
   int? thisTime;
   String? initialText = "";
-  late final StreamSubscription<String?>? _valueChange;
   bool forceRefresh = false;
   String notCutValue = "";
 
@@ -66,9 +72,9 @@ class _EditTextValueState extends State<EditTextValue> {
 
   @override
   void initState() {
-    notCutValue = widget.chosenValue;
-    thisTime = widget.time;
-    initialText = widget.chosenValue;
+    notCutValue = widget.getUpdatedValue();
+    thisTime = widget.getUpdatedTime();
+    initialText = widget.getUpdatedValue();
     if (!widget.isReadOnly) {
       myFocusNode = FocusNode();
       myFocusNode.addListener(() {
@@ -116,11 +122,11 @@ class _EditTextValueState extends State<EditTextValue> {
   }
 
   initTextController() {
-    if (shouldCut(widget.chosenValue)) {
+    if (shouldCut(widget.getUpdatedValue())) {
       _controller ??=
-          TextEditingController(text: generateDottedText(widget.chosenValue));
+          TextEditingController(text: generateDottedText(widget.getUpdatedValue()));
     } else {
-      _controller ??= TextEditingController(text: (widget.chosenValue));
+      _controller ??= TextEditingController(text: (widget.getUpdatedValue()));
     }
     _controller?.addListener(notifyValue);
   }
@@ -146,7 +152,7 @@ class _EditTextValueState extends State<EditTextValue> {
         }
         _controller?.selection = TextSelection.fromPosition(
             TextPosition(offset: _controller!.text.length));
-        thisTime = DateTime.now().millisecondsSinceEpoch;
+        thisTime = widget.getUpdatedTime();
         initialText = _controller?.text;
       });
     }
@@ -179,7 +185,7 @@ class _EditTextValueState extends State<EditTextValue> {
     }
     initialText = _controller?.text;
     if (widget.onValueChanged != null &&
-        (!firstTime || _controller!.text != widget.chosenValue)) {
+        (!firstTime || _controller!.text != widget.getUpdatedValue())) {
       if (_debounce?.isActive ?? false) {
         _debounce?.cancel();
       }
@@ -188,19 +194,30 @@ class _EditTextValueState extends State<EditTextValue> {
           if (widget.onValueChanged != null) {
             bool res =
                 await widget.onValueChanged!(widget.id, _controller!.text);
-            if (res && mounted) {
-              setState(() {
-                thisTime = DateTime.now().millisecondsSinceEpoch;
-              });
+            if (res) {
+              thisTime = DateTime
+                  .now()
+                  .millisecondsSinceEpoch;
+              widget.onTimeUpdated(thisTime!);
+              if(mounted) {
+                setState(() {
+                  thisTime;
+                });
+              }
             }
           }
         });
       } else {
         bool res = await widget.onValueChanged!(widget.id, _controller!.text);
-        if (res && mounted) {
-          setState(() {
-            thisTime = DateTime.now().millisecondsSinceEpoch;
-          });
+
+        if (res) {
+          thisTime = DateTime.now().millisecondsSinceEpoch;
+          widget.onTimeUpdated(thisTime!);
+          if(mounted) {
+            setState(() {
+              thisTime;
+            });
+          }
         }
       }
     }
@@ -221,15 +238,15 @@ class _EditTextValueState extends State<EditTextValue> {
 
   void startController() {
     if (!widget.isReadOnly) {
-      if (shouldCut(widget.chosenValue)) {
-        notCutValue = widget.chosenValue;
-        _controller!.text = generateDottedText(widget.chosenValue);
+      if (shouldCut(widget.getUpdatedValue())) {
+        notCutValue = widget.getUpdatedValue();
+        _controller!.text = generateDottedText(widget.getUpdatedValue());
       } else {
-        notCutValue = widget.chosenValue;
+        notCutValue = widget.getUpdatedValue();
         updateFromRemote = true;
-        _controller!.text = (widget.chosenValue);
+        _controller!.text = (widget.getUpdatedValue());
       }
-      thisTime = widget.time;
+      thisTime = widget.getUpdatedTime();
     }
     setPositionRemote = true;
     _controller?.selection = TextSelection.fromPosition(
@@ -257,7 +274,7 @@ class _EditTextValueState extends State<EditTextValue> {
     if (forceRefresh) {
       forceRefresh = false;
       startController();
-      thisTime = widget.time;
+      thisTime = widget.getUpdatedTime();
     }
     Widget text = Container(
         margin: widget.long

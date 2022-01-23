@@ -56,7 +56,7 @@ class _StaticTextValueState extends State<StaticTextValue> {
   }
 
   void _onRemoteValueChanged(DataClass event) {
-    if (event.id == widget.id) {
+    if (event.id == widget.id && mounted) {
       setState(() {
         value = event.value ?? "";
         thisTime = DateTime

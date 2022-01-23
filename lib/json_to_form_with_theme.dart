@@ -157,6 +157,8 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
   void _onRemoteValueChanged(Map<String, dynamic> values) {
     for (String id in values.keys) {
       if (parsers[id] != null) {
+        parsers[id]?.chosenValue = values[id];
+        parsers[id]?.time = DateTime.now().millisecondsSinceEpoch;
         _onDataClassReady.add(DataClass(id: id, value: values[id]));
       }
     }
@@ -191,11 +193,16 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
                   },
                   child: UpdateStreamWidget(
                     dataClassStream: dataClassStream,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: widgetsGlobal,
-                      ),
-                    ),
+                    child: CustomScrollView(key: const ValueKey("scrollView"),slivers: <Widget>[
+                      SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (BuildContext context, int index) {
+                            return widgetsGlobal[index];
+                          },
+                          childCount: widgetsGlobal.length,
+                        ),
+                      )
+                    ]),
                   ),
                 )));
       },

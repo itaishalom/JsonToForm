@@ -18,11 +18,17 @@ class Toggle extends StatefulWidget {
       this.description,
       this.dateBuilder,
       this.time,
+        required this.getUpdatedTime,
+        required this.onTimeUpdated,
       required this.isBeforeHeader,
+        required this.getUpdatedValue,
       this.chosenValue})
-      : super(key: key) {
-  }
+      : super(key: key);
 
+  Function(int) onTimeUpdated;
+
+  final Function getUpdatedTime;
+  final Function getUpdatedValue;
   final String? description;
   final String name;
   final String id;
@@ -55,17 +61,17 @@ class _ToggleState extends State<Toggle> {
 
   @override
   void initState() {
-    thisTime = widget.time;
+    thisTime = widget.getUpdatedTime();
     stringToIndex();
 
     super.initState();
   }
 
   stringToIndex() {
-    if (widget.chosenValue == null || widget.chosenValue!.isEmpty) {
+    if (widget.getUpdatedValue() == null || widget.getUpdatedValue()!.isEmpty) {
       updatedIndex = null;
     } else {
-      updatedIndex = widget.values.indexOf(widget.chosenValue!);
+      updatedIndex = widget.values.indexOf(widget.getUpdatedValue()!);
       if (updatedIndex == -1) {
         updatedIndex = null;
       }
@@ -80,7 +86,7 @@ class _ToggleState extends State<Toggle> {
     if (forceRefresh) {
       forceRefresh = false;
       stringToIndex();
-      thisTime = widget.time;
+      thisTime = widget.getUpdatedTime();
     }
     changedLocally = false;
     return LineWrapper(
@@ -121,11 +127,14 @@ class _ToggleState extends State<Toggle> {
                 if (updatedIndex == index) {
                   updatedIndex = null;
                   res = await widget.onValueChanged!(widget.id, null);
-                  if (res && mounted) {
+                  if (res) {
                     thisTime = DateTime.now().millisecondsSinceEpoch;
-                    setState(() {
-                      thisTime = DateTime.now().millisecondsSinceEpoch;
-                    });
+                    widget.onTimeUpdated(thisTime!);
+                    if(mounted) {
+                      setState(() {
+                        thisTime;
+                      });
+                    }
                   }
                   return;
                 } else if (index == null) {
@@ -135,11 +144,14 @@ class _ToggleState extends State<Toggle> {
                   res = await widget.onValueChanged!(
                       widget.id, widget.values[index]);
                 }
-                if (res && mounted) {
+                if (res) {
                   thisTime = DateTime.now().millisecondsSinceEpoch;
-                  setState(() {
-                    thisTime = DateTime.now().millisecondsSinceEpoch;
-                  });
+                  widget.onTimeUpdated(thisTime!);
+                  if(mounted) {
+                    setState(() {
+                      thisTime;
+                    });
+                  }
                 }
               }
             },
@@ -163,7 +175,7 @@ class _ToggleState extends State<Toggle> {
             updatedIndex = null;
           }
         }
-        thisTime = DateTime.now().millisecondsSinceEpoch;
+        thisTime = widget.getUpdatedTime();
       });
     }
   }

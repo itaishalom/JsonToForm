@@ -18,13 +18,18 @@ class DropDownWidget extends StatefulWidget {
       required this.values,
       required this.description,
       required this.onValueChanged,
+      required this.getUpdatedTime,
       this.chosenValue,
+        required this.onTimeUpdated,
+      required this.getUpdatedValue,
       this.dateBuilder,
       this.time,
       required this.isBeforeHeader})
-      : super(key: key) {
-  }
+      : super(key: key);
 
+  Function(int) onTimeUpdated;
+  final Function getUpdatedTime;
+  final Function getUpdatedValue;
   final String name;
   final String? description;
   final String id;
@@ -51,30 +56,30 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
     super.didUpdateWidget(oldWidget);
     forceRefresh = true;
   }
+
   @override
   void didChangeDependencies() {
-    UpdateStreamWidget.of(context)!.dataClassStream.listen(_onRemoteValueChanged);
+    UpdateStreamWidget.of(context)!
+        .dataClassStream
+        .listen(_onRemoteValueChanged);
     super.didChangeDependencies();
   }
 
   @override
   void initState() {
-    dropdownValue = widget.chosenValue;
-    thisTime = widget.time;
+    dropdownValue = widget.getUpdatedValue();
+    thisTime = widget.getUpdatedTime();
     super.initState();
   }
 
   void _onRemoteValueChanged(DataClass dataClass) {
-    if(dataClass.id == widget.id) {
+    if (dataClass.id == widget.id && mounted) {
       setState(() {
         dropdownValue = dataClass.value;
-        thisTime = DateTime
-            .now()
-            .millisecondsSinceEpoch;
+        thisTime = widget.getUpdatedTime();
       });
     }
   }
-
 
   int? thisTime;
 
@@ -82,8 +87,8 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
   Widget build(BuildContext context) {
     if (forceRefresh) {
       forceRefresh = false;
-      dropdownValue = widget.chosenValue;
-      thisTime = widget.time;
+      dropdownValue = widget.getUpdatedValue();
+      thisTime = widget.getUpdatedTime();
     }
     return LineWrapper(
       isBeforeHeader: widget.isBeforeHeader,
@@ -97,7 +102,9 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                 dateBuilder: widget.dateBuilder,
                 time: thisTime),
             Container(
-              constraints: BoxConstraints(maxWidth: InheritedJsonFormTheme.of(context).theme.dropDownWith.w),
+              constraints: BoxConstraints(
+                  maxWidth:
+                      InheritedJsonFormTheme.of(context).theme.dropDownWith.w),
               child: DropdownButton<String>(
                 dropdownColor: const Color(0xff222222),
                 value: dropdownValue,
@@ -162,10 +169,14 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
     if (widget.onValueChanged != null) {
       res = await widget.onValueChanged!(widget.id, dropdownValue);
     }
-    if (res && mounted) {
-      setState(() {
-        thisTime = DateTime.now().millisecondsSinceEpoch;
-      });
+    if (res) {
+      thisTime = DateTime.now().millisecondsSinceEpoch;
+      widget.onTimeUpdated(thisTime!);
+      if(mounted) {
+        setState(() {
+          thisTime;
+        });
+      }
     }
   }
 }

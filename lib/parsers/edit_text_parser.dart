@@ -48,6 +48,9 @@ class EditTextParser implements WidgetParser {
   @override
   Widget getWidget(bool refresh) {
     return EditTextValue(
+        getUpdatedTime: (){return time;},
+        getUpdatedValue: (){return chosenValue;},
+        onTimeUpdated: (int newTime){time = newTime;},
         name: name,
         id: id,
         description: description,

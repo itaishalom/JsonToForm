@@ -329,5 +329,112 @@ void main() {
      // debugDumpApp();
       expect(findText, findsOneWidget);
     });
+
+    testWidgets('Change value from outside - long list with scroll', (WidgetTester tester) async {
+
+      Stream<Map<String, dynamic>>? onValueChangeStream;
+      final StreamController<Map<String, dynamic>> _onUserController =
+      StreamController<Map<String, dynamic>>();
+      onValueChangeStream = _onUserController.stream.asBroadcastStream();
+      final Map<String, dynamic> json= {};
+      json["widgets"] = [];
+      for(int i = 0; i < 50; i++){
+        json["widgets"].add ( {
+          "id": "abc"+i.toString(),
+          "name": "Edit text",
+          "type": "edit_text",
+          "chosen_value": i.toString(),
+          "description": "(edit description..)",
+        });
+      }
+
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(child: JsonFormWithTheme(jsonWidgets: json, streamUpdates: onValueChangeStream)),
+        ),
+      );
+      // Trigger a frame.
+      await tester.pump();
+
+      _onUserController.add({}..["abc0"] =
+          "zzz"); // toggle
+
+
+      await tester.pump(const Duration(seconds: 5));
+
+      expect(find.text("zzz"), findsOneWidget);
+
+      _onUserController.add({}..["abc49"] =
+          "51"); // toggle
+
+      expect(find.text("51"), findsNothing);
+      await tester.drag(find.byKey(Key('scrollView')), const Offset(0.0, -3000));
+      await tester.pump(const Duration(seconds: 5));
+
+      expect(find.text("51"), findsOneWidget);
+      await tester.drag(find.byKey(Key('scrollView')), const Offset(0.0, 3000));
+      await tester.pump(const Duration(seconds: 5));
+      expect(find.text("zzz"), findsOneWidget);
+    });
+
+
+    testWidgets('Change value from outside - long list with scroll and change from the inside', (WidgetTester tester) async {
+      String  testId = "abc0";
+      Key scrollKey = const Key('scrollView');
+      Stream<Map<String, dynamic>>? onValueChangeStream;
+      final StreamController<Map<String, dynamic>> _onUserController =
+      StreamController<Map<String, dynamic>>();
+      onValueChangeStream = _onUserController.stream.asBroadcastStream();
+      final Map<String, dynamic> json= {};
+      json["widgets"] = [];
+      for(int i = 0; i < 50; i++){
+        json["widgets"].add ( {
+          "id": "abc"+i.toString(),
+          "name": "Edit text",
+          "type": "edit_text",
+          "chosen_value": i.toString(),
+          "description": "(edit description..)",
+        });
+      }
+
+    String valueAfterChange ="";
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(child: JsonFormWithTheme(streamUpdates: onValueChangeStream, jsonWidgets: json, onValueChanged: (String id, dynamic value){
+            valueAfterChange = value;
+            return Future.value(true);
+          },)),
+        ),
+      );
+      // Trigger a frame.
+      await tester.pump();
+
+      _onUserController.add({}..[testId] =
+          "zzz"); // toggle
+
+
+      await tester.pump(const Duration(seconds: 5));
+      expect(find.text("zzz"), findsOneWidget);
+
+      await tester.drag(find.byKey(scrollKey), const Offset(0.0, -3000));
+      await tester.pump(const Duration(seconds: 5));
+
+
+
+      await tester.drag(find.byKey(scrollKey), const Offset(0.0, 3000));
+      await tester.pump(const Duration(seconds: 5));
+      expect(find.text("zzz"), findsOneWidget);
+
+      await tester.enterText(find.byKey(ValueKey(testId)), "test");
+      expect(find.text('test'), findsOneWidget);
+      expect(valueAfterChange, "test");
+      await tester.drag(find.byKey(scrollKey), const Offset(0.0, -3000));
+      await tester.pump(const Duration(seconds: 5));
+
+      await tester.drag(find.byKey(scrollKey), const Offset(0.0, 3000));
+      await tester.pump(const Duration(seconds: 5));
+      expect(find.text('test'), findsOneWidget);
+    });
   });
 }

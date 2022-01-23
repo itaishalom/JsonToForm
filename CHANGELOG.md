@@ -114,3 +114,6 @@ Multiple bug fixes
 
 #1.4.1
 Prevent dispose when widget get out of scroll view
+
+2.0.0
+Updates and bug fixes + new tests

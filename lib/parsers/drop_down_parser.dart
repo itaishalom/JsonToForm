@@ -52,13 +52,24 @@ class DropDownParser implements WidgetParser {
         key: ValueKey(id),
         name: name,
         id: id,
+        getUpdatedTime: (){return time;},
+        getUpdatedValue: (){return chosenValue;},
+        onTimeUpdated: (int newTime){time = newTime;},
         values: values,
         time: time,
         dateBuilder: dateBuilder,
         description: description,
+        onValueChanged: (String id, dynamic value) async{
+          if (chosenValue != value) {
+            chosenValue = value;
+            if (onValueChanged != null) {
+              return await onValueChanged!(id, value);
+            }
+          }
+          return false;
+        },
         chosenValue: chosenValue,
-        isBeforeHeader: isBeforeHeader,
-        onValueChanged: onValueChanged);
+        isBeforeHeader: isBeforeHeader,);
   }
 
   @override
