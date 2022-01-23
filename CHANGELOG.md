@@ -123,3 +123,6 @@ Don't cut the text if edit text on focus
 
 #2.0.2
 Drop Down tests
+
+#2.0.3
+Toggle tests

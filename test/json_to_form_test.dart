@@ -568,6 +568,72 @@ void main() {
           equals('XXX'));
     });
 
+
+    testWidgets('Verify Toggle updates - long list with multiple refreshes', (WidgetTester tester) async {
+
+
+      Stream<Map<String, dynamic>>? onValueChangeStream;
+      final StreamController<Map<String, dynamic>> _onUserController =
+      StreamController<Map<String, dynamic>>();
+      String? valueAfterChange = "YES";
+      String toggleValue = "YES";
+      onValueChangeStream = _onUserController.stream.asBroadcastStream();
+      String toggleId= "toggleId";
+      final Map<String, dynamic> json = {
+        "widgets": [
+          {
+            "id": toggleId,
+            "name": "Toggle",
+            "type": "toggle",
+            "values": ["YES", "NO"],
+            "chosen_value": "NO"
+          },
+        ]
+      };
+      for(int i = 0; i < 50; i++){
+        json["widgets"].add ( {
+          "id": "abc"+i.toString(),
+          "name": "Edit text",
+          "type": "edit_text",
+          "chosen_value": i.toString(),
+          "description": "(edit description..)",
+        });
+      }
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(child: JsonFormWithTheme(streamUpdates: onValueChangeStream, jsonWidgets: json, onValueChanged: (String id, dynamic value){
+            valueAfterChange = value;
+            return Future.value(true);
+          })),
+        ),
+      );
+      await tester.pump();
+      _onUserController.add({}..[toggleId] =
+          valueAfterChange); //
+      await tester.pump(const Duration(seconds: 5));
+
+
+      Key scrollKey = const Key('scrollView');
+
+      await tester.tap(find.text(toggleValue));
+      await tester.pump(const Duration(seconds: 5));
+      expect(null, valueAfterChange);
+
+
+      await tester.drag(find.byKey(scrollKey), const Offset(0.0, -3000));
+      await tester.pump(const Duration(seconds: 5));
+
+      await tester.drag(find.byKey(scrollKey), const Offset(0.0, 3000));
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text(toggleValue));
+      await tester.pump(const Duration(seconds: 5));
+      expect("YES", valueAfterChange);
+
+    });
+
   });
 
 
