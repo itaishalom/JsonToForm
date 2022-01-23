@@ -145,7 +145,7 @@ class _EditTextValueState extends State<EditTextValue> {
     notCutValue = event.value ?? "";
     if (mounted) {
       setState(() {
-        if (shouldCut(notCutValue)) {
+        if (!myFocusNode.hasFocus && shouldCut(notCutValue)) {
           _controller?.text = generateDottedText(notCutValue);
         } else {
           _controller?.text = notCutValue;
