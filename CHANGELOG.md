@@ -121,5 +121,5 @@ Updates and bug fixes + new tests
 #2.0.1
 Don't cut the text if edit text on focus
 
-#2.0.1
+#2.0.2
 Drop Down tests
