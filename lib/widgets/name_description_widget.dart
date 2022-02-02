@@ -8,6 +8,7 @@ class NameWidgetDescription extends StatelessWidget {
       required this.name,
       this.description,
       this.dateBuilder,
+        required this.width,
       this.time,
       this.componentSameLine = true})
       : super(key: key);
@@ -16,6 +17,7 @@ class NameWidgetDescription extends StatelessWidget {
   final String? description;
   final Widget Function(int date)? dateBuilder;
   final int? time;
+  final double width;
   final bool componentSameLine;
 
   @override
@@ -34,12 +36,9 @@ class NameWidgetDescription extends StatelessWidget {
     ];
 
     return Container(
-        constraints: componentSameLine
-            ? BoxConstraints(maxWidth: 65.w)
-            : null,
+        constraints: componentSameLine ? BoxConstraints(maxWidth: width.w) : null,
         padding: InheritedJsonFormTheme.of(context).theme.nameContainerPadding,
-        decoration:
-            InheritedJsonFormTheme.of(context).theme.nameContainerDecoration,
+        decoration: InheritedJsonFormTheme.of(context).theme.nameContainerDecoration,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,

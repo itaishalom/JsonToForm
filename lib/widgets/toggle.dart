@@ -18,10 +18,10 @@ class Toggle extends StatefulWidget {
       this.description,
       this.dateBuilder,
       this.time,
-        required this.getUpdatedTime,
-        required this.onTimeUpdated,
+      required this.getUpdatedTime,
+      required this.onTimeUpdated,
       required this.isBeforeHeader,
-        required this.getUpdatedValue,
+      required this.getUpdatedValue,
       this.chosenValue})
       : super(key: key);
 
@@ -78,7 +78,6 @@ class _ToggleState extends State<Toggle> {
     }
   }
 
-  bool changedLocally = false;
   int? updatedIndex;
 
   @override
@@ -88,7 +87,6 @@ class _ToggleState extends State<Toggle> {
       stringToIndex();
       thisTime = widget.getUpdatedTime();
     }
-    changedLocally = false;
     return LineWrapper(
       isBeforeHeader: widget.isBeforeHeader,
       child: Row(
@@ -97,10 +95,8 @@ class _ToggleState extends State<Toggle> {
         textDirection: TextDirection.ltr,
         children: <Widget>[
           NameWidgetDescription(
-              name: widget.name,
-              description: widget.description,
-              dateBuilder: widget.dateBuilder,
-              time: thisTime),
+              width: InheritedJsonFormTheme.of(context).theme.toggleWidthOfHeader,
+              name: widget.name, description: widget.description, dateBuilder: widget.dateBuilder, time: thisTime),
           ToggleSwitch(
             doubleTapDisable: true,
             minWidth: InheritedJsonFormTheme.of(context).theme.toggleMinWidth,
@@ -108,46 +104,21 @@ class _ToggleState extends State<Toggle> {
             fontSize: InheritedJsonFormTheme.of(context).theme.toggleFontSize,
             initialLabelIndex: updatedIndex,
             cornerRadius: 4.0,
-            activeBgColor: [
-              InheritedJsonFormTheme.of(context).theme.toggleActiveColor
-            ],
-            activeFgColor:
-                InheritedJsonFormTheme.of(context).theme.toggleActiveTextColor,
-            inactiveBgColor:
-                InheritedJsonFormTheme.of(context).theme.toggleInactiveColor,
-            inactiveFgColor: InheritedJsonFormTheme.of(context)
-                .theme
-                .toggleInactiveTextColor,
+            activeBgColor: [InheritedJsonFormTheme.of(context).theme.toggleActiveColor],
+            activeFgColor: InheritedJsonFormTheme.of(context).theme.toggleActiveTextColor,
+            inactiveBgColor: InheritedJsonFormTheme.of(context).theme.toggleInactiveColor,
+            inactiveFgColor: InheritedJsonFormTheme.of(context).theme.toggleInactiveTextColor,
             totalSwitches: widget.values.length,
             labels: widget.values,
             onToggle: (index) async {
               if (widget.onValueChanged != null) {
                 bool res = false;
-                changedLocally = true;
-                if (updatedIndex == index) {
-                  updatedIndex = null;
-                  res = await widget.onValueChanged!(widget.id, null);
-                  if (res) {
-                    thisTime = DateTime.now().millisecondsSinceEpoch;
-                    widget.onTimeUpdated(thisTime!);
-                    if(mounted) {
-                      setState(() {
-                        thisTime;
-                      });
-                    }
-                  }
-                  return;
-                } else if (index == null) {
-                  res = await widget.onValueChanged!(widget.id, null);
-                } else {
-                  updatedIndex = index;
-                  res = await widget.onValueChanged!(
-                      widget.id, widget.values[index]);
-                }
+                updatedIndex = index;
+                res = await widget.onValueChanged!(widget.id, index != null ? widget.values[index] : index);
                 if (res) {
                   thisTime = DateTime.now().millisecondsSinceEpoch;
                   widget.onTimeUpdated(thisTime!);
-                  if(mounted) {
+                  if (mounted) {
                     setState(() {
                       thisTime;
                     });
@@ -162,7 +133,7 @@ class _ToggleState extends State<Toggle> {
   }
 
   void _onRemoteValueChanged(DataClass event) {
-    if(event.id != widget.id){
+    if (event.id != widget.id) {
       return;
     }
     if (mounted) {

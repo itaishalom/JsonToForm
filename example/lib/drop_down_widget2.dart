@@ -54,7 +54,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget2> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           textDirection: TextDirection.ltr,
           children: <Widget>[
-            NameWidgetDescription(
+            NameWidgetDescription(width: InheritedJsonFormTheme.of(context).theme.dropDownWidthOfHeader,
                 name: widget.name, description: widget.description,    dateBuilder: widget.dateBuilder,
                 time: widget.time),
             Container(

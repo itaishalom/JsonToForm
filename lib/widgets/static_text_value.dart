@@ -81,6 +81,7 @@ class _StaticTextValueState extends State<StaticTextValue> {
         textDirection: TextDirection.ltr,
         children: <Widget>[
           NameWidgetDescription(
+            width: InheritedJsonFormTheme.of(context).theme.staticTextWidthOfHeader,
               name: widget.name,
               description: widget.description,
               dateBuilder: widget.dateBuilder,

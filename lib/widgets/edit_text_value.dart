@@ -315,6 +315,7 @@ class _EditTextValueState extends State<EditTextValue> {
     List<Widget> innerWidgets = [
       NameWidgetDescription(
         name: widget.name,
+        width: InheritedJsonFormTheme.of(context).theme.editTextWidthOfHeader,
         description: widget.description,
         dateBuilder: widget.dateBuilder,
         time: thisTime,

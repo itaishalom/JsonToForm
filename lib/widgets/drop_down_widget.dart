@@ -97,6 +97,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
           textDirection: TextDirection.ltr,
           children: <Widget>[
             NameWidgetDescription(
+                width: InheritedJsonFormTheme.of(context).theme.dropDownWidthOfHeader,
                 name: widget.name,
                 description: widget.description,
                 dateBuilder: widget.dateBuilder,
