@@ -132,3 +132,6 @@ New must variable - width of header
 
 ## 3.0.0
 Update build builder to with Id
+
+## 3.0.1
+Use edit text without stream

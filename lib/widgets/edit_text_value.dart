@@ -59,7 +59,7 @@ class _EditTextValueState extends State<EditTextValue> {
   final ValueNotifier<int?> thisTime = ValueNotifier<int?>(null);
   @override
   void didChangeDependencies() {
-    UpdateStreamWidget.of(context)!.dataClassStream.listen(_onRemoteValueChanged);
+    UpdateStreamWidget.of(context)?.dataClassStream.listen(_onRemoteValueChanged);
     super.didChangeDependencies();
   }
 
