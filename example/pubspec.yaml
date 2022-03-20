@@ -30,6 +30,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  flutter_svg: ^0.22.0
+  sizer: ^2.0.15
   json_to_form_with_theme:
     path: ../
   # The following adds the Cupertino Icons font to your application.
@@ -39,6 +41,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
 
   intl: ^0.17.0
   # The "flutter_lints" package below contains a set of recommended lints to

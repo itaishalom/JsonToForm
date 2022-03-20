@@ -18,7 +18,7 @@ class EditTextValue extends StatefulWidget {
   final OnValueChanged? onValueChanged;
   final Function getUpdatedValue;
   final Function getUpdatedTime;
-  final Widget Function(int date)? dateBuilder;
+  final Widget Function(int date, String id)? dateBuilder;
   int? time;
   final bool isReadOnly;
   final bool long;
@@ -53,11 +53,10 @@ class _EditTextValueState extends State<EditTextValue> {
   bool firstTime = true;
   late FocusNode myFocusNode;
   int? debounceTime;
-  int? thisTime;
   String? initialText = "";
   bool forceRefresh = false;
   String notCutValue = "";
-
+  final ValueNotifier<int?> thisTime = ValueNotifier<int?>(null);
   @override
   void didChangeDependencies() {
     UpdateStreamWidget.of(context)!.dataClassStream.listen(_onRemoteValueChanged);
@@ -73,7 +72,7 @@ class _EditTextValueState extends State<EditTextValue> {
   @override
   void initState() {
     notCutValue = widget.getUpdatedValue();
-    thisTime = widget.getUpdatedTime();
+    thisTime.value = widget.getUpdatedTime();
     initialText = widget.getUpdatedValue();
     if (!widget.isReadOnly) {
       myFocusNode = FocusNode();
@@ -152,7 +151,7 @@ class _EditTextValueState extends State<EditTextValue> {
         }
         _controller?.selection = TextSelection.fromPosition(
             TextPosition(offset: _controller!.text.length));
-        thisTime = widget.getUpdatedTime();
+        thisTime.value = widget.getUpdatedTime();
         initialText = _controller?.text;
       });
     }
@@ -195,15 +194,10 @@ class _EditTextValueState extends State<EditTextValue> {
             bool res =
                 await widget.onValueChanged!(widget.id, _controller!.text);
             if (res) {
-              thisTime = DateTime
+              thisTime.value = DateTime
                   .now()
                   .millisecondsSinceEpoch;
-              widget.onTimeUpdated(thisTime!);
-              if(mounted) {
-                setState(() {
-                  thisTime;
-                });
-              }
+              widget.onTimeUpdated(thisTime.value!);
             }
           }
         });
@@ -211,13 +205,8 @@ class _EditTextValueState extends State<EditTextValue> {
         bool res = await widget.onValueChanged!(widget.id, _controller!.text);
 
         if (res) {
-          thisTime = DateTime.now().millisecondsSinceEpoch;
-          widget.onTimeUpdated(thisTime!);
-          if(mounted) {
-            setState(() {
-              thisTime;
-            });
-          }
+          thisTime.value = DateTime.now().millisecondsSinceEpoch;
+          widget.onTimeUpdated(thisTime.value!);
         }
       }
     }
@@ -246,7 +235,7 @@ class _EditTextValueState extends State<EditTextValue> {
         updateFromRemote = true;
         _controller!.text = (widget.getUpdatedValue());
       }
-      thisTime = widget.getUpdatedTime();
+      thisTime.value = widget.getUpdatedTime();
     }
     setPositionRemote = true;
     _controller?.selection = TextSelection.fromPosition(
@@ -274,7 +263,7 @@ class _EditTextValueState extends State<EditTextValue> {
     if (forceRefresh) {
       forceRefresh = false;
       startController();
-      thisTime = widget.getUpdatedTime();
+      thisTime.value = widget.getUpdatedTime();
     }
     Widget text = Container(
         margin: widget.long
@@ -313,14 +302,20 @@ class _EditTextValueState extends State<EditTextValue> {
         ));
 
     List<Widget> innerWidgets = [
-      NameWidgetDescription(
-        name: widget.name,
-        width: InheritedJsonFormTheme.of(context).theme.editTextWidthOfHeader,
-        description: widget.description,
-        dateBuilder: widget.dateBuilder,
-        time: thisTime,
-        componentSameLine: !widget.long,
-      ),
+      ValueListenableBuilder<int?>(
+          valueListenable: thisTime,
+          builder: (context, time, _) {
+            return   NameWidgetDescription(
+              name: widget.name,
+              id: widget.id,
+              width: InheritedJsonFormTheme.of(context).theme.editTextWidthOfHeader,
+              description: widget.description,
+              dateBuilder: widget.dateBuilder,
+              time: time,
+              componentSameLine: !widget.long,
+            );
+          })
+    ,
     ];
     if (widget.long) {
       innerWidgets.add(text);

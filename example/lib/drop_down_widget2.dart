@@ -28,7 +28,7 @@ class DropDownWidget2 extends StatefulWidget {
   String? chosenValue;
   final OnValueChanged? onValueChanged;
   final bool isBeforeHeader;
-  final Widget Function(int date)? dateBuilder;
+  final Widget Function(int date, String id)? dateBuilder;
   int? time;
 
   @override
@@ -54,7 +54,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget2> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           textDirection: TextDirection.ltr,
           children: <Widget>[
-            NameWidgetDescription(width: InheritedJsonFormTheme.of(context).theme.dropDownWidthOfHeader,
+            NameWidgetDescription(width: InheritedJsonFormTheme.of(context).theme.dropDownWidthOfHeader, id: widget.id,
                 name: widget.name, description: widget.description,    dateBuilder: widget.dateBuilder,
                 time: widget.time),
             Container(

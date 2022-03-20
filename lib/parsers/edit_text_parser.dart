@@ -29,7 +29,7 @@ class EditTextParser implements WidgetParser {
   dynamic chosenValue;
   final bool isBeforeHeader;
   OnValueChanged? onValueChangedLocal;
-  final Widget Function(int date)? dateBuilder;
+  final Widget Function(int date, String id)? dateBuilder;
   @override
   int? time;
 

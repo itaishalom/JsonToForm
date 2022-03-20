@@ -25,7 +25,7 @@ class DropDownParser implements WidgetParser {
   final String id;
   final List<String> values;
   OnValueChanged? onValueChangedLocal;
-  final Widget Function(int date)? dateBuilder;
+  final Widget Function(int date, String id)? dateBuilder;
   int? time;
 
   DropDownParser.fromJson(Map<String, dynamic> json, this.onValueChanged,

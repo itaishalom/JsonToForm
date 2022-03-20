@@ -26,7 +26,7 @@ class StaticTextValue extends StatefulWidget {
   final String id;
   String chosenValue;
   final bool isBeforeHeader;
-  final Widget Function(int date)? dateBuilder;
+  final Widget Function(int date, String id)? dateBuilder;
   int? time;
 
   @override
@@ -83,6 +83,7 @@ class _StaticTextValueState extends State<StaticTextValue> {
           NameWidgetDescription(
             width: InheritedJsonFormTheme.of(context).theme.staticTextWidthOfHeader,
               name: widget.name,
+              id: widget.id,
               description: widget.description,
               dateBuilder: widget.dateBuilder,
               time: thisTime),

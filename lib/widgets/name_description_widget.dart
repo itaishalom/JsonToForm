@@ -10,15 +10,17 @@ class NameWidgetDescription extends StatelessWidget {
       this.dateBuilder,
         required this.width,
       this.time,
+        required this.id,
       this.componentSameLine = true})
       : super(key: key);
 
   final String name;
   final String? description;
-  final Widget Function(int date)? dateBuilder;
+  final Widget Function(int date, String id)? dateBuilder;
   final int? time;
   final double width;
   final bool componentSameLine;
+  final String id;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +53,7 @@ class NameWidgetDescription extends StatelessWidget {
                 ? StreamBuilder(
                     stream: Stream.periodic(const Duration(minutes: 1)),
                     builder: (context, snapshot) {
-                      return dateBuilder!(time!);
+                      return dateBuilder!(time!, id);
                     },
                   )
                 : const SizedBox.shrink()

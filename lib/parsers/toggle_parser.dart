@@ -34,7 +34,7 @@ class ToggleParser implements WidgetParser {
   dynamic? chosenValue;
   OnValueChanged? onValueChangedLocal;
   final bool isBeforeHeader;
-  final Widget Function(int date)? dateBuilder;
+  final Widget Function(int date, String id)? dateBuilder;
   int? time;
 
   ToggleParser.fromJson(Map<String, dynamic> json, this.onValueChanged,

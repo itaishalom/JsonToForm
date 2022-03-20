@@ -20,7 +20,7 @@ import 'package:sizer/sizer.dart';
 typedef OnValueChanged = Future<bool> Function(String id, dynamic value);
 
 class JsonFormWithTheme extends StatefulWidget {
-  final Widget Function(int date)? dateBuilder;
+  final Widget Function(int date, String id)? dateBuilder;
 
   final OnValueChanged? onValueChanged;
   final HashMap<int, WidgetParser> parsers = HashMap();

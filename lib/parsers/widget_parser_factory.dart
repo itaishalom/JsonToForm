@@ -9,5 +9,5 @@ abstract class WidgetParserFactory {
       int index,
       Map<String, dynamic> widgetJson,
       bool isBeforeHeader,
-      OnValueChanged? onValueChanged, Widget Function(int date)? dateBuilder);
+      OnValueChanged? onValueChanged, Widget Function(int date, String id)? dateBuilder);
 }

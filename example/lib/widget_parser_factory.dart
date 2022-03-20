@@ -13,7 +13,7 @@ class MyWidgetParserFactory implements WidgetParserFactory{
       Map<String, dynamic> widgetJson,
       bool isBeforeHeader,
       OnValueChanged? onValueChanged,
-      Widget Function(int date)? dateBuilder) {
+      Widget Function(int date, String id)? dateBuilder) {
     switch (type) {
       case "drop_down2":
         try {

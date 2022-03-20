@@ -36,7 +36,7 @@ class Toggle extends StatefulWidget {
   String? chosenValue;
   final OnValueChanged? onValueChanged;
   final bool isBeforeHeader;
-  final Widget Function(int date)? dateBuilder;
+  final Widget Function(int date, String id)? dateBuilder;
   int? time;
 
   @override
@@ -44,7 +44,7 @@ class Toggle extends StatefulWidget {
 }
 
 class _ToggleState extends State<Toggle> {
-  int? thisTime;
+  final ValueNotifier<int?> thisTime = ValueNotifier<int?>(null);
   bool forceRefresh = false;
 
   @override
@@ -61,7 +61,7 @@ class _ToggleState extends State<Toggle> {
 
   @override
   void initState() {
-    thisTime = widget.getUpdatedTime();
+    thisTime.value = widget.getUpdatedTime();
     stringToIndex();
 
     super.initState();
@@ -85,7 +85,7 @@ class _ToggleState extends State<Toggle> {
     if (forceRefresh) {
       forceRefresh = false;
       stringToIndex();
-      thisTime = widget.getUpdatedTime();
+      thisTime.value = widget.getUpdatedTime();
     }
     return LineWrapper(
       isBeforeHeader: widget.isBeforeHeader,
@@ -94,9 +94,18 @@ class _ToggleState extends State<Toggle> {
         crossAxisAlignment: CrossAxisAlignment.center,
         textDirection: TextDirection.ltr,
         children: <Widget>[
-          NameWidgetDescription(
-              width: InheritedJsonFormTheme.of(context).theme.toggleWidthOfHeader,
-              name: widget.name, description: widget.description, dateBuilder: widget.dateBuilder, time: thisTime),
+          ValueListenableBuilder<int?>(
+              valueListenable: thisTime,
+              builder: (context, time, _) {
+                return NameWidgetDescription(
+                  name: widget.name,
+                  id: widget.id,
+                  width: InheritedJsonFormTheme.of(context).theme.toggleWidthOfHeader,
+                  description: widget.description,
+                  dateBuilder: widget.dateBuilder,
+                  time: time,
+                );
+              }),
           ToggleSwitch(
             doubleTapDisable: true,
             minWidth: InheritedJsonFormTheme.of(context).theme.toggleMinWidth,
@@ -116,13 +125,8 @@ class _ToggleState extends State<Toggle> {
                 updatedIndex = index;
                 res = await widget.onValueChanged!(widget.id, index != null ? widget.values[index] : index);
                 if (res) {
-                  thisTime = DateTime.now().millisecondsSinceEpoch;
-                  widget.onTimeUpdated(thisTime!);
-                  if (mounted) {
-                    setState(() {
-                      thisTime;
-                    });
-                  }
+                  thisTime.value = DateTime.now().millisecondsSinceEpoch;
+                  widget.onTimeUpdated(thisTime.value!);
                 }
               }
             },
@@ -146,7 +150,7 @@ class _ToggleState extends State<Toggle> {
             updatedIndex = null;
           }
         }
-        thisTime = widget.getUpdatedTime();
+        thisTime.value = widget.getUpdatedTime();
       });
     }
   }

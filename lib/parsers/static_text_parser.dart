@@ -19,7 +19,7 @@ class StaticTextParser implements WidgetParser {
   dynamic chosenValue;
   final bool isBeforeHeader;
   OnValueChanged? onValueChangedLocal;
-  final Widget Function(int date)? dateBuilder;
+  final Widget Function(int date, String id)? dateBuilder;
   int? time;
 
   StaticTextParser.fromJson(Map<String, dynamic> json, this.onValueChanged,

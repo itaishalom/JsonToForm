@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:example/drop_down_parser2.dart';
+import 'package:example/aidoc_theme.dart';
 import 'package:example/widget_parser_factory.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
-import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
+import 'package:sizer/sizer.dart';
 
 void main() {
   runApp(const MyApp());
@@ -42,10 +42,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key) {}
 
-
-
-
-
   final String title;
 
   @override
@@ -54,8 +50,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Stream<Map<String, dynamic>>? onValueChangeStream;
-  final StreamController<Map<String, dynamic>> _onUserController =
-      StreamController<Map<String, dynamic>>();
+  final StreamController<Map<String, dynamic>> _onUserController = StreamController<Map<String, dynamic>>();
 
   Map<String, WidgetParser> dynamics = {};
 
@@ -103,8 +98,6 @@ class _MyHomePageState extends State<MyHomePage> {
         "time": 1640260609562,
         "description": "mmHg - with a long description",
       },
-
-
       {"type": "header", "name": "Header", "id": "99"},
       {
         "id": "4",
@@ -167,7 +160,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return "${hours}h ${minutes}m";
   }
 
-  Widget dateBuilder(int date) {
+  Widget dateBuilder(int date, String id) {
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(date);
     return Text(buildDate(dateTime));
   }
@@ -179,15 +172,16 @@ class _MyHomePageState extends State<MyHomePage> {
   int toggle = 1;
 
   bool changeToGoodBad = true;
+
   Future<dynamic> _refresh() {
     //"chosen_value": "Low-Intermediate"
-    if(changeToGoodBad) {
+    if (changeToGoodBad) {
       toggleList = ['Good', "Bad"];
       json['widgets'][1]['values'] = toggleList;
       json['widgets'][1]['chosen_value'] = "Bad";
       json['widgets'][6]['chosen_value'] = "goodReally";
       json['widgets'][8]['chosen_value'] = "Medium";
-    }else{
+    } else {
       toggleList = ["On", "Off"];
       json['widgets'][1]['chosen_value'] = "On";
       json['widgets'][1]['values'] = toggleList;
@@ -196,54 +190,54 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     changeToGoodBad = !changeToGoodBad;
-    setState(() {
-
-    });
+    setState(() {});
     return Future.delayed(const Duration(seconds: 0));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Floating Action Button'),
-      ),
-      body:  RefreshIndicator(
-      onRefresh: _refresh,
-        child: JsonFormWithTheme(
-            jsonWidgets: json,
-            dateBuilder: dateBuilder,
-            dynamicFactory: MyWidgetParserFactory(),
-            streamUpdates: onValueChangeStream,
-            onValueChanged: (String d, dynamic s) async {
-              print("Update id $d to value $s");
-              await Future.delayed(const Duration(seconds: 1));
-              return Future.value(true);
+    return Sizer(
+      builder: (BuildContext context, Orientation orientation, DeviceType deviceType) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Floating Action Button'),
+          ),
+          body: RefreshIndicator(
+            onRefresh: _refresh,
+            child: JsonFormWithTheme(
+                jsonWidgets: json,
+                dateBuilder: dateBuilder,
+                dynamicFactory: MyWidgetParserFactory(),
+                streamUpdates: onValueChangeStream,
+                onValueChanged: (String d, dynamic s) async {
+                  print("Update id $d to value $s");
+                  await Future.delayed(const Duration(seconds: 1));
+                  return Future.value(true);
+                },
+                theme: const DefaultTheme()),
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              counter++;
+              if (counter % 4 == 1) {
+                toggle++;
+                _onUserController.add({}..["1"] = toggleList[toggle % 2]); // toggle
+              }
+              if (counter % 4 == 2) {
+                _onUserController.add({}..["2"] = "updated" + Random().nextInt(10).toString()); // toggle
+              }
+              if (counter % 4 == 3) {
+                _onUserController.add({}..["3"] = "Val" + Random().nextInt(100000).toString()); // toggle
+              }
+              if (counter % 4 == 0) {
+                _onUserController.add({}..["4"] = list[toggle % 2]); // toggle
+              }
             },
-            theme: const DefaultTheme()),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          counter++;
-          if (counter % 4 == 1) {
-            toggle++;
-            _onUserController.add({}..["1"] = toggleList[toggle % 2]); // toggle
-          }
-          if (counter % 4 == 2) {
-            _onUserController.add({}..["2"] =
-                "updated" + Random().nextInt(10).toString()); // toggle
-          }
-          if (counter % 4 == 3) {
-            _onUserController.add(
-                {}..["3"] = "Val" + Random().nextInt(100000).toString()); // toggle
-          }
-          if (counter % 4 == 0) {
-            _onUserController.add({}..["4"] = list[toggle % 2]); // toggle
-          }
-        },
-        child: const Icon(Icons.navigation),
-        backgroundColor: Colors.green,
-      ),
+            child: const Icon(Icons.navigation),
+            backgroundColor: Colors.green,
+          ),
+        );
+      },
     );
   }
 }
