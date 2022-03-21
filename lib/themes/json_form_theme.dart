@@ -85,7 +85,8 @@ abstract class JsonFormTheme {
       required this.toggleWidthOfHeader,
       required this.editTextWidthOfHeader,
       required this.dropDownWidthOfHeader,
-      required this.staticTextWidthOfHeader});
+      required this.staticTextWidthOfHeader,
+      this.mainAxisAlignmentOfName = MainAxisAlignment.start});
 
   /// Global container params///
 
@@ -119,6 +120,8 @@ abstract class JsonFormTheme {
   final TextStyle headerTextStyle;
 
   final TextStyle titleTextStyle;
+
+  final MainAxisAlignment mainAxisAlignmentOfName;
 
   //////////////////////////////////
 

@@ -42,7 +42,7 @@ class NameWidgetDescription extends StatelessWidget {
         padding: InheritedJsonFormTheme.of(context).theme.nameContainerPadding,
         decoration: InheritedJsonFormTheme.of(context).theme.nameContainerDecoration,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: InheritedJsonFormTheme.of(context).theme.mainAxisAlignmentOfName,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Wrap(

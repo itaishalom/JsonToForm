@@ -135,3 +135,6 @@ Update build builder to with Id
 
 ## 3.0.1
 Use edit text without stream
+
+## 3.0.2
+Name widget main Axis alignment
