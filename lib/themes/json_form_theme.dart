@@ -79,6 +79,7 @@ abstract class JsonFormTheme {
       required this.headerContainerMargins,
       required this.debounceTime,
       this.overflow = false,
+      this.staticTextValueAlign = TextAlign.end,
       required this.dropDownWith,
       required this.keyboardTypeLong,
       required this.keyboardTypeShort,
@@ -146,6 +147,8 @@ abstract class JsonFormTheme {
   final double staticValueWidth;
 
   final double toggleWidthOfHeader;
+
+  final TextAlign staticTextValueAlign;
 
   ///////////////////////////////
 
@@ -303,7 +306,7 @@ class DefaultTheme extends JsonFormTheme {
             bottom: BorderSide.none,
           ))})
       : super(
-      staticValueWidth: 20,
+            staticValueWidth: 20,
             dropDownWith: 30,
             overflow: true,
             keyboardTypeLong: null,

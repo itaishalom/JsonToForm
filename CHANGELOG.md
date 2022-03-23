@@ -144,3 +144,6 @@ Use static text without stream
 
 ## 3.0.4
 Static value width
+
+## 3.0.4
+Static value text alignment

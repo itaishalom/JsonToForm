@@ -101,6 +101,7 @@ class _StaticTextValueState extends State<StaticTextValue> {
                   InheritedJsonFormTheme.of(context).theme.staticTextPadding,
               child: Text(
                 value,
+                textAlign: InheritedJsonFormTheme.of(context).theme.staticTextValueAlign,
                 style: InheritedJsonFormTheme.of(context).theme.staticTextStyle,
               ),
             ),
