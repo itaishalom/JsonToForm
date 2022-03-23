@@ -86,6 +86,7 @@ abstract class JsonFormTheme {
       required this.editTextWidthOfHeader,
       required this.dropDownWidthOfHeader,
       required this.staticTextWidthOfHeader,
+      required this.staticValueWidth,
       this.mainAxisAlignmentOfName = MainAxisAlignment.start});
 
   /// Global container params///
@@ -141,6 +142,8 @@ abstract class JsonFormTheme {
   final EdgeInsets staticTextPadding;
 
   final BoxDecoration staticContainerDecoration;
+
+  final double staticValueWidth;
 
   final double toggleWidthOfHeader;
 
@@ -300,6 +303,7 @@ class DefaultTheme extends JsonFormTheme {
             bottom: BorderSide.none,
           ))})
       : super(
+      staticValueWidth: 20,
             dropDownWith: 30,
             overflow: true,
             keyboardTypeLong: null,

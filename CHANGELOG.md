@@ -141,3 +141,6 @@ Name widget main Axis alignment
 
 ## 3.0.3
 Use static text without stream
+
+## 3.0.4
+Static value width

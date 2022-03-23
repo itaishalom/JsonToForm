@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
+import 'package:sizer/sizer.dart';
 
 import 'line_wrapper.dart';
 import 'name_description_widget.dart';
@@ -88,6 +89,9 @@ class _StaticTextValueState extends State<StaticTextValue> {
               dateBuilder: widget.dateBuilder,
               time: thisTime),
           Container(
+            width: InheritedJsonFormTheme.of(context)
+                .theme
+                .staticValueWidth.w,
             decoration: InheritedJsonFormTheme.of(context)
                 .theme
                 .staticContainerDecoration,

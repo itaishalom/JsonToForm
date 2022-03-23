@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
+import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
 import 'package:sizer/sizer.dart';
 
 void main() {
@@ -78,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
         "id": "2",
         "name": "Static text",
         "type": "static_text",
-        "chosen_value": "value",
+        "chosen_value": "value which is long value",
         "description": "(description..)",
         "time": 1640164109066,
       },
