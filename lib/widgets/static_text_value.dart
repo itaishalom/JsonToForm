@@ -51,7 +51,7 @@ class _StaticTextValueState extends State<StaticTextValue> {
 
   @override
   void didChangeDependencies() {
-    UpdateStreamWidget.of(context)!.dataClassStream.listen(_onRemoteValueChanged);
+    UpdateStreamWidget.of(context)?.dataClassStream.listen(_onRemoteValueChanged);
     super.didChangeDependencies();
   }
 

@@ -138,3 +138,6 @@ Use edit text without stream
 
 ## 3.0.2
 Name widget main Axis alignment
+
+## 3.0.3
+Use static text without stream
