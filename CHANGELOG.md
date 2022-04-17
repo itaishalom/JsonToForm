@@ -147,3 +147,6 @@ Static value width
 
 ## 3.0.5
 Static value text alignment
+
+## 3.0.6
+Toggle switch update - added activeToggleBorder.

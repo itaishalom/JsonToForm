@@ -1,6 +1,6 @@
 name: json_to_form_with_theme
 description: A simple library to convert Json to Form, fully customized and dynamic.
-version: 3.0.5
+version: 3.0.6
 homepage: https://github.com/itaishalom/JsonToForm
 
 environment:
@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  toggle_switch: ^1.4.0
+  toggle_switch: ^2.0.1
   sizer: ^2.0.15
 
 

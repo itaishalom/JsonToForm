@@ -107,6 +107,8 @@ class _ToggleState extends State<Toggle> {
                 );
               }),
           ToggleSwitch(
+            activeBorders: InheritedJsonFormTheme.of(context).theme.activeToggleBorder !=
+                null?[InheritedJsonFormTheme.of(context).theme.activeToggleBorder] : null,
             doubleTapDisable: true,
             minWidth: InheritedJsonFormTheme.of(context).theme.toggleMinWidth,
             minHeight: InheritedJsonFormTheme.of(context).theme.toggleMinHeight,

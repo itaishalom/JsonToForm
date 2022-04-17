@@ -88,6 +88,7 @@ abstract class JsonFormTheme {
       required this.dropDownWidthOfHeader,
       required this.staticTextWidthOfHeader,
       required this.staticValueWidth,
+        this.activeToggleBorder,
       this.mainAxisAlignmentOfName = MainAxisAlignment.start});
 
   /// Global container params///
@@ -136,6 +137,7 @@ abstract class JsonFormTheme {
   final Color toggleActiveTextColor;
   final Color toggleInactiveColor;
   final Color toggleInactiveTextColor;
+  final Border? activeToggleBorder;
 
   ///// Static Text ////
   final TextStyle staticTextStyle;
