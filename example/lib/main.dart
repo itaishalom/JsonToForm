@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:example/aidoc_theme.dart';
 import 'package:example/widget_parser_factory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
