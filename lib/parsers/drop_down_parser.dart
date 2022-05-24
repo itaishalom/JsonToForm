@@ -1,12 +1,26 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:json_to_form_with_theme/parsers/parser_creator.dart';
 import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
 import 'package:json_to_form_with_theme/widgets/drop_down_widget.dart';
 
 import '../json_to_form_with_theme.dart';
 
+
+class DropDownParserCreator extends ParserCreator{
+  String get type => "drop_down";
+  WidgetParser parseFromJson(Map<String, dynamic> json,
+      OnValueChanged? onValueChanged,
+      bool isBeforeHeader,
+      int index,
+      Widget Function(int date, String id)? datebuilder) =>
+        DropDownParser.fromJson(json, onValueChanged, isBeforeHeader, index);
+}
+
 class DropDownParser implements WidgetParser {
+
+
   DropDownParser(
       this.name,
       this.description,

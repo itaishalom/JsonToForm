@@ -1,10 +1,20 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:json_to_form_with_theme/parsers/parser_creator.dart';
 import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
 import 'package:json_to_form_with_theme/widgets/toggle.dart';
 
 import '../json_to_form_with_theme.dart';
+class ToggleParserCreator extends ParserCreator{
+  String get type => "toggle";
+  WidgetParser parseFromJson(Map<String, dynamic> json,
+      OnValueChanged? onValueChanged,
+      bool isBeforeHeader,
+      int index,
+      Widget Function(int date, String id)? datebuilder) =>
+      ToggleParser.fromJson(json, onValueChanged, isBeforeHeader, index);
+}
 
 class ToggleParser implements WidgetParser {
   ToggleParser(
@@ -84,4 +94,5 @@ class ToggleParser implements WidgetParser {
   setChosenValue(value) {
     chosenValue = value;
   }
+
 }

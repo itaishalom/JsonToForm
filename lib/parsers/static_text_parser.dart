@@ -1,11 +1,21 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:json_to_form_with_theme/parsers/parser_creator.dart';
 import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
 import 'package:json_to_form_with_theme/widgets/static_text_value.dart';
-import 'package:json_to_form_with_theme/widgets/toggle.dart';
 
 import '../json_to_form_with_theme.dart';
+
+class StaticTextParserCreator extends ParserCreator{
+  String get type => "static_text";
+  WidgetParser parseFromJson(Map<String, dynamic> json,
+      OnValueChanged? onValueChanged,
+      bool isBeforeHeader,
+      int index,
+      Widget Function(int date, String id)? datebuilder) =>
+      StaticTextParser.fromJson(json, onValueChanged, isBeforeHeader, index);
+}
 
 class StaticTextParser implements WidgetParser {
   StaticTextParser(this.name, this.description, this.id, this.chosenValue,

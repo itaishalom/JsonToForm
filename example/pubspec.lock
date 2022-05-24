@@ -101,7 +101,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "3.0.4"
+    version: "3.0.6"
   lints:
     dependency: transitive
     description:
@@ -218,7 +218,7 @@ packages:
       name: toggle_switch
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.4.0"
+    version: "2.0.1"
   typed_data:
     dependency: transitive
     description:
