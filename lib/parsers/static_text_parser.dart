@@ -13,7 +13,11 @@ class StaticTextModel extends Model {
   final String name;
   dynamic chosenValue;
   int? time;
-
+  @override
+  void updateValue(value) {
+    chosenValue = value;
+    time = DateTime.now().millisecondsSinceEpoch;
+  }
   StaticTextModel.fromJson(Map<String, dynamic> json, String type,
       bool isBeforeHeader)
       :  name = json['name'],

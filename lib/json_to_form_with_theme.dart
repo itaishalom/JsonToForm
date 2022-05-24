@@ -184,10 +184,8 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
     for (String id in values.keys) { //Todo : ask Itai :(
       Model item = widget.items.firstWhere((element) => element.id == id,
           orElse: () => EmptyModel());
-      if (item is EmptyModel) {
-
-      } else {
-
+      if (item is! EmptyModel) {
+        item.updateValue(values[id]);
         _onDataClassReady.add(DataClass(id: id, value: values[id]));
       }
     }

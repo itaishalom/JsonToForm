@@ -14,7 +14,11 @@ class ToggleModel extends Model{
   final List<String> values;
   dynamic? chosenValue;
   int? time;
-
+  @override
+  void updateValue(value) {
+    chosenValue = value;
+    time = DateTime.now().millisecondsSinceEpoch;
+  }
   ToggleModel.fromJson(Map<String, dynamic> json, String type, bool isBeforeHeader)
       :name = json['name'],
         description = json['description'],

@@ -15,7 +15,11 @@ class DropDownModel extends Model{
   final List<String> values;
   int? time;
   dynamic chosenValue;
-
+  @override
+  void updateValue(value) {
+    chosenValue = value;
+    time = DateTime.now().millisecondsSinceEpoch;
+  }
   DropDownModel.fromJson(Map<String, dynamic> json, String type, bool isBeforeHeader)
       : name = json['name'],
         description = json['description'],

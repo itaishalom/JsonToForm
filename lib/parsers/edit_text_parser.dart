@@ -13,19 +13,30 @@ abstract class Model{
   final bool isBeforeHeader;
 
   Model(this.id, this.type, this.isBeforeHeader);
+  void updateValue(dynamic value) {}
 }
 class EmptyModel extends Model{
   EmptyModel() : super("empty", "empty", false);
+
+  @override
+  void updateValue(value) {
+  }
 }
 
-class EditTextValueModel extends Model{
+class EditTextValueModel extends Model {
   final String name;
   final String? description;
   bool isReadOnly = false;
   bool long = false;
+  @override
   dynamic chosenValue;
   int? time;
 
+  @override
+  void updateValue(value) {
+    chosenValue = value;
+    time = DateTime.now().millisecondsSinceEpoch;
+  }
   EditTextValueModel.fromJson(Map<String, dynamic> json, String type, bool isBeforeHeader)
       : name = json['name'],
         description = json['description'],
