@@ -1,3 +1,4 @@
+import 'package:example/drop_down_parser2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
@@ -8,28 +9,17 @@ import 'package:json_to_form_with_theme/widgets/name_description_widget.dart';
 
 /// This is the stateful widget that the main application instantiates.
 class DropDownWidget2 extends StatefulWidget {
+  final DropDownParser2Model model;
+  final OnValueChanged? onValueChanged;
+  final Widget Function(int date, String id)? dateBuilder;
+
   DropDownWidget2(
       {Key? key,
-      required this.name,
-      required this.id,
-      required this.values,
-      required this.description,
+        required this.model,
       required this.onValueChanged,
-      this.chosenValue,
         this.dateBuilder,
-        this.time,
-      required this.isBeforeHeader})
+      })
       : super(key: key);
-
-  final String name;
-  final String? description;
-  final String id;
-  final List<String> values;
-  String? chosenValue;
-  final OnValueChanged? onValueChanged;
-  final bool isBeforeHeader;
-  final Widget Function(int date, String id)? dateBuilder;
-  int? time;
 
   @override
   State<DropDownWidget2> createState() => _MyStatefulWidgetState();
@@ -47,16 +37,16 @@ class _MyStatefulWidgetState extends State<DropDownWidget2> {
 
   @override
   Widget build(BuildContext context) {
-    dropdownValue ??= widget.chosenValue;
+    dropdownValue ??= widget.model.chosenValue;
     return LineWrapper(
-      isBeforeHeader: widget.isBeforeHeader,
+      isBeforeHeader: widget.model.isBeforeHeader,
       child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           textDirection: TextDirection.ltr,
           children: <Widget>[
-            NameWidgetDescription(width: InheritedJsonFormTheme.of(context).theme.dropDownWidthOfHeader, id: widget.id,
-                name: widget.name, description: widget.description,    dateBuilder: widget.dateBuilder,
-                time: widget.time),
+            NameWidgetDescription(width: InheritedJsonFormTheme.of(context).theme.dropDownWidthOfHeader, id: widget.model.id,
+                name: widget.model.name, description: widget.model.description,    dateBuilder: widget.dateBuilder,
+                time: widget.model.time),
             Container(
               alignment: Alignment.center,
               child: DropdownButton<String>(
@@ -86,12 +76,12 @@ class _MyStatefulWidgetState extends State<DropDownWidget2> {
                   setState(() {
                     dropdownValue = newValue!;
                     if(widget.onValueChanged!= null) {
-                      widget.onValueChanged!(widget.id, dropdownValue);
+                      widget.onValueChanged!(widget.model.id, dropdownValue);
                     }
                   });
                 },
                 selectedItemBuilder: (BuildContext context) {
-                  return widget.values.map((String value) {
+                  return widget.model.values.map((String value) {
                     return Center(
                       child: Text(
                         dropdownValue!,
@@ -101,7 +91,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget2> {
                   }).toList();
                 },
                 items:
-                    widget.values.map<DropdownMenuItem<String>>((String value) {
+                    widget.model.values.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),

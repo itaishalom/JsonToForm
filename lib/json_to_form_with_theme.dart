@@ -41,11 +41,11 @@ class JsonFormWithThemeBuilder{
      return this;
    }
 
-   WidgetParserFactory? _dynamicFactory;
-   JsonFormWithThemeBuilder setDynamicFactory(WidgetParserFactory dynamicFactory){
-     _dynamicFactory = dynamicFactory;
-     return this;
-   }
+   // WidgetParserFactory? _dynamicFactory;
+   // JsonFormWithThemeBuilder setDynamicFactory(WidgetParserFactory dynamicFactory){
+   //   _dynamicFactory = dynamicFactory;
+   //   return this;
+   // }
 
    Stream<Map<String, dynamic>>? _streamUpdates;
    JsonFormWithThemeBuilder setStreamUpdates(Stream<Map<String, dynamic>>? streamUpdates){
@@ -80,17 +80,19 @@ class JsonFormWithTheme extends StatefulWidget {
   JsonFormWithTheme._builder(JsonFormWithThemeBuilder builder):
         jsonWidgets = builder.jsonWidgets,
         onValueChanged=  builder._onValueChanged,
-        dynamicFactory= builder._dynamicFactory,
+        // dynamicFactory= builder._dynamicFactory,
         theme= builder._theme,
         streamUpdates= builder._streamUpdates,
         dateBuilder= builder._dateBuilderMethod,
-        _parsersCreateors = builder._parsers,super();
+        _parsersCreateors = builder._parsers,
+        super();
 
   final DateBuilderMethod? dateBuilder;
   final HashMap<String, ParserCreator> _parsersCreateors;
+  final List<Model> items = [];
   final OnValueChanged? onValueChanged;
-  final HashMap<int, WidgetParser> parsers = HashMap();
-  final WidgetParserFactory? dynamicFactory;
+  // final HashMap<int, WidgetParser> parsers = HashMap();
+  // final WidgetParserFactory? dynamicFactory;
 
   final Map<String, dynamic> jsonWidgets;
   final JsonFormTheme theme;
@@ -100,7 +102,7 @@ class JsonFormWithTheme extends StatefulWidget {
     Key? key,
     required this.jsonWidgets,
     this.onValueChanged,
-    this.dynamicFactory,
+    // this.dynamicFactory,
     this.theme = const DefaultTheme(),
     this.streamUpdates,
     this.dateBuilder,
@@ -111,16 +113,16 @@ class JsonFormWithTheme extends StatefulWidget {
 }
 
 class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
-  HashMap<String, WidgetParser> parsers = HashMap();
-  List<Widget> widgetsGlobal = [];
+  // HashMap<String, WidgetParser> parsers = HashMap();
+  // List<Widget> widgetsGlobal = [];
   late final StreamSubscription<Map<String, dynamic>>? _valueChange;
   final StreamController<DataClass> _onDataClassReady =
       StreamController<DataClass>();
 
 
   buildWidgetsFromJson() {
-    parsers = HashMap();
-    widgetsGlobal = [];
+    // parsers = HashMap();
+
     List<dynamic>? widgets = widget.jsonWidgets['widgets'];
     if (widgets == null) {
       throw const ParsingException("No widgets found");
@@ -140,46 +142,25 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
         }
         isBeforeHeader = typeTemp == "header";
       }
-      WidgetParser? tempParser;
 
       ParserCreator? parser  = widget._parsersCreateors[type];
-      if (parser != null) {
+
+      if (parser == null) {
+        throw ParsingException("Unknown type $type");
+      }
         try{
-          tempParser = parser.parseFromJson(widgetJson, widget.onValueChanged, isBeforeHeader, i, widget.dateBuilder);
+          Model item = parser.parseModel(widgetJson, isBeforeHeader);
+          if(widget.items.any((element) => element.id == item.id)){
+            throw ParsingException("Duplicate Id ${item.id}");
+          }
+          widget.items.add(item);
+
         } catch (e) {
           throw ParsingException("Bad $type format");
         }
-        createWidgetFromParser(tempParser);
-      }else if (widget.dynamicFactory != null) {
 
-        try {
-          tempParser = widget.dynamicFactory!.getWidgetParser(
-              type,
-              i,
-              widgetJson,
-              isBeforeHeader,
-              widget.onValueChanged,
-              widget.dateBuilder);
-          if (tempParser != null) {
-            createWidgetFromParser(tempParser);
-          }else{
-            throw ParsingException("Unknown type $type");
-          }
-        } catch (e) {
-          throw ParsingException("Unknown type $type");
-        }
-        throw ParsingException("Unknown type $type");
       }
     }
-  }
-
-  void createWidgetFromParser(WidgetParser tempParser) {
-    if (parsers.containsKey(tempParser.id)) {
-      throw ParsingException("Duplicate Id ${tempParser.id}");
-    }
-    parsers[tempParser.id] = tempParser;
-    widgetsGlobal.add(tempParser.getWidget(true));
-  }
 
   @override
   void initState() {
@@ -190,12 +171,23 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
   }
 
   late Stream<DataClass> dataClassStream;
-
+  // void _onRemoteValueChanged(Map<String, dynamic> values) {
+  //   for (String id in values.keys) {
+  //     if (parsers[id] != null) {
+  //       parsers[id]?.chosenValue = values[id];
+  //       parsers[id]?.time = DateTime.now().millisecondsSinceEpoch;
+  //       _onDataClassReady.add(DataClass(id: id, value: values[id]));
+  //     }
+  //   }
+  // }
   void _onRemoteValueChanged(Map<String, dynamic> values) {
-    for (String id in values.keys) {
-      if (parsers[id] != null) {
-        parsers[id]?.chosenValue = values[id];
-        parsers[id]?.time = DateTime.now().millisecondsSinceEpoch;
+    for (String id in values.keys) { //Todo : ask Itai :(
+      Model item = widget.items.firstWhere((element) => element.id == id,
+          orElse: () => EmptyModel());
+      if (item is EmptyModel) {
+
+      } else {
+
         _onDataClassReady.add(DataClass(id: id, value: values[id]));
       }
     }
@@ -235,9 +227,10 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
                       SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int index) {
-                            return widgetsGlobal[index];
+                            Model item = widget.items[index];
+                            return (widget._parsersCreateors[item.type]?? EmptyCreator()).createWidget(item, widget.onValueChanged,  widget.dateBuilder);
                           },
-                          childCount: widgetsGlobal.length,
+                          childCount: widget.items.length,
                         ),
                       )
                     ]),

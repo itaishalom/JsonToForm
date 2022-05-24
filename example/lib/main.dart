@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Stream<Map<String, dynamic>>? onValueChangeStream;
   final StreamController<Map<String, dynamic>> _onUserController = StreamController<Map<String, dynamic>>();
 
-  Map<String, WidgetParser> dynamics = {};
+  // Map<String, WidgetParser> dynamics = {};
 
   final Map<String, dynamic> json = {
     "widgets": [
@@ -96,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
         "id": "3",
         "name": "Blood Pressure with a long long long",
         "type": "edit_text",
-        "chosen_value": "ValAAAAAA",
+        "chosen_value": "A",
         "time": 1640260609562,
         "description": "mmHg - with a long description",
       },
@@ -155,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
         "id": "1003",
         "name": "Blood Pressure with a long long long",
         "type": "edit_text",
-        "chosen_value": "ValAAAAAA",
+        "chosen_value": "B",
         "time": 1640260609562,
         "description": "mmHg - with a long description",
       },
@@ -214,7 +214,7 @@ class _MyHomePageState extends State<MyHomePage> {
         "id": "2003",
         "name": "Blood Pressure with a long long long",
         "type": "edit_text",
-        "chosen_value": "ValAAAAAA",
+        "chosen_value": "c",
         "time": 1640260609562,
         "description": "mmHg - with a long description",
       },
