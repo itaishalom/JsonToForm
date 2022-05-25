@@ -9,11 +9,10 @@ import 'package:json_to_form_with_theme/exceptions/parsing_exception.dart';
 import 'package:json_to_form_with_theme/parsers/drop_down_parser.dart';
 import 'package:json_to_form_with_theme/parsers/edit_text_parser.dart';
 import 'package:json_to_form_with_theme/parsers/header_parser.dart';
+import 'package:json_to_form_with_theme/parsers/item_model.dart';
 import 'package:json_to_form_with_theme/parsers/parser_creator.dart';
 import 'package:json_to_form_with_theme/parsers/static_text_parser.dart';
 import 'package:json_to_form_with_theme/parsers/toggle_parser.dart';
-import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
-import 'package:json_to_form_with_theme/parsers/widget_parser_factory.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
 import 'package:sizer/sizer.dart';
@@ -40,12 +39,6 @@ class JsonFormWithThemeBuilder{
      _onValueChanged = onValueChanged;
      return this;
    }
-
-   // WidgetParserFactory? _dynamicFactory;
-   // JsonFormWithThemeBuilder setDynamicFactory(WidgetParserFactory dynamicFactory){
-   //   _dynamicFactory = dynamicFactory;
-   //   return this;
-   // }
 
    Stream<Map<String, dynamic>>? _streamUpdates;
    JsonFormWithThemeBuilder setStreamUpdates(Stream<Map<String, dynamic>>? streamUpdates){
@@ -76,33 +69,28 @@ class JsonFormWithThemeBuilder{
   }
 }
 class JsonFormWithTheme extends StatefulWidget {
+  final DateBuilderMethod? dateBuilder;
+  final HashMap<String, ParserCreator> _parsersCreateors;
+  final List<ItemModel> items = [];
+  final OnValueChanged? onValueChanged;
+  final Map<String, dynamic> jsonWidgets;
+  final JsonFormTheme theme;
+  final Stream<Map<String, dynamic>>? streamUpdates;
+
 
   JsonFormWithTheme._builder(JsonFormWithThemeBuilder builder):
         jsonWidgets = builder.jsonWidgets,
         onValueChanged=  builder._onValueChanged,
-        // dynamicFactory= builder._dynamicFactory,
         theme= builder._theme,
         streamUpdates= builder._streamUpdates,
         dateBuilder= builder._dateBuilderMethod,
         _parsersCreateors = builder._parsers,
         super();
 
-  final DateBuilderMethod? dateBuilder;
-  final HashMap<String, ParserCreator> _parsersCreateors;
-  final List<Model> items = [];
-  final OnValueChanged? onValueChanged;
-  // final HashMap<int, WidgetParser> parsers = HashMap();
-  // final WidgetParserFactory? dynamicFactory;
-
-  final Map<String, dynamic> jsonWidgets;
-  final JsonFormTheme theme;
-  final Stream<Map<String, dynamic>>? streamUpdates;
-
   JsonFormWithTheme._({
     Key? key,
     required this.jsonWidgets,
     this.onValueChanged,
-    // this.dynamicFactory,
     this.theme = const DefaultTheme(),
     this.streamUpdates,
     this.dateBuilder,
@@ -113,16 +101,14 @@ class JsonFormWithTheme extends StatefulWidget {
 }
 
 class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
-  // HashMap<String, WidgetParser> parsers = HashMap();
-  // List<Widget> widgetsGlobal = [];
   late final StreamSubscription<Map<String, dynamic>>? _valueChange;
+  late Stream<DataClass> dataClassStream;
+  bool ignoreRebuild = false;
+
   final StreamController<DataClass> _onDataClassReady =
       StreamController<DataClass>();
 
-
   buildWidgetsFromJson() {
-    // parsers = HashMap();
-
     List<dynamic>? widgets = widget.jsonWidgets['widgets'];
     if (widgets == null) {
       throw const ParsingException("No widgets found");
@@ -149,49 +135,35 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
         throw ParsingException("Unknown type $type");
       }
         try{
-          Model item = parser.parseModel(widgetJson, isBeforeHeader);
+          ItemModel item = parser.parseModel(widgetJson, isBeforeHeader);
           if(widget.items.any((element) => element.id == item.id)){
             throw ParsingException("Duplicate Id ${item.id}");
           }
           widget.items.add(item);
-
         } catch (e) {
           throw ParsingException("Bad $type format");
         }
-
       }
     }
 
   @override
   void initState() {
-
     _valueChange = widget.streamUpdates?.listen(_onRemoteValueChanged);
     dataClassStream = _onDataClassReady.stream.asBroadcastStream();
     super.initState();
   }
 
-  late Stream<DataClass> dataClassStream;
-  // void _onRemoteValueChanged(Map<String, dynamic> values) {
-  //   for (String id in values.keys) {
-  //     if (parsers[id] != null) {
-  //       parsers[id]?.chosenValue = values[id];
-  //       parsers[id]?.time = DateTime.now().millisecondsSinceEpoch;
-  //       _onDataClassReady.add(DataClass(id: id, value: values[id]));
-  //     }
-  //   }
-  // }
+
   void _onRemoteValueChanged(Map<String, dynamic> values) {
     for (String id in values.keys) { //Todo : ask Itai :(
-      Model item = widget.items.firstWhere((element) => element.id == id,
-          orElse: () => EmptyModel());
-      if (item is! EmptyModel) {
+      ItemModel item = widget.items.firstWhere((element) => element.id == id,
+          orElse: () => EmptyItemModel());
+      if (item is! EmptyItemModel) {
         item.updateValue(values[id]);
         _onDataClassReady.add(DataClass(id: id, value: values[id]));
       }
     }
   }
-
-  bool ignoreRebuild = false;
 
   @override
   void dispose() {
@@ -203,7 +175,6 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
   @override
   Widget build(BuildContext context) {
     if (!ignoreRebuild) {
-
       buildWidgetsFromJson();
     } else {}
     ignoreRebuild = false;
@@ -225,7 +196,7 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
                       SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int index) {
-                            Model item = widget.items[index];
+                            ItemModel item = widget.items[index];
                             return (widget._parsersCreateors[item.type]?? EmptyCreator()).createWidget(item, widget.onValueChanged,  widget.dateBuilder);
                           },
                           childCount: widget.items.length,

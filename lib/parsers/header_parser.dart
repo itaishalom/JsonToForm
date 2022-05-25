@@ -1,12 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import 'package:json_to_form_with_theme/parsers/edit_text_parser.dart';
 import 'package:json_to_form_with_theme/parsers/parser_creator.dart';
-import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
 import 'package:json_to_form_with_theme/widgets/header.dart';
-
 import '../json_to_form_with_theme.dart';
+import 'item_model.dart';
 
-class HeaderModel extends Model {
+class HeaderModel extends ItemModel {
   String name;
 
   HeaderModel.fromJson(Map<String, dynamic> json, String type,

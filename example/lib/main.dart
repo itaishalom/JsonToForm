@@ -3,12 +3,9 @@ import 'dart:math';
 
 
 import 'package:example/drop_down_parser2.dart';
-import 'package:example/widget_parser_factory.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
-import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
 import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
 import 'package:sizer/sizer.dart';
 

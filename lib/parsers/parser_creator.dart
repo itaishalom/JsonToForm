@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
-
+import 'package:json_to_form_with_theme/parsers/item_model.dart';
 import '../json_to_form_with_theme.dart';
-import 'edit_text_parser.dart';
 
-abstract class ParserCreator<M extends Model> {
+abstract class ParserCreator<M extends ItemModel> {
   String get type;
 
   M parseModel(Map<String, dynamic> json, bool isBeforeHeader);
@@ -12,18 +10,16 @@ abstract class ParserCreator<M extends Model> {
   Widget createWidget(M model, OnValueChanged? onValueChanged, DateBuilderMethod? dateBuilder);
 }
 
-class EmptyCreator extends ParserCreator<EmptyModel>{
+class EmptyCreator extends ParserCreator<EmptyItemModel>{
   @override
-  Widget createWidget(EmptyModel model, OnValueChanged? onValueChanged, DateBuilderMethod? dateBuilder) => SizedBox();
+  Widget createWidget(EmptyItemModel model, OnValueChanged? onValueChanged, DateBuilderMethod? dateBuilder) => SizedBox();
 
   @override
-  EmptyModel parseModel(Map<String, dynamic> json, bool isBeforeHeader) {
-    // TODO: implement parseModel
-    throw UnimplementedError();
+  EmptyItemModel parseModel(Map<String, dynamic> json, bool isBeforeHeader) {
+    return EmptyItemModel();
   }
 
   @override
-  // TODO: implement type
-  String get type => throw UnimplementedError();
+  String get type => emptyItemModelType;
 
 }
