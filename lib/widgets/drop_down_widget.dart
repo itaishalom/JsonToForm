@@ -12,34 +12,7 @@ import 'name_description_widget.dart';
 
 /// This is the stateful widget that the main application instantiates.
 class DropDownWidget extends StatefulWidget {
-  
-  // DropDownWidget(
-  //     {Key? key,
-  //     required this.name,
-  //     required this.id,
-  //     required this.values,
-  //     required this.description,
-  //     required this.onValueChanged,
-  //     required this.getUpdatedTime,
-  //     this.chosenValue,
-  //       required this.onTimeUpdated,
-  //     required this.getUpdatedValue,
-  //     this.dateBuilder,
-  //     this.time,
-  //     required this.isBeforeHeader})
-  //     : super(key: key);
-
-  // Function(int) onTimeUpdated;
-  // final Function getUpdatedTime;
-  // final Function getUpdatedValue;
-  // final String name;
-  // final String? description;
-  // final String id;
-  // final List<String> values;
-  // String? chosenValue;
-  // final bool isBeforeHeader;
   final Widget Function(int date, String id)? dateBuilder;
-  // int? time;
   final DropDownModel model;
   final OnValueChanged? onValueChanged;
   

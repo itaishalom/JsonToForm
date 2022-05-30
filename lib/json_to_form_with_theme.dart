@@ -70,7 +70,7 @@ class JsonFormWithThemeBuilder{
 }
 class JsonFormWithTheme extends StatefulWidget {
   final DateBuilderMethod? dateBuilder;
-  final HashMap<String, ParserCreator> _parsersCreateors;
+  final HashMap<String, ParserCreator> _creators;
   final List<ItemModel> items = [];
   final OnValueChanged? onValueChanged;
   final Map<String, dynamic> jsonWidgets;
@@ -84,7 +84,7 @@ class JsonFormWithTheme extends StatefulWidget {
         theme= builder._theme,
         streamUpdates= builder._streamUpdates,
         dateBuilder= builder._dateBuilderMethod,
-        _parsersCreateors = builder._parsers,
+        _creators = builder._parsers,
         super();
 
   JsonFormWithTheme._({
@@ -94,7 +94,7 @@ class JsonFormWithTheme extends StatefulWidget {
     this.theme = const DefaultTheme(),
     this.streamUpdates,
     this.dateBuilder,
-  }) :_parsersCreateors = HashMap(), super(key: key);
+  }) :_creators = HashMap(), super(key: key);
 
   @override
   _JsonFormWithThemeState createState() => _JsonFormWithThemeState();
@@ -129,7 +129,7 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
         isBeforeHeader = typeTemp == "header";
       }
 
-      ParserCreator? parser  = widget._parsersCreateors[type];
+      ParserCreator? parser  = widget._creators[type];
 
       if (parser == null) {
         throw ParsingException("Unknown type $type");
@@ -197,7 +197,7 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
                         delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int index) {
                             ItemModel item = widget.items[index];
-                            return (widget._parsersCreateors[item.type]?? EmptyCreator()).createWidget(item, widget.onValueChanged,  widget.dateBuilder);
+                            return (widget._creators[item.type]?? EmptyCreator()).createWidget(item, widget.onValueChanged,  widget.dateBuilder);
                           },
                           childCount: widget.items.length,
                         ),
