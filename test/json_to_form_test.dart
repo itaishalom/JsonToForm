@@ -28,7 +28,7 @@ void main() {
       };
       await tester.pumpWidget(
         MaterialApp(
-          home: Material(child: JsonFormWithTheme(jsonWidgets: json)),
+          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json).build()),
         ),
       );
       // Trigger a frame.
@@ -52,7 +52,7 @@ void main() {
       };
       await tester.pumpWidget(
         MaterialApp(
-          home: Material(child: JsonFormWithTheme(jsonWidgets: json)),
+          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json).build()),
         ),
       );
       // Trigger a frame.
@@ -77,7 +77,7 @@ void main() {
       };
       await tester.pumpWidget(
         MaterialApp(
-          home: Material(child: JsonFormWithTheme(jsonWidgets: json)),
+          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json).build()),
         ),
       );
       // Trigger a frame.
@@ -102,7 +102,7 @@ void main() {
       };
       await tester.pumpWidget(
         MaterialApp(
-          home: Material(child: JsonFormWithTheme(jsonWidgets: json)),
+          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json).build()),
         ),
       );
       await tester.pump();
@@ -133,7 +133,7 @@ void main() {
       };
       await tester.pumpWidget(
         MaterialApp(
-          home: Material(child: JsonFormWithTheme(jsonWidgets: json)),
+          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json).build()),
         ),
       );
       // Trigger a frame.
@@ -154,7 +154,7 @@ void main() {
       };
       await tester.pumpWidget(
         MaterialApp(
-          home: Material(child: JsonFormWithTheme(jsonWidgets: json)),
+          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json).build()),
         ),
       );
       // Trigger a frame.
@@ -176,10 +176,10 @@ void main() {
       };
       await tester.pumpWidget(
         MaterialApp(
-          home: Material(child: JsonFormWithTheme(jsonWidgets: json, onValueChanged: (String id, dynamic value){
+          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json).setOnValueChanged((String id, dynamic value){
             valueAfterChange = value;
             return Future.value(true);
-          },)),
+          }).build()),
         ),
       );
       // Trigger a frame.
@@ -209,10 +209,10 @@ void main() {
       };
       await tester.pumpWidget(
         MaterialApp(
-          home: Material(child: JsonFormWithTheme(jsonWidgets: json, onValueChanged: (String id, dynamic value){
+          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json).setOnValueChanged((String id, dynamic value){
             valueAfterChange = value;
             return Future.value(true);
-          },)),
+          }).build(),),
         ),
       );
       // Trigger a frame.
@@ -243,10 +243,10 @@ void main() {
       };
       await tester.pumpWidget(
         MaterialApp(
-          home: Material(child: JsonFormWithTheme(jsonWidgets: json, onValueChanged: (String id, dynamic value){
+          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json).setOnValueChanged((String id, dynamic value){
             valueAfterChange = value;
             return Future.value(true);
-          },)),
+          }).build(),),
         ),
       );
       // Trigger a frame.
@@ -279,7 +279,7 @@ void main() {
       };
       await tester.pumpWidget(
         MaterialApp(
-          home: Material(child: JsonFormWithTheme(jsonWidgets: json, streamUpdates: onValueChangeStream)),
+          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json).setStreamUpdates(onValueChangeStream).build()),
         ),
       );
       // Trigger a frame.
@@ -315,7 +315,7 @@ void main() {
       };
       await tester.pumpWidget(
         MaterialApp(
-          home: Material(child: JsonFormWithTheme(jsonWidgets: json, streamUpdates: onValueChangeStream)),
+          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json).setStreamUpdates(onValueChangeStream).build()),
         ),
       );
       // Trigger a frame.
@@ -351,7 +351,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Material(child: JsonFormWithTheme(jsonWidgets: json, streamUpdates: onValueChangeStream)),
+          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json).setStreamUpdates(onValueChangeStream).build()),
         ),
       );
       // Trigger a frame.
@@ -401,10 +401,13 @@ void main() {
     String valueAfterChange ="";
       await tester.pumpWidget(
         MaterialApp(
-          home: Material(child: JsonFormWithTheme(streamUpdates: onValueChangeStream, jsonWidgets: json, onValueChanged: (String id, dynamic value){
-            valueAfterChange = value;
-            return Future.value(true);
-          },)),
+          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json)
+              .setStreamUpdates(onValueChangeStream)
+              .setOnValueChanged((String id, dynamic value){
+                valueAfterChange = value;
+                return Future.value(true);
+            }).build()
+          ),
         ),
       );
       // Trigger a frame.
@@ -468,10 +471,13 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Material(child: JsonFormWithTheme(streamUpdates: onValueChangeStream, jsonWidgets: json, onValueChanged: (String id, dynamic value){
+          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json)
+              .setStreamUpdates(onValueChangeStream)
+              .setOnValueChanged((String id, dynamic value){
             valueAfterChange = value;
             return Future.value(true);
-          })),
+          }).build()
+          ),
         ),
       );
       await tester.pump();
@@ -602,10 +608,12 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Material(child: JsonFormWithTheme(streamUpdates: onValueChangeStream, jsonWidgets: json, onValueChanged: (String id, dynamic value){
+          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json)
+              .setStreamUpdates(onValueChangeStream)
+              .setOnValueChanged((String id, dynamic value){
             valueAfterChange = value;
             return Future.value(true);
-          })),
+          }).build()),
         ),
       );
       await tester.pump();

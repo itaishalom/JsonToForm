@@ -6,39 +6,22 @@ import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 import 'package:json_to_form_with_theme/widgets/line_wrapper.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
+import '../parsers/toggle_parser.dart';
 import 'name_description_widget.dart';
 
 class Toggle extends StatefulWidget {
+  final ToggleModel model;
   Toggle(
       {Key? key,
-      required this.name,
-      required this.id,
-      required this.values,
+        required this.model,
       required this.onValueChanged,
-      this.description,
       this.dateBuilder,
-      this.time,
-      required this.getUpdatedTime,
-      required this.onTimeUpdated,
-      required this.isBeforeHeader,
-      required this.getUpdatedValue,
-      this.chosenValue})
+      })
       : super(key: key);
 
-  Function(int) onTimeUpdated;
-
-  final Function getUpdatedTime;
-  final Function getUpdatedValue;
-  final String? description;
-  final String name;
-  final String id;
-  final List<String> values;
-  String? chosenValue;
   final OnValueChanged? onValueChanged;
-  final bool isBeforeHeader;
   final Widget Function(int date, String id)? dateBuilder;
-  int? time;
-
+  
   @override
   _ToggleState createState() => _ToggleState();
 }
@@ -61,17 +44,17 @@ class _ToggleState extends State<Toggle> {
 
   @override
   void initState() {
-    thisTime.value = widget.getUpdatedTime();
+    thisTime.value = widget.model.time;
     stringToIndex();
 
     super.initState();
   }
 
   stringToIndex() {
-    if (widget.getUpdatedValue() == null || widget.getUpdatedValue()!.isEmpty) {
+    if (widget.model.chosenValue == null || widget.model.chosenValue!.isEmpty) {
       updatedIndex = null;
     } else {
-      updatedIndex = widget.values.indexOf(widget.getUpdatedValue()!);
+      updatedIndex = widget.model.values.indexOf(widget.model.chosenValue!);
       if (updatedIndex == -1) {
         updatedIndex = null;
       }
@@ -85,10 +68,10 @@ class _ToggleState extends State<Toggle> {
     if (forceRefresh) {
       forceRefresh = false;
       stringToIndex();
-      thisTime.value = widget.getUpdatedTime();
+      thisTime.value = widget.model.time;
     }
     return LineWrapper(
-      isBeforeHeader: widget.isBeforeHeader,
+      isBeforeHeader: widget.model.isBeforeHeader,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -98,10 +81,10 @@ class _ToggleState extends State<Toggle> {
               valueListenable: thisTime,
               builder: (context, time, _) {
                 return NameWidgetDescription(
-                  name: widget.name,
-                  id: widget.id,
+                  name: widget.model.name,
+                  id: widget.model.id,
                   width: InheritedJsonFormTheme.of(context).theme.toggleWidthOfHeader,
-                  description: widget.description,
+                  description: widget.model.description,
                   dateBuilder: widget.dateBuilder,
                   time: time,
                 );
@@ -119,16 +102,16 @@ class _ToggleState extends State<Toggle> {
             activeFgColor: InheritedJsonFormTheme.of(context).theme.toggleActiveTextColor,
             inactiveBgColor: InheritedJsonFormTheme.of(context).theme.toggleInactiveColor,
             inactiveFgColor: InheritedJsonFormTheme.of(context).theme.toggleInactiveTextColor,
-            totalSwitches: widget.values.length,
-            labels: widget.values,
+            totalSwitches: widget.model.values.length,
+            labels: widget.model.values,
             onToggle: (index) async {
               if (widget.onValueChanged != null) {
                 bool res = false;
                 updatedIndex = index;
-                res = await widget.onValueChanged!(widget.id, index != null ? widget.values[index] : index);
+                res = await widget.onValueChanged!(widget.model.id, index != null ? widget.model.values[index] : index);
                 if (res) {
                   thisTime.value = DateTime.now().millisecondsSinceEpoch;
-                  widget.onTimeUpdated(thisTime.value!);
+                  widget.model.time = thisTime.value!;
                 }
               }
             },
@@ -139,7 +122,7 @@ class _ToggleState extends State<Toggle> {
   }
 
   void _onRemoteValueChanged(DataClass event) {
-    if (event.id != widget.id) {
+    if (event.id != widget.model.id) {
       return;
     }
     if (mounted) {
@@ -147,12 +130,12 @@ class _ToggleState extends State<Toggle> {
         if (event.value == null) {
           updatedIndex = null;
         } else {
-          updatedIndex = widget.values.indexOf(event.value);
+          updatedIndex = widget.model.values.indexOf(event.value);
           if (updatedIndex == -1) {
             updatedIndex = null;
           }
         }
-        thisTime.value = widget.getUpdatedTime();
+        thisTime.value = widget.model.time;
       });
     }
   }

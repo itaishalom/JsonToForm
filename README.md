@@ -61,36 +61,41 @@ You can declare a Json as:
 And easily use the basic Theme (or edit it)
 
 ```dart
-@override
-    @override
-    Widget build(BuildContext context) {
+ @override
+ Widget build(BuildContext context) {
+  return Sizer(
+    builder: (BuildContext context, Orientation orientation, DeviceType deviceType) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Floating Action Button'),
         ),
-        body: JsonFormWithTheme(
-            jsonWidgets: widget.json,
-            dynamicFactory: MyWidgetParserFactory(),
-            streamUpdates: onValueChangeStream,
-            onValueChanged: (String d, dynamic s) {
-              print("Update id $d to value $s");
-            },
-            theme: const DefaultTheme()),
-        /*form?.getForm(context),*/
+        body: RefreshIndicator(
+          onRefresh: _refresh,
+          child: JsonFormWithThemeBuilder(
+              jsonWidgets: json)
+              .setDateBuilderMethod(dateBuilder)
+              .registerComponent(DropDownParser2Creator())
+          // .setDynamicFactory(MyWidgetParserFactory())
+              .setStreamUpdates(onValueChangeStream)
+              .setOnValueChanged((String d, dynamic s) async {
+            print("Update id $d to value $s");
+            await Future.delayed(const Duration(seconds: 1));
+            return Future.value(true);
+          })
+              .setTheme(const DefaultTheme()).build(),
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             counter++;
             if (counter % 4 == 1) {
               toggle++;
-              _onUserController.add({}..["1"] = toggle % 2); // toggle
+              _onUserController.add({}..["1"] = toggleList[toggle % 2]); // toggle
             }
             if (counter % 4 == 2) {
-              _onUserController.add({}..["2"] =
-                  "updated" + Random().nextInt(10).toString()); // toggle
+              _onUserController.add({}..["2"] = "updated" + Random().nextInt(10).toString()); // toggle
             }
             if (counter % 4 == 3) {
-              _onUserController.add({}..["3"] =
-                  "editUp" + Random().nextInt(10).toString()); // toggle
+              _onUserController.add({}..["3"] = "Val" + Random().nextInt(100000).toString()); // toggle
             }
             if (counter % 4 == 0) {
               _onUserController.add({}..["4"] = list[toggle % 2]); // toggle
@@ -100,7 +105,9 @@ And easily use the basic Theme (or edit it)
           backgroundColor: Colors.green,
         ),
       );
-    }
+    },
+  );
+}
 ```
 <p align="center">
   <img src="https://raw.githubusercontent.com/itaishalom/JsonToForm/main/screen_shot.jpg" width="350">

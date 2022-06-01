@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
+import 'package:json_to_form_with_theme/parsers/static_text_parser.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 import 'package:sizer/sizer.dart';
 
@@ -10,25 +11,16 @@ import 'line_wrapper.dart';
 import 'name_description_widget.dart';
 
 class StaticTextValue extends StatefulWidget {
+  final StaticTextModel model;
   StaticTextValue(
       {Key? key,
-      required this.name,
-      required this.id,
-      required this.isBeforeHeader,
-      this.description,
+        required this.model,
       this.dateBuilder,
-      this.time,
-      required this.chosenValue})
+      })
       : super(key: key) {
   }
 
-  final String? description;
-  final String name;
-  final String id;
-  String chosenValue;
-  final bool isBeforeHeader;
   final Widget Function(int date, String id)? dateBuilder;
-  int? time;
 
   @override
   _StaticTextValueState createState() => _StaticTextValueState();
@@ -40,8 +32,8 @@ class _StaticTextValueState extends State<StaticTextValue> {
   bool forceRefresh = false;
   @override
   void initState() {
-    value = widget.chosenValue;
-    thisTime = widget.time;
+    value = widget.model.chosenValue;
+    thisTime = widget.model.time;
     super.initState();
   }
   @override
@@ -57,7 +49,7 @@ class _StaticTextValueState extends State<StaticTextValue> {
   }
 
   void _onRemoteValueChanged(DataClass event) {
-    if (event.id == widget.id && mounted) {
+    if (event.id == widget.model.id && mounted) {
       setState(() {
         value = event.value ?? "";
         thisTime = DateTime
@@ -72,20 +64,20 @@ class _StaticTextValueState extends State<StaticTextValue> {
   Widget build(BuildContext context) {
     if(forceRefresh){
       forceRefresh = false;
-      value = widget.chosenValue;
-      thisTime = widget.time;
+      value = widget.model.chosenValue;
+      thisTime = widget.model.time;
     }
     return LineWrapper(
-      isBeforeHeader: widget.isBeforeHeader,
+      isBeforeHeader: widget.model.isBeforeHeader,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         textDirection: TextDirection.ltr,
         children: <Widget>[
           NameWidgetDescription(
             width: InheritedJsonFormTheme.of(context).theme.staticTextWidthOfHeader,
-              name: widget.name,
-              id: widget.id,
-              description: widget.description,
+              name: widget.model.name,
+              id: widget.model.id,
+              description: widget.model.description,
               dateBuilder: widget.dateBuilder,
               time: thisTime),
           Container(

@@ -150,3 +150,7 @@ Static value text alignment
 
 ## 3.0.6
 Toggle switch update - added activeToggleBorder.
+
+## 4.0.0
+Register new widgets to parse with registerComponent.
+ 

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:json_to_form_with_theme/parsers/edit_text_parser.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 
 import '../json_to_form_with_theme.dart';
@@ -10,37 +11,16 @@ import 'line_wrapper.dart';
 import 'name_description_widget.dart';
 
 class EditTextValue extends StatefulWidget {
-  final String? description;
-  final String name;
-  final String id;
-  String chosenValue;
-  final bool isBeforeHeader;
-  final OnValueChanged? onValueChanged;
-  final Function getUpdatedValue;
-  final Function getUpdatedTime;
-  final Widget Function(int date, String id)? dateBuilder;
-  int? time;
-  final bool isReadOnly;
-  final bool long;
-  Function(int) onTimeUpdated;
+  
+ final OnValueChanged? onValueChanged;
 
+  final Widget Function(int date, String id)? dateBuilder;
+  EditTextValueModel model;
   EditTextValue({
     Key? key,
-    required this.name,
-    required this.onTimeUpdated,
-    required this.id,
-    required this.isBeforeHeader,
-    this.description,
-    required this.getUpdatedTime,
+    required  this.model,
     required this.onValueChanged,
-    required this.getUpdatedValue,
-    required this.chosenValue,
-
-    this.isReadOnly = false,
-    this.long = false,
     this.dateBuilder,
-
-    this.time,
   }) : super(key: key);
 
   @override
@@ -71,10 +51,10 @@ class _EditTextValueState extends State<EditTextValue> {
 
   @override
   void initState() {
-    notCutValue = widget.getUpdatedValue();
-    thisTime.value = widget.getUpdatedTime();
-    initialText = widget.getUpdatedValue();
-    if (!widget.isReadOnly) {
+    notCutValue = widget.model.chosenValue;
+    thisTime.value = widget.model.time;
+    initialText = widget.model.chosenValue;
+    if (!widget.model.isReadOnly) {
       myFocusNode = FocusNode();
       myFocusNode.addListener(() {
         if (!myFocusNode.hasFocus) {
@@ -109,7 +89,7 @@ class _EditTextValueState extends State<EditTextValue> {
   }
 
   bool shouldCutLight() {
-    return !widget.long && InheritedJsonFormTheme.of(context).theme.overflow;
+    return !widget.model.long && InheritedJsonFormTheme.of(context).theme.overflow;
   }
 
   bool shouldCut(String text) {
@@ -121,11 +101,11 @@ class _EditTextValueState extends State<EditTextValue> {
   }
 
   initTextController() {
-    if (shouldCut(widget.getUpdatedValue())) {
+    if (shouldCut(widget.model.chosenValue)) {
       _controller ??=
-          TextEditingController(text: generateDottedText(widget.getUpdatedValue()));
+          TextEditingController(text: generateDottedText(widget.model.chosenValue));
     } else {
-      _controller ??= TextEditingController(text: (widget.getUpdatedValue()));
+      _controller ??= TextEditingController(text: (widget.model.chosenValue));
     }
     _controller?.addListener(notifyValue);
   }
@@ -136,7 +116,7 @@ class _EditTextValueState extends State<EditTextValue> {
   bool setPositionRemote = false;
 
   void _onRemoteValueChanged(DataClass event) {
-    if(event.id != widget.id){
+    if(event.id != widget.model.id){
       return;
     }
     updateFromRemote = true;
@@ -151,13 +131,23 @@ class _EditTextValueState extends State<EditTextValue> {
         }
         _controller?.selection = TextSelection.fromPosition(
             TextPosition(offset: _controller!.text.length));
-        thisTime.value = widget.getUpdatedTime();
+        thisTime.value = widget.model.time;
         initialText = _controller?.text;
       });
     }
   }
 
   bool controllerLoaded = false;
+  Future<bool> changeValue(String id, dynamic value)
+         async{
+        if (widget.model.chosenValue != value) {
+          widget.model.chosenValue = value;
+          if (widget.onValueChanged != null) {
+            return await widget.onValueChanged!(id, value);
+          }
+        }
+        return false;
+  }
 
   Future<void> notifyValue() async {
     if (cutIgnore) {
@@ -184,7 +174,7 @@ class _EditTextValueState extends State<EditTextValue> {
     }
     initialText = _controller?.text;
     if (widget.onValueChanged != null &&
-        (!firstTime || _controller!.text != widget.getUpdatedValue())) {
+        (!firstTime || _controller!.text != widget.model.chosenValue)) {
       if (_debounce?.isActive ?? false) {
         _debounce?.cancel();
       }
@@ -192,21 +182,21 @@ class _EditTextValueState extends State<EditTextValue> {
         _debounce = Timer(Duration(milliseconds: debounceTime!), () async {
           if (widget.onValueChanged != null) {
             bool res =
-                await widget.onValueChanged!(widget.id, _controller!.text);
+                await changeValue(widget.model.id, _controller!.text);
             if (res) {
               thisTime.value = DateTime
                   .now()
                   .millisecondsSinceEpoch;
-              widget.onTimeUpdated(thisTime.value!);
+              widget.model.time = thisTime.value!;
             }
           }
         });
       } else {
-        bool res = await widget.onValueChanged!(widget.id, _controller!.text);
+        bool res = await changeValue(widget.model.id, _controller!.text);
 
         if (res) {
           thisTime.value = DateTime.now().millisecondsSinceEpoch;
-          widget.onTimeUpdated(thisTime.value!);
+          widget.model.time = thisTime.value!;
         }
       }
     }
@@ -218,7 +208,7 @@ class _EditTextValueState extends State<EditTextValue> {
     // Clean up the controller when the widget is removed from the widget tree.
     // This also removes the _printLatestValue listener.
     _controller?.dispose();
-    if (!widget.isReadOnly) {
+    if (!widget.model.isReadOnly) {
       myFocusNode.dispose();
     }
     super.dispose();
@@ -226,16 +216,16 @@ class _EditTextValueState extends State<EditTextValue> {
 
 
   void startController() {
-    if (!widget.isReadOnly) {
-      if (shouldCut(widget.getUpdatedValue())) {
-        notCutValue = widget.getUpdatedValue();
-        _controller!.text = generateDottedText(widget.getUpdatedValue());
+    if (!widget.model.isReadOnly) {
+      if (shouldCut(widget.model.chosenValue)) {
+        notCutValue = widget.model.chosenValue;
+        _controller!.text = generateDottedText(widget.model.chosenValue);
       } else {
-        notCutValue = widget.getUpdatedValue();
+        notCutValue = widget.model.chosenValue;
         updateFromRemote = true;
-        _controller!.text = (widget.getUpdatedValue());
+        _controller!.text = (widget.model.chosenValue);
       }
-      thisTime.value = widget.getUpdatedTime();
+      thisTime.value = widget.model.time;
     }
     setPositionRemote = true;
     _controller?.selection = TextSelection.fromPosition(
@@ -247,7 +237,7 @@ class _EditTextValueState extends State<EditTextValue> {
 
   requestFocus(BuildContext context) {
     //WidgetsBinding.instance?.addPostFrameCallback((_) => _controller?.text = (_controller!.text));
-    if (!widget.isReadOnly) {
+    if (!widget.model.isReadOnly) {
       FocusScope.of(context).requestFocus(myFocusNode);
       setState(() {});
     }
@@ -263,32 +253,32 @@ class _EditTextValueState extends State<EditTextValue> {
     if (forceRefresh) {
       forceRefresh = false;
       startController();
-      thisTime.value = widget.getUpdatedTime();
+      thisTime.value = widget.model.time;
     }
     Widget text = Container(
-        margin: widget.long
+        margin: widget.model.long
             ? InheritedJsonFormTheme.of(context).theme.editTextLongMargins
             : InheritedJsonFormTheme.of(context).theme.editTextMargins,
         child: TextField(
           onTap: () => requestFocus(context),
-          focusNode: widget.isReadOnly ? null : myFocusNode,
+          focusNode: widget.model.isReadOnly ? null : myFocusNode,
           autofocus: false,
           clipBehavior: Clip.antiAlias,
-          readOnly: widget.isReadOnly,
-          maxLines: widget.long ? 10 : 1,
+          readOnly: widget.model.isReadOnly,
+          maxLines: widget.model.long ? 10 : 1,
           minLines: 1,
-          keyboardType: widget.long
+          keyboardType: widget.model.long
               ? InheritedJsonFormTheme.of(context).theme.keyboardTypeLong
               : InheritedJsonFormTheme.of(context).theme.keyboardTypeShort,
-          inputFormatters: widget.long
+          inputFormatters: widget.model.long
               ? []
               : [
                   LengthLimitingTextInputFormatter(12),
                 ],
-          textAlign: widget.long ? TextAlign.start : TextAlign.center,
+          textAlign: widget.model.long ? TextAlign.start : TextAlign.center,
           obscureText: false,
           controller: _controller,
-          style: !widget.isReadOnly
+          style: !widget.model.isReadOnly
               ? (myFocusNode.hasFocus
                   ? InheritedJsonFormTheme.of(context).theme.editTextStyleFocus
                   : InheritedJsonFormTheme.of(context).theme.editTextStyle)
@@ -296,7 +286,7 @@ class _EditTextValueState extends State<EditTextValue> {
           cursorColor:
               InheritedJsonFormTheme.of(context).theme.editTextCursorColor,
           //
-          decoration: widget.isReadOnly
+          decoration: widget.model.isReadOnly
               ? InheritedJsonFormTheme.of(context).theme.inputDecorationReadOnly
               : InheritedJsonFormTheme.of(context).theme.inputDecoration,
         ));
@@ -306,18 +296,18 @@ class _EditTextValueState extends State<EditTextValue> {
           valueListenable: thisTime,
           builder: (context, time, _) {
             return   NameWidgetDescription(
-              name: widget.name,
-              id: widget.id,
+              name: widget.model.name,
+              id: widget.model.id,
               width: InheritedJsonFormTheme.of(context).theme.editTextWidthOfHeader,
-              description: widget.description,
+              description: widget.model.description,
               dateBuilder: widget.dateBuilder,
               time: time,
-              componentSameLine: !widget.long,
+              componentSameLine: !widget.model.long,
             );
           })
     ,
     ];
-    if (widget.long) {
+    if (widget.model.long) {
       innerWidgets.add(text);
     } else {
       innerWidgets.add(SizedBox(
@@ -326,8 +316,8 @@ class _EditTextValueState extends State<EditTextValue> {
           child: text));
     }
     return LineWrapper(
-      isBeforeHeader: widget.isBeforeHeader,
-      child: widget.long
+      isBeforeHeader: widget.model.isBeforeHeader,
+      child: widget.model.long
           ? Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,

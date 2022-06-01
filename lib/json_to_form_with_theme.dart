@@ -9,51 +9,106 @@ import 'package:json_to_form_with_theme/exceptions/parsing_exception.dart';
 import 'package:json_to_form_with_theme/parsers/drop_down_parser.dart';
 import 'package:json_to_form_with_theme/parsers/edit_text_parser.dart';
 import 'package:json_to_form_with_theme/parsers/header_parser.dart';
+import 'package:json_to_form_with_theme/parsers/item_model.dart';
+import 'package:json_to_form_with_theme/parsers/parser_creator.dart';
 import 'package:json_to_form_with_theme/parsers/static_text_parser.dart';
 import 'package:json_to_form_with_theme/parsers/toggle_parser.dart';
-import 'package:json_to_form_with_theme/parsers/widget_parser.dart';
-import 'package:json_to_form_with_theme/parsers/widget_parser_factory.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
 import 'package:sizer/sizer.dart';
 
 typedef OnValueChanged = Future<bool> Function(String id, dynamic value);
+typedef DateBuilderMethod =  Widget Function(int date, String id);
+class JsonFormWithThemeBuilder{
+   Map<String, dynamic> jsonWidgets;
 
+   JsonFormTheme _theme = DefaultTheme();
+   JsonFormWithThemeBuilder setTheme(JsonFormTheme theme){
+     _theme = theme;
+     return this;
+   }
+   DateBuilderMethod? _dateBuilderMethod;
+   JsonFormWithThemeBuilder setDateBuilderMethod(DateBuilderMethod dateBuilder){
+     _dateBuilderMethod = dateBuilder;
+     return this;
+   }
+
+   OnValueChanged? _onValueChanged;
+
+   JsonFormWithThemeBuilder setOnValueChanged(OnValueChanged onValueChanged){
+     _onValueChanged = onValueChanged;
+     return this;
+   }
+
+   Stream<Map<String, dynamic>>? _streamUpdates;
+   JsonFormWithThemeBuilder setStreamUpdates(Stream<Map<String, dynamic>>? streamUpdates){
+     _streamUpdates = streamUpdates;
+     return this;
+   }
+
+   JsonFormWithThemeBuilder({required this.jsonWidgets});
+
+   final HashMap<String, ParserCreator> _parsers = HashMap();
+
+   JsonFormWithThemeBuilder registerComponent(ParserCreator parser){
+     _parsers[parser.type] =  parser;
+     return this;
+   }
+
+   _registerComponents(){
+     registerComponent(ToggleParserCreator());
+     registerComponent(HeaderParserCreator());
+     registerComponent(StaticTextParserCreator());
+     registerComponent(DropDownParserCreator());
+     registerComponent(EditTextParserCreator());
+   }
+
+  JsonFormWithTheme build() {
+    _registerComponents();
+    return JsonFormWithTheme._builder(this);
+  }
+}
 class JsonFormWithTheme extends StatefulWidget {
-  final Widget Function(int date, String id)? dateBuilder;
-
+  final DateBuilderMethod? dateBuilder;
+  final HashMap<String, ParserCreator> _creators;
+  final List<ItemModel> items = [];
   final OnValueChanged? onValueChanged;
-  final HashMap<int, WidgetParser> parsers = HashMap();
-  final WidgetParserFactory? dynamicFactory;
-
   final Map<String, dynamic> jsonWidgets;
   final JsonFormTheme theme;
   final Stream<Map<String, dynamic>>? streamUpdates;
 
-  JsonFormWithTheme({
+
+  JsonFormWithTheme._builder(JsonFormWithThemeBuilder builder):
+        jsonWidgets = builder.jsonWidgets,
+        onValueChanged=  builder._onValueChanged,
+        theme= builder._theme,
+        streamUpdates= builder._streamUpdates,
+        dateBuilder= builder._dateBuilderMethod,
+        _creators = builder._parsers,
+        super();
+
+  JsonFormWithTheme._({
     Key? key,
     required this.jsonWidgets,
     this.onValueChanged,
-    this.dynamicFactory,
     this.theme = const DefaultTheme(),
     this.streamUpdates,
     this.dateBuilder,
-  }) : super(key: key);
+  }) :_creators = HashMap(), super(key: key);
 
   @override
   _JsonFormWithThemeState createState() => _JsonFormWithThemeState();
 }
 
 class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
-  HashMap<String, WidgetParser> parsers = HashMap();
-  List<Widget> widgetsGlobal = [];
   late final StreamSubscription<Map<String, dynamic>>? _valueChange;
+  late Stream<DataClass> dataClassStream;
+  bool ignoreRebuild = false;
+
   final StreamController<DataClass> _onDataClassReady =
       StreamController<DataClass>();
 
   buildWidgetsFromJson() {
-    parsers = HashMap();
-    widgetsGlobal = [];
     List<dynamic>? widgets = widget.jsonWidgets['widgets'];
     if (widgets == null) {
       throw const ParsingException("No widgets found");
@@ -73,77 +128,23 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
         }
         isBeforeHeader = typeTemp == "header";
       }
-      WidgetParser? tempParser;
 
-      switch (type) {
-        case "toggle":
-          try {
-            tempParser = ToggleParser.fromJson(widgetJson,
-                widget.onValueChanged, isBeforeHeader, i, widget.dateBuilder);
-          } catch (e) {
-            throw const ParsingException("Bad toggle format");
-          }
-          break;
-        case "header":
-          try {
-            tempParser = (HeaderParser.fromJson(widgetJson, i));
-          } catch (e) {
-            throw const ParsingException("Bad header format");
-          }
-          break;
-        case "static_text":
-          try {
-            tempParser = (StaticTextParser.fromJson(widgetJson,
-                widget.onValueChanged, isBeforeHeader, i, widget.dateBuilder));
-          } catch (e) {
-            throw const ParsingException("Bad static_text format");
-          }
-          break;
-        case "drop_down":
-          try {
-            tempParser = (DropDownParser.fromJson(widgetJson,
-                widget.onValueChanged, isBeforeHeader, i, widget.dateBuilder));
-          } catch (e) {
-            throw const ParsingException("Bad drop_down format");
-          }
-          break;
-        case "edit_text":
-          try {
-            tempParser = (EditTextParser.fromJson(widgetJson,
-                widget.onValueChanged, isBeforeHeader, i, widget.dateBuilder));
-          } catch (e) {
-            throw const ParsingException("Bad edit_text format");
-          }
-          break;
-        default:
-          if (widget.dynamicFactory != null) {
-            try {
-              tempParser = widget.dynamicFactory!.getWidgetParser(
-                  type,
-                  i,
-                  widgetJson,
-                  isBeforeHeader,
-                  widget.onValueChanged,
-                  widget.dateBuilder);
-              if (tempParser == null) {
-                throw ParsingException("Unknown type $type");
-              }
-            } catch (e) {
-              throw ParsingException("Unknown type $type");
-            }
-          } else {
-            throw ParsingException("Unknown type $type");
-          }
-          break;
-      }
+      ParserCreator? parser  = widget._creators[type];
 
-      if (parsers.containsKey(tempParser.id)) {
-        throw ParsingException("Duplicate Id ${tempParser.id}");
+      if (parser == null) {
+        throw ParsingException("Unknown type $type");
       }
-      parsers[tempParser.id] = tempParser;
-      widgetsGlobal.add(tempParser.getWidget(true));
+        try{
+          ItemModel item = parser.parseModel(widgetJson, isBeforeHeader);
+          if(widget.items.any((element) => element.id == item.id)){
+            throw ParsingException("Duplicate Id ${item.id}");
+          }
+          widget.items.add(item);
+        } catch (e) {
+          throw ParsingException("Bad $type format");
+        }
+      }
     }
-  }
 
   @override
   void initState() {
@@ -152,19 +153,17 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
     super.initState();
   }
 
-  late Stream<DataClass> dataClassStream;
 
   void _onRemoteValueChanged(Map<String, dynamic> values) {
-    for (String id in values.keys) {
-      if (parsers[id] != null) {
-        parsers[id]?.chosenValue = values[id];
-        parsers[id]?.time = DateTime.now().millisecondsSinceEpoch;
+    for (String id in values.keys) { //Todo : ask Itai :(
+      ItemModel item = widget.items.firstWhere((element) => element.id == id,
+          orElse: () => EmptyItemModel());
+      if (item is! EmptyItemModel) {
+        item.updateValue(values[id]);
         _onDataClassReady.add(DataClass(id: id, value: values[id]));
       }
     }
   }
-
-  bool ignoreRebuild = false;
 
   @override
   void dispose() {
@@ -197,9 +196,10 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
                       SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int index) {
-                            return widgetsGlobal[index];
+                            ItemModel item = widget.items[index];
+                            return (widget._creators[item.type]?? EmptyCreator()).createWidget(item, widget.onValueChanged,  widget.dateBuilder);
                           },
-                          childCount: widgetsGlobal.length,
+                          childCount: widget.items.length,
                         ),
                       )
                     ]),
