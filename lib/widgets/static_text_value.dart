@@ -69,36 +69,39 @@ class _StaticTextValueState extends State<StaticTextValue> {
     }
     return LineWrapper(
       isBeforeHeader: widget.model.isBeforeHeader,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        textDirection: TextDirection.ltr,
-        children: <Widget>[
-          NameWidgetDescription(
-            width: InheritedJsonFormTheme.of(context).theme.staticTextWidthOfHeader,
-              name: widget.model.name,
-              id: widget.model.id,
-              description: widget.model.description,
-              dateBuilder: widget.dateBuilder,
-              time: thisTime),
-          Container(
-            width: InheritedJsonFormTheme.of(context)
-                .theme
-                .staticValueWidth.w,
-            decoration: InheritedJsonFormTheme.of(context)
-                .theme
-                .staticContainerDecoration,
-            child: Padding(
-              //
-              padding:
-                  InheritedJsonFormTheme.of(context).theme.staticTextPadding,
-              child: Text(
-                value,
-                textAlign: InheritedJsonFormTheme.of(context).theme.staticTextValueAlign,
-                style: InheritedJsonFormTheme.of(context).theme.staticTextStyle,
+      child: Container(
+        constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          textDirection: TextDirection.ltr,
+          children: <Widget>[
+            NameWidgetDescription(
+              width: InheritedJsonFormTheme.of(context).theme.staticTextWidthOfHeader,
+                name: widget.model.name,
+                id: widget.model.id,
+                description: widget.model.description,
+                dateBuilder: widget.dateBuilder,
+                time: thisTime),
+            Container(
+              width: InheritedJsonFormTheme.of(context)
+                  .theme
+                  .staticValueWidth.w,
+              decoration: InheritedJsonFormTheme.of(context)
+                  .theme
+                  .staticContainerDecoration,
+              child: Padding(
+                //
+                padding:
+                    InheritedJsonFormTheme.of(context).theme.staticTextPadding,
+                child: Text(
+                  value,
+                  textAlign: InheritedJsonFormTheme.of(context).theme.staticTextValueAlign,
+                  style: InheritedJsonFormTheme.of(context).theme.staticTextStyle,
+                ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

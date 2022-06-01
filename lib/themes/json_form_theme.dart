@@ -62,6 +62,7 @@ abstract class JsonFormTheme {
       required this.dropDownIcon,
       required this.underLineWidget,
       required this.nameTextStyle,
+      required this.itemMinHeight,
       required this.nameContainerPadding,
       required this.nameContainerDecoration,
       required this.descriptionTextStyle,
@@ -92,6 +93,8 @@ abstract class JsonFormTheme {
       this.mainAxisAlignmentOfName = MainAxisAlignment.start});
 
   /// Global container params///
+
+  final double itemMinHeight;
 
   final EdgeInsets nameContainerPadding;
 
@@ -254,7 +257,7 @@ class DefaultTheme extends JsonFormTheme {
         top: BorderSide.none,
         left: BorderSide.none,
         right: BorderSide.none,
-        bottom: BorderSide(width: 0.0, color: Color(0xFF8233F)),
+        bottom: BorderSide(width: 2.0, color: Color(0xFF8233F)),
       )),
       BoxDecoration linePaDecorationAboveHeader = const BoxDecoration(
           border: Border(
@@ -308,6 +311,7 @@ class DefaultTheme extends JsonFormTheme {
             bottom: BorderSide.none,
           ))})
       : super(
+            itemMinHeight: 190,
             staticValueWidth: 20,
             dropDownWith: 30,
             overflow: true,

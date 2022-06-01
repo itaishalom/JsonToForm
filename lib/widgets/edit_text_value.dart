@@ -259,6 +259,7 @@ class _EditTextValueState extends State<EditTextValue> {
         margin: widget.model.long
             ? InheritedJsonFormTheme.of(context).theme.editTextLongMargins
             : InheritedJsonFormTheme.of(context).theme.editTextMargins,
+        constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight),
         child: TextField(
           onTap: () => requestFocus(context),
           focusNode: widget.model.isReadOnly ? null : myFocusNode,

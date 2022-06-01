@@ -72,51 +72,54 @@ class _ToggleState extends State<Toggle> {
     }
     return LineWrapper(
       isBeforeHeader: widget.model.isBeforeHeader,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        textDirection: TextDirection.ltr,
-        children: <Widget>[
-          ValueListenableBuilder<int?>(
-              valueListenable: thisTime,
-              builder: (context, time, _) {
-                return NameWidgetDescription(
-                  name: widget.model.name,
-                  id: widget.model.id,
-                  width: InheritedJsonFormTheme.of(context).theme.toggleWidthOfHeader,
-                  description: widget.model.description,
-                  dateBuilder: widget.dateBuilder,
-                  time: time,
-                );
-              }),
-          ToggleSwitch(
-            activeBorders: InheritedJsonFormTheme.of(context).theme.activeToggleBorder !=
-                null?[InheritedJsonFormTheme.of(context).theme.activeToggleBorder] : null,
-            doubleTapDisable: true,
-            minWidth: InheritedJsonFormTheme.of(context).theme.toggleMinWidth,
-            minHeight: InheritedJsonFormTheme.of(context).theme.toggleMinHeight,
-            fontSize: InheritedJsonFormTheme.of(context).theme.toggleFontSize,
-            initialLabelIndex: updatedIndex,
-            cornerRadius: 4.0,
-            activeBgColor: [InheritedJsonFormTheme.of(context).theme.toggleActiveColor],
-            activeFgColor: InheritedJsonFormTheme.of(context).theme.toggleActiveTextColor,
-            inactiveBgColor: InheritedJsonFormTheme.of(context).theme.toggleInactiveColor,
-            inactiveFgColor: InheritedJsonFormTheme.of(context).theme.toggleInactiveTextColor,
-            totalSwitches: widget.model.values.length,
-            labels: widget.model.values,
-            onToggle: (index) async {
-              if (widget.onValueChanged != null) {
-                bool res = false;
-                updatedIndex = index;
-                res = await widget.onValueChanged!(widget.model.id, index != null ? widget.model.values[index] : index);
-                if (res) {
-                  thisTime.value = DateTime.now().millisecondsSinceEpoch;
-                  widget.model.time = thisTime.value!;
+      child: Container(
+        constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          textDirection: TextDirection.ltr,
+          children: <Widget>[
+            ValueListenableBuilder<int?>(
+                valueListenable: thisTime,
+                builder: (context, time, _) {
+                  return NameWidgetDescription(
+                    name: widget.model.name,
+                    id: widget.model.id,
+                    width: InheritedJsonFormTheme.of(context).theme.toggleWidthOfHeader,
+                    description: widget.model.description,
+                    dateBuilder: widget.dateBuilder,
+                    time: time,
+                  );
+                }),
+            ToggleSwitch(
+              activeBorders: InheritedJsonFormTheme.of(context).theme.activeToggleBorder !=
+                  null?[InheritedJsonFormTheme.of(context).theme.activeToggleBorder] : null,
+              doubleTapDisable: true,
+              minWidth: InheritedJsonFormTheme.of(context).theme.toggleMinWidth,
+              minHeight: InheritedJsonFormTheme.of(context).theme.toggleMinHeight,
+              fontSize: InheritedJsonFormTheme.of(context).theme.toggleFontSize,
+              initialLabelIndex: updatedIndex,
+              cornerRadius: 4.0,
+              activeBgColor: [InheritedJsonFormTheme.of(context).theme.toggleActiveColor],
+              activeFgColor: InheritedJsonFormTheme.of(context).theme.toggleActiveTextColor,
+              inactiveBgColor: InheritedJsonFormTheme.of(context).theme.toggleInactiveColor,
+              inactiveFgColor: InheritedJsonFormTheme.of(context).theme.toggleInactiveTextColor,
+              totalSwitches: widget.model.values.length,
+              labels: widget.model.values,
+              onToggle: (index) async {
+                if (widget.onValueChanged != null) {
+                  bool res = false;
+                  updatedIndex = index;
+                  res = await widget.onValueChanged!(widget.model.id, index != null ? widget.model.values[index] : index);
+                  if (res) {
+                    thisTime.value = DateTime.now().millisecondsSinceEpoch;
+                    widget.model.time = thisTime.value!;
+                  }
                 }
-              }
-            },
-          )
-        ],
+              },
+            )
+          ],
+        ),
       ),
     );
   }
