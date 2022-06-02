@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 import 'package:json_to_form_with_theme/widgets/line_wrapper.dart';
+import 'package:sizer/sizer.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import '../parsers/toggle_parser.dart';
@@ -73,7 +74,7 @@ class _ToggleState extends State<Toggle> {
     return LineWrapper(
       isBeforeHeader: widget.model.isBeforeHeader,
       child: Container(
-        constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight),
+        constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight.h),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,

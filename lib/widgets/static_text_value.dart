@@ -70,7 +70,7 @@ class _StaticTextValueState extends State<StaticTextValue> {
     return LineWrapper(
       isBeforeHeader: widget.model.isBeforeHeader,
       child: Container(
-        constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight),
+        constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight.h),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           textDirection: TextDirection.ltr,

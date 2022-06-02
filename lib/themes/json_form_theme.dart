@@ -62,7 +62,6 @@ abstract class JsonFormTheme {
       required this.dropDownIcon,
       required this.underLineWidget,
       required this.nameTextStyle,
-      required this.itemMinHeight,
       required this.nameContainerPadding,
       required this.nameContainerDecoration,
       required this.descriptionTextStyle,
@@ -89,7 +88,8 @@ abstract class JsonFormTheme {
       required this.dropDownWidthOfHeader,
       required this.staticTextWidthOfHeader,
       required this.staticValueWidth,
-        this.activeToggleBorder,
+      this.activeToggleBorder,
+      this.itemMinHeight = 0,
       this.mainAxisAlignmentOfName = MainAxisAlignment.start});
 
   /// Global container params///
@@ -311,7 +311,7 @@ class DefaultTheme extends JsonFormTheme {
             bottom: BorderSide.none,
           ))})
       : super(
-            itemMinHeight: 190,
+            itemMinHeight: 0,
             staticValueWidth: 20,
             dropDownWith: 30,
             overflow: true,
