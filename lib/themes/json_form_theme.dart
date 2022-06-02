@@ -257,7 +257,7 @@ class DefaultTheme extends JsonFormTheme {
         top: BorderSide.none,
         left: BorderSide.none,
         right: BorderSide.none,
-        bottom: BorderSide(width: 2.0, color: Color(0xFF8233F)),
+        bottom: BorderSide(width: 0.0, color: Color(0xFF8233F)),
       )),
       BoxDecoration linePaDecorationAboveHeader = const BoxDecoration(
           border: Border(
