@@ -154,4 +154,7 @@ Toggle switch update - added activeToggleBorder.
 ## 4.0.0
 Register new widgets to parse with registerComponent.
 Thanks for @ItzikAlkotzerAidoc for the PR
+
+## 4.0.1
+Fix minimum heights.
  
