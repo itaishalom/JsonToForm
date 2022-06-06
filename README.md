@@ -75,7 +75,6 @@ And easily use the basic Theme (or edit it)
               jsonWidgets: json)
               .setDateBuilderMethod(dateBuilder)
               .registerComponent(DropDownParser2Creator())
-          // .setDynamicFactory(MyWidgetParserFactory())
               .setStreamUpdates(onValueChangeStream)
               .setOnValueChanged((String d, dynamic s) async {
             print("Update id $d to value $s");
