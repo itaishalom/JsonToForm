@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:json_to_form_with_theme/parsers/edit_text_parser.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
+import 'package:sizer/sizer.dart';
 
 import '../json_to_form_with_theme.dart';
 import 'line_wrapper.dart';
@@ -259,6 +260,7 @@ class _EditTextValueState extends State<EditTextValue> {
         margin: widget.model.long
             ? InheritedJsonFormTheme.of(context).theme.editTextLongMargins
             : InheritedJsonFormTheme.of(context).theme.editTextMargins,
+        constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight.h),
         child: TextField(
           onTap: () => requestFocus(context),
           focusNode: widget.model.isReadOnly ? null : myFocusNode,
