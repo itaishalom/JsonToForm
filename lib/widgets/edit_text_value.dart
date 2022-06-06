@@ -260,7 +260,7 @@ class _EditTextValueState extends State<EditTextValue> {
         margin: widget.model.long
             ? InheritedJsonFormTheme.of(context).theme.editTextLongMargins
             : InheritedJsonFormTheme.of(context).theme.editTextMargins,
-        constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight.h),
+
         child: TextField(
           onTap: () => requestFocus(context),
           focusNode: widget.model.isReadOnly ? null : myFocusNode,
@@ -317,20 +317,23 @@ class _EditTextValueState extends State<EditTextValue> {
           width: InheritedJsonFormTheme.of(context).theme.editTextWidth,
           child: text));
     }
-    return LineWrapper(
-      isBeforeHeader: widget.model.isBeforeHeader,
-      child: widget.model.long
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              textDirection: TextDirection.ltr,
-              children: <Widget>[...innerWidgets],
-            )
-          : Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              textDirection: TextDirection.ltr,
-              children: <Widget>[...innerWidgets],
-            ),
+    return Container(
+      constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight.h),
+      child: LineWrapper(
+        isBeforeHeader: widget.model.isBeforeHeader,
+        child: widget.model.long
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                textDirection: TextDirection.ltr,
+                children: <Widget>[...innerWidgets],
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                textDirection: TextDirection.ltr,
+                children: <Widget>[...innerWidgets],
+              ),
+      ),
     );
   }
 }
