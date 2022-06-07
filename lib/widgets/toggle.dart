@@ -71,11 +71,11 @@ class _ToggleState extends State<Toggle> {
       stringToIndex();
       thisTime.value = widget.model.time;
     }
-    return LineWrapper(
+    return  Container(
+      constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight.h),
+      child: LineWrapper(
       isBeforeHeader: widget.model.isBeforeHeader,
-      child: Container(
-        constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight.h),
-        child: Row(
+      child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           textDirection: TextDirection.ltr,

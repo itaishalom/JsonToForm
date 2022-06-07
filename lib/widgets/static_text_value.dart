@@ -67,11 +67,11 @@ class _StaticTextValueState extends State<StaticTextValue> {
       value = widget.model.chosenValue;
       thisTime = widget.model.time;
     }
-    return LineWrapper(
+    return  Container(
+      constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight.h),
+      child: LineWrapper(
       isBeforeHeader: widget.model.isBeforeHeader,
-      child: Container(
-        constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight.h),
-        child: Row(
+      child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           textDirection: TextDirection.ltr,
           children: <Widget>[
