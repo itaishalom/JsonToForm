@@ -157,4 +157,7 @@ Thanks for @ItzikAlkotzerAidoc for the PR
 
 ## 4.0.1
 Fix minimum heights.
+
+## 4.0.2
+Fix minimum heights for widgets
  
