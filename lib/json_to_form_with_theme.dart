@@ -102,7 +102,6 @@ class JsonFormWithTheme extends StatefulWidget {
 class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
   late final StreamSubscription<Map<String, dynamic>>? _valueChange;
   late Stream<DataClass> dataClassStream;
-  bool ignoreRebuild = false;
 
   final StreamController<DataClass> _onDataClassReady =
       StreamController<DataClass>();
@@ -180,7 +179,6 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
 
   @override
   Widget build(BuildContext context) {
-    ignoreRebuild = false;
         return InheritedJsonFormTheme(
             theme: widget.theme,
             child: Scaffold(
