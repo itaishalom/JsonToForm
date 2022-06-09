@@ -15,7 +15,6 @@ import 'package:json_to_form_with_theme/parsers/static_text_parser.dart';
 import 'package:json_to_form_with_theme/parsers/toggle_parser.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
-import 'package:sizer/sizer.dart';
 
 typedef OnValueChanged = Future<bool> Function(String id, dynamic value);
 typedef DateBuilderMethod =  Widget Function(int date, String id);
@@ -150,7 +149,14 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
   void initState() {
     _valueChange = widget.streamUpdates?.listen(_onRemoteValueChanged);
     dataClassStream = _onDataClassReady.stream.asBroadcastStream();
+    buildWidgetsFromJson();
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant JsonFormWithTheme oldWidget) {
+    buildWidgetsFromJson();
+    super.didUpdateWidget(oldWidget);
   }
 
 
@@ -174,13 +180,7 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
 
   @override
   Widget build(BuildContext context) {
-    if (!ignoreRebuild) {
-      buildWidgetsFromJson();
-    } else {}
     ignoreRebuild = false;
-    return Sizer(
-      builder: (BuildContext context, Orientation orientation,
-          DeviceType deviceType) {
         return InheritedJsonFormTheme(
             theme: widget.theme,
             child: Scaffold(
@@ -205,8 +205,6 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
                     ]),
                   ),
                 )));
-      },
-    );
   }
 }
 

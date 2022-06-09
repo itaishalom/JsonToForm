@@ -312,13 +312,13 @@ class DefaultTheme extends JsonFormTheme {
           ))})
       : super(
             itemMinHeight: 0,
-            staticValueWidth: 20,
-            dropDownWith: 30,
+            staticValueWidth: 90,
+            dropDownWith: 120,
             overflow: true,
             keyboardTypeLong: null,
             keyboardTypeShort: const TextInputType.numberWithOptions(decimal: true),
             editTextStyleFocus: editTextStyleFocus,
-            editTextWidth: 70,
+            editTextWidth: 90,
             staticContainerDecoration: staticContainerDecoration,
             editTextHeight: editTextHeight,
             inputDecoration: inputDecoration,
@@ -354,7 +354,7 @@ class DefaultTheme extends JsonFormTheme {
             editTextLongMargins: editTextLongMargins,
             debounceTime: null,
             toggleWidthOfHeader: 45,
-            editTextWidthOfHeader: 65,
-            dropDownWidthOfHeader: 55,
-            staticTextWidthOfHeader: 65);
+            editTextWidthOfHeader: 125,
+            dropDownWidthOfHeader: 105,
+            staticTextWidthOfHeader: 125);
 }
