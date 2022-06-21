@@ -163,3 +163,6 @@ Fix minimum heights for widgets
 
 ## 4.1.0
 Remove sizer and bug fix
+
+## 4.1.1
+Editmode - save bar
