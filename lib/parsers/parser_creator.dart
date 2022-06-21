@@ -7,12 +7,12 @@ abstract class ParserCreator<M extends ItemModel> {
 
   M parseModel(Map<String, dynamic> json, bool isBeforeHeader);
 
-  Widget createWidget(M model, OnValueChanged? onValueChanged, DateBuilderMethod? dateBuilder);
+  Widget createWidget(M model, OnValueChanged? onValueChanged, DateBuilderMethod? dateBuilder, SaveBarBuilderMethod? savebarBuilder);
 }
 
 class EmptyCreator extends ParserCreator<EmptyItemModel>{
   @override
-  Widget createWidget(EmptyItemModel model, OnValueChanged? onValueChanged, DateBuilderMethod? dateBuilder) => SizedBox();
+  Widget createWidget(EmptyItemModel model, OnValueChanged? onValueChanged, DateBuilderMethod? dateBuilder,  SaveBarBuilderMethod? savebarBuilder) => SizedBox();
 
   @override
   EmptyItemModel parseModel(Map<String, dynamic> json, bool isBeforeHeader) {

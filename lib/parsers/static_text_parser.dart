@@ -33,7 +33,7 @@ class StaticTextParserCreator extends ParserCreator<StaticTextModel>{
   StaticTextModel parseModel(Map<String, dynamic> json, bool isBeforeHeader) =>  StaticTextModel.fromJson(json, type, isBeforeHeader);
 
   @override
-  Widget createWidget(StaticTextModel model, OnValueChanged? onValueChanged, DateBuilderMethod? dateBuilder)  => StaticTextValue(
+  Widget createWidget(StaticTextModel model, OnValueChanged? onValueChanged, DateBuilderMethod? dateBuilder, SaveBarBuilderMethod? savebarBuilder)  => StaticTextValue(
     model: model,
     dateBuilder: dateBuilder,
       );

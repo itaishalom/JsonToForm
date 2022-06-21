@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:example/aidoc_theme.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+
 
 import 'package:example/drop_down_parser2.dart';
 import 'package:flutter/material.dart';
@@ -55,183 +58,208 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final Map<String, dynamic> json = {
     "widgets": [
-      {"type": "header", "name": "Header", "id": "29"},
       {
-        "id": "1",
-        "name": "DVT",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "chosen_value": null,
-        "time": 1630164109066,
-      },
-      {"type": "header", "name": "Header2", "id": "39"},
-      {
-        "id": "56",
-        "name": "ADVT",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "chosen_value": "Off",
-        "time": 1630164109056,
+        "id": "e1",
+        "name": "Text #1",
+        "type": "edit_text",
+        "chosen_value": "long",
+        "long" : true,
+        "time": 1640260609562,
+        "description": "asd",
       },
       {
-        "id": "2",
-        "name": "Static text",
-        "type": "static_text",
-        "chosen_value": "value which is long value",
-        "description": "(description..)",
-        "time": 1640164109066,
+        "id": "e2",
+        "name": "Text #2",
+        "type": "edit_text",
+        "chosen_value": "sort",
+        "time": 1640260609562,
+        "description": "",
       },
       {
-        "id": "26",
-        "name": "Long name of the line but a short",
-        "type": "static_text",
-        "chosen_value": "value",
-        "description": "(description..)",
-        "time": 1640164109066,
-      },
-      {
-        "id": "3",
-        "name": "Blood Pressure with a long long long",
+        "id": "e3",
+        "name": "Text #3",
         "type": "edit_text",
         "chosen_value": "A",
         "time": 1640260609562,
         "description": "mmHg - with a long description",
       },
-      {"type": "header", "name": "Header", "id": "99"},
-      {
-        "id": "4",
-        "name": "Drop down",
-        "type": "drop_down",
-        "time": 1640264109066,
-        "values": ["Low-Intermediate", "Medium", "High", ""],
-        "chosen_value": "Low-Intermediate"
-      },
-      {
-        "id": "5",
-        "name": "Dynamic Drop down",
-        "type": "drop_down2",
-        "values": ["one", "two", "three"],
-        "chosen_value": "one",
-        "time": 1530164109066,
-      },
-      {"type": "header", "name": "Header", "id": "10029"},
-      {
-        "id": "1001",
-        "name": "DVT",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "chosen_value": null,
-        "time": 1630164109066,
-      },
-      {"type": "header", "name": "Header2", "id": "10039"},
-      {
-        "id": "10056",
-        "name": "ADVT",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "chosen_value": "Off",
-        "time": 1630164109056,
-      },
-      {
-        "id": "1002",
-        "name": "Static text",
-        "type": "static_text",
-        "chosen_value": "value which is long value",
-        "description": "(description..)",
-        "time": 1640164109066,
-      },
-      {
-        "id": "10026",
-        "name": "Long name of the line but a short",
-        "type": "static_text",
-        "chosen_value": "value",
-        "description": "(description..)",
-        "time": 1640164109066,
-      },
-      {
-        "id": "1003",
-        "name": "Blood Pressure with a long long long",
-        "type": "edit_text",
-        "chosen_value": "B",
-        "time": 1640260609562,
-        "description": "mmHg - with a long description",
-      },
-      {"type": "header", "name": "Header", "id": "10099"},
-      {
-        "id": "1004",
-        "name": "Drop down",
-        "type": "drop_down",
-        "time": 1640264109066,
-        "values": ["Low-Intermediate", "Medium", "High", ""],
-        "chosen_value": "Low-Intermediate"
-      },
-      {
-        "id": "1005",
-        "name": "Dynamic Drop down",
-        "type": "drop_down2",
-        "values": ["one", "two", "three"],
-        "chosen_value": "one",
-        "time": 1530164109066,
-      },
-      {"type": "header", "name": "Header", "id": "20029"},
-      {
-        "id": "2001",
-        "name": "DVT",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "chosen_value": null,
-        "time": 1630164109066,
-      },
-      {"type": "header", "name": "Header2", "id": "20039"},
-      {
-        "id": "20056",
-        "name": "ADVT",
-        "type": "toggle",
-        "values": ["On", "Off"],
-        "chosen_value": "Off",
-        "time": 1630164109056,
-      },
-      {
-        "id": "2002",
-        "name": "Static text",
-        "type": "static_text",
-        "chosen_value": "value which is long value",
-        "description": "(description..)",
-        "time": 1640164109066,
-      },
-      {
-        "id": "20026",
-        "name": "Long name of the line but a short",
-        "type": "static_text",
-        "chosen_value": "value",
-        "description": "(description..)",
-        "time": 1640164109066,
-      },
-      {
-        "id": "2003",
-        "name": "Blood Pressure with a long long long",
-        "type": "edit_text",
-        "chosen_value": "c",
-        "time": 1640260609562,
-        "description": "mmHg - with a long description",
-      },
-      {"type": "header", "name": "Header", "id": "20099"},
-      {
-        "id": "2004",
-        "name": "Drop down",
-        "type": "drop_down",
-        "time": 1640264109066,
-        "values": ["Low-Intermediate", "Medium", "High", ""],
-        "chosen_value": "Low-Intermediate"
-      },
-      {
-        "id": "2005",
-        "name": "Dynamic Drop down",
-        "type": "drop_down2",
-        "values": ["one", "two", "three"],
-        "chosen_value": "one",
-        "time": 1530164109066,
-      }
+      // {"type": "header", "name": "Header", "id": "29"},
+      // {
+      //   "id": "1",
+      //   "name": "DVT",
+      //   "type": "toggle",
+      //   "values": ["On", "Off"],
+      //   "chosen_value": null,
+      //   "time": 1630164109066,
+      // },
+      // {"type": "header", "name": "Header2", "id": "39"},
+      // {
+      //   "id": "56",
+      //   "name": "ADVT",
+      //   "type": "toggle",
+      //   "values": ["On", "Off"],
+      //   "chosen_value": "Off",
+      //   "time": 1630164109056,
+      // },
+      // {
+      //   "id": "2",
+      //   "name": "Static text",
+      //   "type": "static_text",
+      //   "chosen_value": "value which is long value",
+      //   "description": "(description..)",
+      //   "time": 1640164109066,
+      // },
+      // {
+      //   "id": "26",
+      //   "name": "Long name of the line but a short",
+      //   "type": "static_text",
+      //   "chosen_value": "value",
+      //   "description": "(description..)",
+      //   "time": 1640164109066,
+      // },
+      // {
+      //   "id": "3",
+      //   "name": "Blood Pressure with a long long long",
+      //   "type": "edit_text",
+      //   "chosen_value": "A",
+      //   "time": 1640260609562,
+      //   "description": "mmHg - with a long description",
+      // },
+      // {"type": "header", "name": "Header", "id": "99"},
+      // {
+      //   "id": "4",
+      //   "name": "Drop down",
+      //   "type": "drop_down",
+      //   "time": 1640264109066,
+      //   "values": ["Low-Intermediate", "Medium", "High", ""],
+      //   "chosen_value": "Low-Intermediate"
+      // },
+      // {
+      //   "id": "5",
+      //   "name": "Dynamic Drop down",
+      //   "type": "drop_down2",
+      //   "values": ["one", "two", "three"],
+      //   "chosen_value": "one",
+      //   "time": 1530164109066,
+      // },
+      // {"type": "header", "name": "Header", "id": "10029"},
+      // {
+      //   "id": "1001",
+      //   "name": "DVT",
+      //   "type": "toggle",
+      //   "values": ["On", "Off"],
+      //   "chosen_value": null,
+      //   "time": 1630164109066,
+      // },
+      // {"type": "header", "name": "Header2", "id": "10039"},
+      // {
+      //   "id": "10056",
+      //   "name": "ADVT",
+      //   "type": "toggle",
+      //   "values": ["On", "Off"],
+      //   "chosen_value": "Off",
+      //   "time": 1630164109056,
+      // },
+      // {
+      //   "id": "1002",
+      //   "name": "Static text",
+      //   "type": "static_text",
+      //   "chosen_value": "value which is long value",
+      //   "description": "(description..)",
+      //   "time": 1640164109066,
+      // },
+      // {
+      //   "id": "10026",
+      //   "name": "Long name of the line but a short",
+      //   "type": "static_text",
+      //   "chosen_value": "value",
+      //   "description": "(description..)",
+      //   "time": 1640164109066,
+      // },
+      // {
+      //   "id": "1003",
+      //   "name": "Blood Pressure with a long long long",
+      //   "type": "edit_text",
+      //   "chosen_value": "B",
+      //   "time": 1640260609562,
+      //   "description": "mmHg - with a long description",
+      // },
+      // {"type": "header", "name": "Header", "id": "10099"},
+      // {
+      //   "id": "1004",
+      //   "name": "Drop down",
+      //   "type": "drop_down",
+      //   "time": 1640264109066,
+      //   "values": ["Low-Intermediate", "Medium", "High", ""],
+      //   "chosen_value": "Low-Intermediate"
+      // },
+      // {
+      //   "id": "1005",
+      //   "name": "Dynamic Drop down",
+      //   "type": "drop_down2",
+      //   "values": ["one", "two", "three"],
+      //   "chosen_value": "one",
+      //   "time": 1530164109066,
+      // },
+      // {"type": "header", "name": "Header", "id": "20029"},
+      // {
+      //   "id": "2001",
+      //   "name": "DVT",
+      //   "type": "toggle",
+      //   "values": ["On", "Off"],
+      //   "chosen_value": null,
+      //   "time": 1630164109066,
+      // },
+      // {"type": "header", "name": "Header2", "id": "20039"},
+      // {
+      //   "id": "20056",
+      //   "name": "ADVT",
+      //   "type": "toggle",
+      //   "values": ["On", "Off"],
+      //   "chosen_value": "Off",
+      //   "time": 1630164109056,
+      // },
+      // {
+      //   "id": "2002",
+      //   "name": "Static text",
+      //   "type": "static_text",
+      //   "chosen_value": "value which is long value",
+      //   "description": "(description..)",
+      //   "time": 1640164109066,
+      // },
+      // {
+      //   "id": "20026",
+      //   "name": "Long name of the line but a short",
+      //   "type": "static_text",
+      //   "chosen_value": "value",
+      //   "description": "(description..)",
+      //   "time": 1640164109066,
+      // },
+      // {
+      //   "id": "2003",
+      //   "name": "Blood Pressure with a long long long",
+      //   "type": "edit_text",
+      //   "chosen_value": "c",
+      //   "time": 1640260609562,
+      //   "description": "mmHg - with a long description",
+      // },
+      // {"type": "header", "name": "Header", "id": "20099"},
+      // {
+      //   "id": "2004",
+      //   "name": "Drop down",
+      //   "type": "drop_down",
+      //   "time": 1640264109066,
+      //   "values": ["Low-Intermediate", "Medium", "High", ""],
+      //   "chosen_value": "Low-Intermediate"
+      // },
+      // {
+      //   "id": "2005",
+      //   "name": "Dynamic Drop down",
+      //   "type": "drop_down2",
+      //   "values": ["one", "two", "three"],
+      //   "chosen_value": "one",
+      //   "time": 1530164109066,
+      // }
     ]
   };
 
@@ -281,6 +309,21 @@ class _MyHomePageState extends State<MyHomePage> {
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(date);
     return Text(buildDate(dateTime));
   }
+  Widget saveBarBuilder({required Function onSave, required Function onClose}) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+          children: [
+            ElevatedButton(
+                onPressed: ()=> onClose(),
+                child: Text("close")),
+            Spacer(),
+            ElevatedButton(
+                onPressed: ()=> onSave(),
+                child: Text("save")),
+          ]),
+    );
+  }
 
   List<String> list = ["Medium", "High"];
   List<String> toggleList = ["On", "Off"];
@@ -311,51 +354,56 @@ class _MyHomePageState extends State<MyHomePage> {
     return Future.delayed(const Duration(seconds: 0));
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return Sizer(
-      builder: (BuildContext context, Orientation orientation, DeviceType deviceType) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Floating Action Button'),
-          ),
-          body: RefreshIndicator(
-            onRefresh: _refresh,
-            child: JsonFormWithThemeBuilder(
-                jsonWidgets: json)
-                .setDateBuilderMethod(dateBuilder)
-                .registerComponent(DropDownParser2Creator())
-                // .setDynamicFactory(MyWidgetParserFactory())
-                .setStreamUpdates(onValueChangeStream)
-                .setOnValueChanged((String d, dynamic s) async {
-                  print("Update id $d to value $s");
-                  await Future.delayed(const Duration(seconds: 1));
-                  return Future.value(true);
-                })
-                .setTheme(const DefaultTheme()).build(),
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              counter++;
-              if (counter % 4 == 1) {
-                toggle++;
-                _onUserController.add({}..["1"] = toggleList[toggle % 2]); // toggle
-              }
-              if (counter % 4 == 2) {
-                _onUserController.add({}..["2"] = "updated" + Random().nextInt(10).toString()); // toggle
-              }
-              if (counter % 4 == 3) {
-                _onUserController.add({}..["3"] = "Val" + Random().nextInt(100000).toString()); // toggle
-              }
-              if (counter % 4 == 0) {
-                _onUserController.add({}..["4"] = list[toggle % 2]); // toggle
-              }
-            },
-            child: const Icon(Icons.navigation),
-            backgroundColor: Colors.green,
-          ),
-        );
-      },
+     return KeyboardVisibilityProvider(
+      child: Sizer(
+        builder: (BuildContext context, Orientation orientation, DeviceType deviceType) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Floating Action Button'),
+            ),
+            body: RefreshIndicator(
+              onRefresh: _refresh,
+              child:
+                  JsonFormWithThemeBuilder(
+                      jsonWidgets: json)
+                      .setDateBuilderMethod(dateBuilder)
+                      .registerComponent(DropDownParser2Creator())
+                      // .setDynamicFactory(MyWidgetParserFactory())
+                      .setStreamUpdates(onValueChangeStream)
+                      .setOnValueChanged((String d, dynamic s) async {
+                        print("Update id $d to value $s");
+                        await Future.delayed(const Duration(seconds: 1));
+                        return Future.value(true);
+                      }).setSaveBarBuilderMethod(saveBarBuilder)
+
+                      .setTheme( DefaultTheme()).build(),
+            ),
+            // floatingActionButton: FloatingActionButton(
+            //   onPressed: () {
+            //     counter++;
+            //     if (counter % 4 == 1) {
+            //       toggle++;
+            //       _onUserController.add({}..["1"] = toggleList[toggle % 2]); // toggle
+            //     }
+            //     if (counter % 4 == 2) {
+            //       _onUserController.add({}..["2"] = "updated" + Random().nextInt(10).toString()); // toggle
+            //     }
+            //     if (counter % 4 == 3) {
+            //       _onUserController.add({}..["3"] = "Val" + Random().nextInt(100000).toString()); // toggle
+            //     }
+            //     if (counter % 4 == 0) {
+            //       _onUserController.add({}..["4"] = list[toggle % 2]); // toggle
+            //     }
+            //   },
+            //   child: const Icon(Icons.navigation),
+            //   backgroundColor: Colors.green,
+            // ),
+          );
+        },
+      ),
     );
   }
 }

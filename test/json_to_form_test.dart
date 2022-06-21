@@ -7,7 +7,7 @@ import 'package:json_to_form_with_theme/exceptions/parsing_exception.dart';
 
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/widgets/drop_down_widget.dart';
-import 'package:json_to_form_with_theme/widgets/edit_text_value.dart';
+import 'package:json_to_form_with_theme/widgets/saveable_edit_text_value.dart';
 import 'package:json_to_form_with_theme/widgets/header.dart';
 import 'package:json_to_form_with_theme/widgets/static_text_value.dart';
 import 'package:json_to_form_with_theme/widgets/toggle.dart';
@@ -34,7 +34,7 @@ void main() {
       // Trigger a frame.
       await tester.pump();
       expect(find.byType(Toggle), findsOneWidget);
-      expect(find.byType(EditTextValue), findsNothing);
+      expect(find.byType(SaveableEditTextValue), findsNothing);
       expect(find.byType(Header), findsNothing);
       expect(find.byType(DropDownWidget), findsNothing);
     });
@@ -58,7 +58,7 @@ void main() {
       // Trigger a frame.
       await tester.pump();
       expect(find.byType(Toggle), findsNothing);
-      expect(find.byType(EditTextValue), findsOneWidget);
+      expect(find.byType(SaveableEditTextValue), findsOneWidget);
       expect(find.byType(Header), findsNothing);
       expect(find.byType(DropDownWidget), findsNothing);
     });
@@ -83,7 +83,7 @@ void main() {
       // Trigger a frame.
       await tester.pump();
       expect(find.byType(Toggle), findsNothing);
-      expect(find.byType(EditTextValue), findsNothing);
+      expect(find.byType(SaveableEditTextValue), findsNothing);
       expect(find.byType(Header), findsNothing);
       expect(find.byType(StaticTextValue), findsOneWidget);
       expect(find.byType(DropDownWidget), findsNothing);
@@ -107,7 +107,7 @@ void main() {
       );
       await tester.pump();
       expect(find.byType(Toggle), findsNothing);
-      expect(find.byType(EditTextValue), findsNothing);
+      expect(find.byType(SaveableEditTextValue), findsNothing);
       expect(find.byType(Header), findsNothing);
       expect(find.byType(StaticTextValue), findsNothing);
       expect(find.byType(DropDownWidget), findsOneWidget);

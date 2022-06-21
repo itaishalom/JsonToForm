@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:json_to_form_with_theme/parsers/item_model.dart';
 import 'package:json_to_form_with_theme/parsers/parser_creator.dart';
-import 'package:json_to_form_with_theme/widgets/edit_text_value.dart';
+import 'package:json_to_form_with_theme/widgets/saveable_edit_text_value.dart';
 import '../json_to_form_with_theme.dart';
 
 class EditTextValueModel extends ItemModel {
@@ -11,6 +11,7 @@ class EditTextValueModel extends ItemModel {
   bool long = false;
   dynamic chosenValue;
   int? time;
+  bool hasNext = false;
 
   @override
   void updateValue(value) {
@@ -43,10 +44,11 @@ class EditTextParserCreator extends ParserCreator<EditTextValueModel>{
   EditTextValueModel parseModel(Map<String, dynamic> json, bool isBeforeHeader) =>  EditTextValueModel.fromJson(json, type, isBeforeHeader);
 
   @override
-  Widget createWidget(EditTextValueModel model, OnValueChanged? onValueChanged, DateBuilderMethod? dateBuilder) {
-    return EditTextValue(
+  Widget createWidget(EditTextValueModel model, OnValueChanged? onValueChanged, DateBuilderMethod? dateBuilder, SaveBarBuilderMethod? savebarBuilder) {
+    return SaveableEditTextValue(
         key: ValueKey(model.id),
         model: model,
+        savebarBuilder: savebarBuilder,
         onValueChanged: onValueChanged,
         dateBuilder: dateBuilder);
   }

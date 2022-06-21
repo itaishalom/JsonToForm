@@ -26,7 +26,7 @@ class DropDownParser2Creator extends ParserCreator<DropDownParser2Model>{
   String get type => "drop_down2";
 
   @override
-  Widget createWidget(DropDownParser2Model model, OnValueChanged? onValueChanged, DateBuilderMethod? dateBuilder) => DropDownWidget2(
+  Widget createWidget(DropDownParser2Model model, OnValueChanged? onValueChanged, DateBuilderMethod? dateBuilder, SaveBarBuilderMethod? saveBarBuilderMethod) => DropDownWidget2(
       key: ValueKey(model.id),
       model: model,
       dateBuilder: dateBuilder,

@@ -35,7 +35,7 @@ class DropDownParserCreator extends ParserCreator<DropDownModel> {
 
   @override
   Widget createWidget(DropDownModel model, OnValueChanged? onValueChanged,
-      DateBuilderMethod? dateBuilder) =>
+      DateBuilderMethod? dateBuilder, SaveBarBuilderMethod? savebarBuilder) =>
       DropDownWidget(
           key: ValueKey(model.id),
           model: model,

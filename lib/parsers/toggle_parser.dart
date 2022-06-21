@@ -30,7 +30,7 @@ class ToggleParserCreator extends ParserCreator<ToggleModel>{
   String get type => "toggle";
 
   @override
-  Widget createWidget(ToggleModel model, OnValueChanged? onValueChanged, DateBuilderMethod? dateBuilder)  =>  Toggle(
+  Widget createWidget(ToggleModel model, OnValueChanged? onValueChanged, DateBuilderMethod? dateBuilder, SaveBarBuilderMethod? savebarBuilder)  =>  Toggle(
       model : model,
       dateBuilder: dateBuilder,
       onValueChanged: onValueChanged);

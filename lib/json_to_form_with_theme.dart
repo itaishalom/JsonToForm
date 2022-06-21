@@ -1,5 +1,5 @@
 library json_to_form_with_theme;
-
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'dart:async';
 import 'dart:collection';
 
@@ -19,6 +19,8 @@ import 'package:sizer/sizer.dart';
 
 typedef OnValueChanged = Future<bool> Function(String id, dynamic value);
 typedef DateBuilderMethod =  Widget Function(int date, String id);
+typedef SaveBarBuilderMethod =  Widget Function({required Function onSave, required Function onClose});
+
 class JsonFormWithThemeBuilder{
    Map<String, dynamic> jsonWidgets;
 
@@ -30,6 +32,12 @@ class JsonFormWithThemeBuilder{
    DateBuilderMethod? _dateBuilderMethod;
    JsonFormWithThemeBuilder setDateBuilderMethod(DateBuilderMethod dateBuilder){
      _dateBuilderMethod = dateBuilder;
+     return this;
+   }
+
+   SaveBarBuilderMethod? _savebarBuilderMethod;
+   JsonFormWithThemeBuilder setSaveBarBuilderMethod(SaveBarBuilderMethod saveBarBuilderMethod){
+     _savebarBuilderMethod = saveBarBuilderMethod;
      return this;
    }
 
@@ -70,6 +78,7 @@ class JsonFormWithThemeBuilder{
 }
 class JsonFormWithTheme extends StatefulWidget {
   final DateBuilderMethod? dateBuilder;
+  final SaveBarBuilderMethod? savebarBuilder;
   final HashMap<String, ParserCreator> _creators;
   final List<ItemModel> items = [];
   final OnValueChanged? onValueChanged;
@@ -84,6 +93,7 @@ class JsonFormWithTheme extends StatefulWidget {
         theme= builder._theme,
         streamUpdates= builder._streamUpdates,
         dateBuilder= builder._dateBuilderMethod,
+        savebarBuilder = builder._savebarBuilderMethod,
         _creators = builder._parsers,
         super();
 
@@ -94,6 +104,7 @@ class JsonFormWithTheme extends StatefulWidget {
     this.theme = const DefaultTheme(),
     this.streamUpdates,
     this.dateBuilder,
+    this.savebarBuilder,
   }) :_creators = HashMap(), super(key: key);
 
   @override
@@ -144,6 +155,14 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
           throw ParsingException("Bad $type format");
         }
       }
+
+      for(int i = 0; i< widget.items.length; i++){
+        ItemModel currentItem = widget.items[i];
+        if(currentItem.type == "edit_text")
+        {
+          (currentItem as EditTextValueModel).hasNext  = widget.items.length > (i + 1) && widget.items[i + 1].type == "edit_text" ;
+        }
+      }
     }
 
   @override
@@ -178,34 +197,36 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
       buildWidgetsFromJson();
     } else {}
     ignoreRebuild = false;
-    return Sizer(
-      builder: (BuildContext context, Orientation orientation,
-          DeviceType deviceType) {
-        return InheritedJsonFormTheme(
-            theme: widget.theme,
-            child: Scaffold(
-                backgroundColor: widget.theme.backgroundColor,
-                body: GestureDetector(
-                  onTap: () {
-                    FocusScope.of(context).unfocus();
-                    TextEditingController().clear();
-                  },
-                  child: UpdateStreamWidget(
-                    dataClassStream: dataClassStream,
-                    child: CustomScrollView(key: const ValueKey("scrollView"),slivers: <Widget>[
-                      SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (BuildContext context, int index) {
-                            ItemModel item = widget.items[index];
-                            return (widget._creators[item.type]?? EmptyCreator()).createWidget(item, widget.onValueChanged,  widget.dateBuilder);
-                          },
-                          childCount: widget.items.length,
-                        ),
-                      )
-                    ]),
-                  ),
-                )));
-      },
+    return KeyboardVisibilityProvider(
+      child: Sizer(
+        builder: (BuildContext context, Orientation orientation,
+            DeviceType deviceType) {
+          return InheritedJsonFormTheme(
+              theme: widget.theme,
+              child: Scaffold(
+                  backgroundColor: widget.theme.backgroundColor,
+                  body: GestureDetector(
+                    onTap: () {
+                      FocusScope.of(context).unfocus();
+                      TextEditingController().clear();
+                    },
+                    child: UpdateStreamWidget(
+                      dataClassStream: dataClassStream,
+                      child: CustomScrollView(key: const ValueKey("scrollView"),slivers: <Widget>[
+                        SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (BuildContext context, int index) {
+                              ItemModel item = widget.items[index];
+                              return (widget._creators[item.type]?? EmptyCreator()).createWidget(item, widget.onValueChanged,  widget.dateBuilder, widget.savebarBuilder);
+                            },
+                            childCount: widget.items.length,
+                          ),
+                        )
+                      ]),
+                    ),
+                  )));
+        },
+      ),
     );
   }
 }

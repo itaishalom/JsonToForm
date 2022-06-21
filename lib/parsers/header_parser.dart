@@ -22,7 +22,7 @@ class HeaderParserCreator extends ParserCreator<HeaderModel>{
 
   @override
   Widget createWidget(HeaderModel model, OnValueChanged? onValueChanged,
-          DateBuilderMethod? dateBuilder) =>
+          DateBuilderMethod? dateBuilder, SaveBarBuilderMethod? savebarBuilder) =>
       Header(
         name: model.name,
         id: model.id,
