@@ -1,10 +1,4 @@
 import 'dart:async';
-import 'dart:math';
-
-import 'package:example/aidoc_theme.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-
-
 import 'package:example/drop_down_parser2.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -357,8 +351,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-     return KeyboardVisibilityProvider(
-      child: Sizer(
+     return Sizer(
         builder: (BuildContext context, Orientation orientation, DeviceType deviceType) {
           return Scaffold(
             appBar: AppBar(
@@ -403,7 +396,6 @@ class _MyHomePageState extends State<MyHomePage> {
             // ),
           );
         },
-      ),
     );
   }
 }

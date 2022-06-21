@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/parsers/static_text_parser.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
-import 'package:sizer/sizer.dart';
 
 import 'line_wrapper.dart';
 import 'name_description_widget.dart';
@@ -68,7 +67,7 @@ class _StaticTextValueState extends State<StaticTextValue> {
       thisTime = widget.model.time;
     }
     return  Container(
-      constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight.h),
+      constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight),
       child: LineWrapper(
       isBeforeHeader: widget.model.isBeforeHeader,
       child: Row(
@@ -85,7 +84,7 @@ class _StaticTextValueState extends State<StaticTextValue> {
             Container(
               width: InheritedJsonFormTheme.of(context)
                   .theme
-                  .staticValueWidth.w,
+                  .staticValueWidth,
               decoration: InheritedJsonFormTheme.of(context)
                   .theme
                   .staticContainerDecoration,

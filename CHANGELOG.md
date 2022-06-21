@@ -160,4 +160,6 @@ Fix minimum heights.
 
 ## 4.0.2
 Fix minimum heights for widgets
- 
+
+## 4.1.0
+Remove sizer and bug fix

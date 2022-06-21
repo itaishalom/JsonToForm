@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
-import 'package:sizer/sizer.dart';
 
 class NameWidgetDescription extends StatelessWidget {
   const NameWidgetDescription(
@@ -38,7 +37,7 @@ class NameWidgetDescription extends StatelessWidget {
     ];
 
     return Container(
-        constraints: componentSameLine ? BoxConstraints(maxWidth: width.w) : null,
+        constraints: componentSameLine ? BoxConstraints(maxWidth: width) : null,
         padding: InheritedJsonFormTheme.of(context).theme.nameContainerPadding,
         decoration: InheritedJsonFormTheme.of(context).theme.nameContainerDecoration,
         child: Column(

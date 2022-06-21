@@ -1,5 +1,5 @@
 library json_to_form_with_theme;
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+
 import 'dart:async';
 import 'dart:collection';
 
@@ -15,7 +15,6 @@ import 'package:json_to_form_with_theme/parsers/static_text_parser.dart';
 import 'package:json_to_form_with_theme/parsers/toggle_parser.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
-import 'package:sizer/sizer.dart';
 
 typedef OnValueChanged = Future<bool> Function(String id, dynamic value);
 typedef DateBuilderMethod =  Widget Function(int date, String id);
@@ -114,7 +113,6 @@ class JsonFormWithTheme extends StatefulWidget {
 class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
   late final StreamSubscription<Map<String, dynamic>>? _valueChange;
   late Stream<DataClass> dataClassStream;
-  bool ignoreRebuild = false;
 
   final StreamController<DataClass> _onDataClassReady =
       StreamController<DataClass>();
@@ -169,7 +167,14 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
   void initState() {
     _valueChange = widget.streamUpdates?.listen(_onRemoteValueChanged);
     dataClassStream = _onDataClassReady.stream.asBroadcastStream();
+    buildWidgetsFromJson();
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant JsonFormWithTheme oldWidget) {
+    buildWidgetsFromJson();
+    super.didUpdateWidget(oldWidget);
   }
 
 
@@ -193,41 +198,30 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
 
   @override
   Widget build(BuildContext context) {
-    if (!ignoreRebuild) {
-      buildWidgetsFromJson();
-    } else {}
-    ignoreRebuild = false;
-    return KeyboardVisibilityProvider(
-      child: Sizer(
-        builder: (BuildContext context, Orientation orientation,
-            DeviceType deviceType) {
-          return InheritedJsonFormTheme(
-              theme: widget.theme,
-              child: Scaffold(
-                  backgroundColor: widget.theme.backgroundColor,
-                  body: GestureDetector(
-                    onTap: () {
-                      FocusScope.of(context).unfocus();
-                      TextEditingController().clear();
-                    },
-                    child: UpdateStreamWidget(
-                      dataClassStream: dataClassStream,
-                      child: CustomScrollView(key: const ValueKey("scrollView"),slivers: <Widget>[
-                        SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (BuildContext context, int index) {
-                              ItemModel item = widget.items[index];
-                              return (widget._creators[item.type]?? EmptyCreator()).createWidget(item, widget.onValueChanged,  widget.dateBuilder, widget.savebarBuilder);
-                            },
-                            childCount: widget.items.length,
-                          ),
-                        )
-                      ]),
-                    ),
-                  )));
-        },
-      ),
-    );
+        return InheritedJsonFormTheme(
+            theme: widget.theme,
+            child: Scaffold(
+                backgroundColor: widget.theme.backgroundColor,
+                body: GestureDetector(
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                    TextEditingController().clear();
+                  },
+                  child: UpdateStreamWidget(
+                    dataClassStream: dataClassStream,
+                    child: CustomScrollView(key: const ValueKey("scrollView"),slivers: <Widget>[
+                      SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (BuildContext context, int index) {
+                            ItemModel item = widget.items[index];
+                            return (widget._creators[item.type]?? EmptyCreator()).createWidget(item, widget.onValueChanged,  widget.dateBuilder, widget.savebarBuilder);
+                          },
+                          childCount: widget.items.length,
+                        ),
+                      )
+                    ]),
+                  ),
+                )));
   }
 }
 
