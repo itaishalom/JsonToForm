@@ -5,13 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:json_to_form_with_theme/parsers/edit_text_parser.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
-import 'package:sizer/sizer.dart';
 
 import '../json_to_form_with_theme.dart';
 import 'line_wrapper.dart';
 import 'name_description_widget.dart';
 
-class SaveableEditTextValue extends StatefulWidget {
+class SaveableEditTextValue extends StatefulWidget   {
   final OnValueChanged? onValueChanged;
   final DateBuilderMethod? dateBuilder;
   final SaveBarBuilderMethod? savebarBuilder;
@@ -29,7 +28,7 @@ class SaveableEditTextValue extends StatefulWidget {
   _SaveableEditTextValueState createState() => _SaveableEditTextValueState();
 }
 
-class _SaveableEditTextValueState extends State<SaveableEditTextValue> {
+class _SaveableEditTextValueState extends State<SaveableEditTextValue> with TickerProviderStateMixin{
   final TextEditingController _controller = TextEditingController();
   late FocusNode _focusNode;
   final ValueNotifier<int?> thisTime = ValueNotifier<int?>(null);
@@ -45,7 +44,6 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> {
 
   @override
   void initState() {
-
     thisTime.value = widget.model.time;
 
     if (!widget.model.isReadOnly) {
@@ -53,16 +51,13 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> {
       _focusNode.addListener(() {
         if (!_focusNode.hasFocus) {
            _controller.text = generatefinalText(widget.model.chosenValue);
-          _controller.selection = TextSelection.fromPosition(TextPosition(offset: 0));
           _bottomSheetController?.close();
         }else{
           enableBottomSheet(context);
           _controller.text = widget.model.chosenValue;
-          _controller.selection = TextSelection.fromPosition(TextPosition(offset: _controller.text.length -4));
         }
       });
     }
-
     super.initState();
   }
 
@@ -74,6 +69,8 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> {
     _bottomSheetController = showBottomSheet(
         context: context,
         enableDrag: false,
+
+        transitionAnimationController: AnimationController(duration: const Duration(seconds: 0), vsync: this),
         builder: (BuildContext context) {
           return  widget.savebarBuilder!(onSave: () {
             applaySave(context);
@@ -175,7 +172,7 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> {
           textAlign: widget.model.long ? TextAlign.start : TextAlign.center,
           obscureText: false,
           controller: _controller,
-          textInputAction:  widget.model.long ? TextInputAction.none: widget.model.hasNext?  TextInputAction.next : TextInputAction.done ,
+          textInputAction:  widget.model.long ? TextInputAction.newline: widget.model.hasNext?  TextInputAction.next : TextInputAction.done ,
           onSubmitted: (s)=> applaySave(context),
           style: !widget.model.isReadOnly
               ? (_focusNode.hasFocus
@@ -214,8 +211,8 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> {
           width: InheritedJsonFormTheme.of(context).theme.editTextWidth,
           child: text));
     }
-    return Container(
-      constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight.h),
+    return  Container(
+      constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight),
       child: LineWrapper(
         isBeforeHeader: widget.model.isBeforeHeader,
         child: widget.model.long
