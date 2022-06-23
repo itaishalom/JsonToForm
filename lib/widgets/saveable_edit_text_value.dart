@@ -63,9 +63,10 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
 
   void enableBottomSheet(BuildContext context) {
 
-    if (widget.savebarBuilder == null) {
+    if (widget.savebarBuilder == null || widget.model.isReadOnly) {
       return;
     }
+
     _bottomSheetController = showBottomSheet(
         context: context,
         enableDrag: false,
@@ -78,6 +79,10 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
             FocusScope.of(context).unfocus();
           });
         });
+    _bottomSheetController?.closed.then((value) {
+      FocusScope.of(context).unfocus();
+      print("closed");
+    });
   }
 
   void applaySave(BuildContext context) {
@@ -149,6 +154,7 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
             : InheritedJsonFormTheme.of(context).theme.editTextMargins,
 
         child: TextField(
+            scrollPadding: const EdgeInsets.only(bottom: 100),
           onTap: (){
             requestFocus(context);
             enableBottomSheet(context);
@@ -172,7 +178,7 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
           textAlign: widget.model.long ? TextAlign.start : TextAlign.center,
           obscureText: false,
           controller: _controller,
-          textInputAction:  widget.model.long ? TextInputAction.newline: widget.model.hasNext?  TextInputAction.next : TextInputAction.done ,
+          textInputAction:  widget.model.long ? TextInputAction.newline: /*widget.model.hasNext?  TextInputAction.next :*/ TextInputAction.done ,
           onSubmitted: (s)=> applaySave(context),
           style: !widget.model.isReadOnly
               ? (_focusNode.hasFocus
