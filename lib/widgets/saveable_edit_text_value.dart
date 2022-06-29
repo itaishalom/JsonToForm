@@ -10,13 +10,15 @@ import '../json_to_form_with_theme.dart';
 import 'line_wrapper.dart';
 import 'name_description_widget.dart';
 
-class SaveableEditTextValue extends StatefulWidget   {
+class SaveableEditTextValue extends StatefulWidget  implements Saveble {
   final OnValueChanged? onValueChanged;
   final DateBuilderMethod? dateBuilder;
   final SaveBarBuilderMethod? savebarBuilder;
+  late Function(bool isFoucs, Saveble item)? whenFoucsed;
+
   final EditTextValueModel model;
 
-  const SaveableEditTextValue({
+   SaveableEditTextValue({
     Key? key,
     required  this.model,
     required this.onValueChanged,
@@ -24,11 +26,30 @@ class SaveableEditTextValue extends StatefulWidget   {
     this.dateBuilder,
   }) : super(key: key);
 
+   late _SaveableEditTextValueState state;
+
   @override
-  _SaveableEditTextValueState createState() => _SaveableEditTextValueState();
+  _SaveableEditTextValueState createState() {
+    state = _SaveableEditTextValueState();
+    return state;
+  }
+
+  @override
+  void reset() {
+    state.reset();
+  }
+
+  @override
+  void save() {
+    state.save();
+  }
+}
+abstract class Saveble{
+  void save();
+  void reset();
 }
 
-class _SaveableEditTextValueState extends State<SaveableEditTextValue> with TickerProviderStateMixin{
+class _SaveableEditTextValueState extends State<SaveableEditTextValue> with TickerProviderStateMixin implements Saveble{
   final TextEditingController _controller = TextEditingController();
   late FocusNode _focusNode;
   final ValueNotifier<int?> thisTime = ValueNotifier<int?>(null);
@@ -49,6 +70,7 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
       _focusNode = FocusNode();
       _focusNode.addListener(() {
         print("focus: ${_focusNode.hasFocus}");
+        widget.whenFoucsed?.call(_focusNode.hasFocus, this);
         if (_focusNode.hasFocus) {
            updateControllerToOriginalText();
            enableBottomSheet(context);
@@ -109,9 +131,12 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
     changeValue(widget.model.id, _controller.text);
     if(!widget.model.hasNext){
       closeBottomSheet();
+      FocusScope.of(context).unfocus();
     }
     else {
-      FocusScope.of(context).nextFocus();
+      if(!FocusScope.of(context).nextFocus()){
+        FocusScope.of(context).unfocus();
+      }
     }
   }
 
@@ -155,6 +180,9 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
     }
   }
 
+  resetText(){
+    _controller.text = generatefinalText(widget.model.chosenValue);
+  }
   String generatefinalText(String longText) {
     if(_shouldCutLight() && longText.length > 5) {
       return longText.substring(0, 5) + ".." ;
@@ -251,5 +279,15 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
               ),
       ),
     );
+  }
+
+  @override
+  void reset() {
+    resetText();
+  }
+
+  @override
+  void save() {
+    applaySave(context);
   }
 }

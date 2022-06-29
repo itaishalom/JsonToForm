@@ -15,6 +15,8 @@ import 'package:json_to_form_with_theme/parsers/static_text_parser.dart';
 import 'package:json_to_form_with_theme/parsers/toggle_parser.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
+import 'package:json_to_form_with_theme/widgets/saveable_edit_text_value.dart';
+import 'package:keyboard_attachable/keyboard_attachable.dart';
 
 typedef OnValueChanged = Future<bool> Function(String id, dynamic value);
 typedef DateBuilderMethod =  Widget Function(int date, String id);
@@ -202,7 +204,7 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
     _onDataClassReady.close();
     super.dispose();
   }
-
+  Saveble? selected;
   @override
   Widget build(BuildContext context) {
         return InheritedJsonFormTheme(
@@ -216,19 +218,36 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
                   },
                   child: UpdateStreamWidget(
                     dataClassStream: dataClassStream,
-                    child: CustomScrollView(key: const ValueKey("scrollView"),slivers: <Widget>[
-                      SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (BuildContext context, int index) {
-                            ItemModel item = widget.items[index];
-                            return (widget._creators[item.type]?? EmptyCreator()).createWidget(item, widget.onValueChanged,  widget.dateBuilder, widget.savebarBuilder);
-                          },
-                          childCount: widget.items.length,
-                        ),
-                      )
-                    ]),
+                    child: FooterLayout(
+        footer: selected == null? SizedBox.shrink() :widget.savebarBuilder!(onSave: (){
+          selected?.save();
+        }, onClose: (){
+          selected?.reset();
+          FocusScope.of(context).unfocus();
+          TextEditingController().clear();
+          setState((){selected = null;});
+        }),
+    child:FocusScope(
+      child: CustomScrollView(key: const ValueKey("scrollView"),slivers: <Widget>[
+                        SliverList(
+                          key: const ValueKey("theList"),
+                          delegate: SliverChildBuilderDelegate(
+                            (BuildContext context, int index) {
+                              ItemModel item = widget.items[index];
+                              Widget theItem =  (widget._creators[item.type]?? EmptyCreator()).createWidget(item, widget.onValueChanged,  widget.dateBuilder, null);// widget.savebarBuilder);
+                              if(theItem is SaveableEditTextValue){
+                                theItem.whenFoucsed= (isFoucsed, item)=> setState(()=>selected = isFoucsed? item: null);
+
+                              }
+                              return theItem;
+                            },
+                            childCount: widget.items.length,
+                          ),
+                        )
+                      ]),
+    ),
                   ),
-                )));
+                ))));
   }
 }
 
