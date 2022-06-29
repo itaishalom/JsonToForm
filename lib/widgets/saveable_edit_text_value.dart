@@ -38,7 +38,6 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
   void didChangeDependencies() {
     UpdateStreamWidget.of(context)?.dataClassStream.listen(_onRemoteValueChanged);
     _controller.text = generatefinalText(widget.model.chosenValue);
-
     super.didChangeDependencies();
   }
 
@@ -49,16 +48,24 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
     if (!widget.model.isReadOnly) {
       _focusNode = FocusNode();
       _focusNode.addListener(() {
-        if (!_focusNode.hasFocus) {
-           _controller.text = generatefinalText(widget.model.chosenValue);
-          _bottomSheetController?.close();
+        print("focus: ${_focusNode.hasFocus}");
+        if (_focusNode.hasFocus) {
+           updateControllerToOriginalText();
+           enableBottomSheet(context);
         }else{
-          enableBottomSheet(context);
-          _controller.text = widget.model.chosenValue;
-        }
+            _controller.text = generatefinalText(widget.model.chosenValue);
+            closeBottomSheet();
+         }
       });
     }
     super.initState();
+  }
+
+  void updateControllerToOriginalText() {
+    _controller.text = widget.model.chosenValue;
+    // _controller.selection =
+        // TextSelection.fromPosition(
+        // TextPosition(offset: _controller.text.length));
   }
 
   void enableBottomSheet(BuildContext context) {
@@ -76,19 +83,32 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
           return  widget.savebarBuilder!(onSave: () {
             applaySave(context);
           }, onClose: () {
-            FocusScope.of(context).unfocus();
+            closeBottomSheet();
           });
         });
-    _bottomSheetController?.closed.then((value) {
-      FocusScope.of(context).unfocus();
-      print("closed");
+
+
+    _bottomSheetController?.closed.then((value)  {
+          unfocusThis(context);
     });
+
+  }
+
+  void closeBottomSheet() {
+    _bottomSheetController?.close();
+    _bottomSheetController = null;
+  }
+
+  void unfocusThis(BuildContext context) {
+    if(_focusNode.hasFocus) {
+       FocusScope.of(context).unfocus();
+    }
   }
 
   void applaySave(BuildContext context) {
     changeValue(widget.model.id, _controller.text);
     if(!widget.model.hasNext){
-      FocusScope.of(context).unfocus();
+      closeBottomSheet();
     }
     else {
       FocusScope.of(context).nextFocus();
@@ -99,7 +119,7 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
     if(event.id != widget.model.id){
       return;
     }
-    print("aaa - _onRemoteValueChanged");
+
     if (mounted) {
       setState(() {
         _controller.text = generatefinalText(widget.model.chosenValue);
@@ -108,7 +128,7 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
     }
   }
 
-  Future<void> changeValue(String id, dynamic value) async {
+  void changeValue(String id, dynamic value)  {
     if (widget.model.chosenValue != value) {
       widget.model.chosenValue = value;
       if (widget.onValueChanged != null) {
@@ -121,7 +141,7 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
   @override
   void dispose() {
     _controller.dispose();
-    _bottomSheetController?.close();
+    closeBottomSheet();
     if (!widget.model.isReadOnly) {
       _focusNode.dispose();
     }
@@ -130,6 +150,7 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
 
   requestFocus(BuildContext context) {
     if (!widget.model.isReadOnly) {
+      updateControllerToOriginalText();
       FocusScope.of(context).requestFocus(_focusNode);
     }
   }
@@ -154,12 +175,7 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
             : InheritedJsonFormTheme.of(context).theme.editTextMargins,
 
         child: TextField(
-            scrollPadding: const EdgeInsets.only(bottom: 100),
-          onTap: (){
-            requestFocus(context);
-            enableBottomSheet(context);
-          },
-
+          scrollPadding: const EdgeInsets.only(bottom: 100),
           focusNode: widget.model.isReadOnly ? null : _focusNode,
           autofocus: false,
           clipBehavior: Clip.antiAlias,
@@ -178,7 +194,7 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
           textAlign: widget.model.long ? TextAlign.start : TextAlign.center,
           obscureText: false,
           controller: _controller,
-          textInputAction:  widget.model.long ? TextInputAction.newline: /*widget.model.hasNext?  TextInputAction.next :*/ TextInputAction.done ,
+          textInputAction:  widget.model.long ? TextInputAction.newline: widget.model.hasNext?  TextInputAction.next : TextInputAction.done ,
           onSubmitted: (s)=> applaySave(context),
           style: !widget.model.isReadOnly
               ? (_focusNode.hasFocus

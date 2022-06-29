@@ -156,9 +156,16 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
 
       for(int i = 0; i< widget.items.length; i++){
         ItemModel currentItem = widget.items[i];
+        bool hasNext = false;
         if(currentItem.type == "edit_text")
         {
-          (currentItem as EditTextValueModel).hasNext  = widget.items.length > (i + 1) && widget.items[i + 1].type == "edit_text" ;
+          if( widget.items.length > (i + 1)){
+            hasNext = widget.items[i + 1].type == "edit_text";
+          }
+          if(!hasNext && widget.items.length > (i + 2)){
+            hasNext =  widget.items[i + 1].type == "header" &&  widget.items[i + 2].type == "edit_text";
+          }
+          (currentItem as EditTextValueModel).hasNext  = hasNext;
         }
       }
     }
@@ -204,8 +211,8 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
                 backgroundColor: widget.theme.backgroundColor,
                 body: GestureDetector(
                   onTap: () {
-                    FocusScope.of(context).unfocus();
-                    TextEditingController().clear();
+                      FocusScope.of(context).unfocus();
+                      TextEditingController().clear();
                   },
                   child: UpdateStreamWidget(
                     dataClassStream: dataClassStream,
