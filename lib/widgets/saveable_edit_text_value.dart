@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -10,15 +8,14 @@ import '../json_to_form_with_theme.dart';
 import 'line_wrapper.dart';
 import 'name_description_widget.dart';
 
-class SaveableEditTextValue extends StatefulWidget  implements Saveble {
+class SaveableEditTextValue extends StatefulWidget {
   final OnValueChanged? onValueChanged;
   final DateBuilderMethod? dateBuilder;
   final SaveBarBuilderMethod? savebarBuilder;
-  late Function(bool isFoucs, Saveble item)? whenFoucsed;
 
   final EditTextValueModel model;
 
-   SaveableEditTextValue({
+   const SaveableEditTextValue({
     Key? key,
     required  this.model,
     required this.onValueChanged,
@@ -26,54 +23,35 @@ class SaveableEditTextValue extends StatefulWidget  implements Saveble {
     this.dateBuilder,
   }) : super(key: key);
 
-   late _SaveableEditTextValueState state;
-
   @override
   _SaveableEditTextValueState createState() {
-    state = _SaveableEditTextValueState();
-    return state;
-  }
-
-  @override
-  void reset() {
-    state.reset();
-  }
-
-  @override
-  void save() {
-    state.save();
+    return _SaveableEditTextValueState();
   }
 }
-abstract class Saveble{
-  void save();
-  void reset();
-}
 
-class _SaveableEditTextValueState extends State<SaveableEditTextValue> with TickerProviderStateMixin implements Saveble{
+class _SaveableEditTextValueState extends State<SaveableEditTextValue> with TickerProviderStateMixin {
   final TextEditingController _controller = TextEditingController();
   late FocusNode _focusNode;
   final ValueNotifier<int?> thisTime = ValueNotifier<int?>(null);
-  PersistentBottomSheetController<void>? _bottomSheetController = null;
+  PersistentBottomSheetController<void>? _bottomSheetController;
+  bool wasSaved = false;
 
   @override
   void didChangeDependencies() {
     UpdateStreamWidget.of(context)?.dataClassStream.listen(_onRemoteValueChanged);
-    _controller.text = generatefinalText(widget.model.chosenValue);
+    UpdateStreamWidget.of(context)?.eventsStream.listen(_onRemoteEvents);
     super.didChangeDependencies();
   }
 
   @override
   void initState() {
     thisTime.value = widget.model.time;
-
     if (!widget.model.isReadOnly) {
       _focusNode = FocusNode();
       _focusNode.addListener(() {
-        print("focus: ${_focusNode.hasFocus}");
-        widget.whenFoucsed?.call(_focusNode.hasFocus, this);
         if (_focusNode.hasFocus) {
            updateControllerToOriginalText();
-           enableBottomSheet(context);
+            enableBottomSheet(context);
         }else{
             _controller.text = generatefinalText(widget.model.chosenValue);
             closeBottomSheet();
@@ -84,10 +62,7 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
   }
 
   void updateControllerToOriginalText() {
-    _controller.text = widget.model.chosenValue;
-    // _controller.selection =
-        // TextSelection.fromPosition(
-        // TextPosition(offset: _controller.text.length));
+     _controller.text = widget.model.chosenValue;
   }
 
   void enableBottomSheet(BuildContext context) {
@@ -110,34 +85,32 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
         });
 
 
-    _bottomSheetController?.closed.then((value)  {
-          unfocusThis(context);
+    _bottomSheetController?.closed.whenComplete(() =>   {
+          _onBottomSheetClose(context)
     });
 
   }
 
-  void closeBottomSheet() {
+  void closeBottomSheet({bool fromSave = false}) {
+    wasSaved = fromSave;
     _bottomSheetController?.close();
     _bottomSheetController = null;
   }
 
-  void unfocusThis(BuildContext context) {
-    if(_focusNode.hasFocus) {
+  void _onBottomSheetClose(BuildContext context) {
+    if(wasSaved && widget.model.hasNext){
+      wasSaved = false;
+      if(!FocusScope.of(context).nextFocus()){
+        FocusScope.of(context).unfocus();
+      }
+    }else if(_focusNode.hasFocus) {
        FocusScope.of(context).unfocus();
     }
   }
 
   void applaySave(BuildContext context) {
     changeValue(widget.model.id, _controller.text);
-    if(!widget.model.hasNext){
-      closeBottomSheet();
-      FocusScope.of(context).unfocus();
-    }
-    else {
-      if(!FocusScope.of(context).nextFocus()){
-        FocusScope.of(context).unfocus();
-      }
-    }
+    closeBottomSheet(fromSave: true);
   }
 
   void _onRemoteValueChanged(DataClass event) {
@@ -174,18 +147,23 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
   }
 
   requestFocus(BuildContext context) {
+    print("request focus Hurry!, readonly: ${widget.model.isReadOnly}");
     if (!widget.model.isReadOnly) {
       updateControllerToOriginalText();
-      FocusScope.of(context).requestFocus(_focusNode);
+      if(_focusNode.hasFocus){
+        print("already has foucs");
+        FocusScope.of(context).requestFocus(_focusNode);
+      }
     }
   }
 
   resetText(){
-    _controller.text = generatefinalText(widget.model.chosenValue);
+   _controller.text = generatefinalText(widget.model.chosenValue);
   }
+
   String generatefinalText(String longText) {
     if(_shouldCutLight() && longText.length > 5) {
-      return longText.substring(0, 5) + ".." ;
+       return longText.substring(0, 5) + ".." ;
     }
     return longText;
   }
@@ -193,10 +171,13 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
   bool _shouldCutLight() {
     return !widget.model.long && InheritedJsonFormTheme.of(context).theme.overflow;
   }
-
+  bool initText = false;
   @override
   Widget build(BuildContext context) {
-
+      if(!initText){
+        initText = true;
+        resetText();
+      }
     Widget text = Container(
         margin: widget.model.long
             ? InheritedJsonFormTheme.of(context).theme.editTextLongMargins
@@ -281,13 +262,10 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
     );
   }
 
-  @override
-  void reset() {
-    resetText();
-  }
-
-  @override
-  void save() {
-    applaySave(context);
+  void _onRemoteEvents(Events event) {
+    if(event == Events.CloseBottomSheet){
+      closeBottomSheet();
+      return;
+    }
   }
 }
