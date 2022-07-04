@@ -4,14 +4,13 @@ version: 4.1.1
 homepage: https://github.com/itaishalom/JsonToForm
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.12.0 <3.1.0"
   flutter: ">=1.17.0"
 
 dependencies:
   flutter:
     sdk: flutter
   toggle_switch: ^2.0.1
-  keyboard_attachable: 2.1.0
 
 
 dev_dependencies:

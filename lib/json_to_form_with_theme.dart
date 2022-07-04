@@ -3,7 +3,6 @@ library json_to_form_with_theme;
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:json_to_form_with_theme/exceptions/parsing_exception.dart';
 import 'package:json_to_form_with_theme/parsers/drop_down_parser.dart';
@@ -15,8 +14,6 @@ import 'package:json_to_form_with_theme/parsers/static_text_parser.dart';
 import 'package:json_to_form_with_theme/parsers/toggle_parser.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
-import 'package:json_to_form_with_theme/widgets/saveable_edit_text_value.dart';
-import 'package:keyboard_attachable/keyboard_attachable.dart';
 
 typedef OnValueChanged = Future<bool> Function(String id, dynamic value);
 typedef DateBuilderMethod = Widget Function(int date, String id);
@@ -125,6 +122,7 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
   late final StreamSubscription<Map<String, dynamic>>? _valueChange;
   late Stream<DataClass> dataClassStream;
   late Stream<Events> eventsStream;
+  late final OnValueChanged _localValueChange;
 
   final StreamController<DataClass> _onDataClassReady =
       StreamController<DataClass>();
@@ -184,6 +182,11 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
 
   @override
   void initState() {
+   _localValueChange = (id, value) {
+    widget.onValueChanged?.call(id, value);
+    _onRemoteValueChanged({id: value});
+    return Future.value(true);
+    };
     _valueChange = widget.streamUpdates?.listen(_onRemoteValueChanged);
     dataClassStream = _onDataClassReady.stream.asBroadcastStream();
     eventsStream = _onEventsClassReady.stream.asBroadcastStream();
@@ -243,7 +246,8 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
                                       EmptyCreator())
                                   .createWidget(
                                       item,
-                                      widget.onValueChanged,
+                                  _localValueChange,
+
                                       widget.dateBuilder,
                                       widget.savebarBuilder);
                               return theItem;
