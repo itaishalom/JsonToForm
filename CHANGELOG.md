@@ -163,3 +163,10 @@ Fix minimum heights for widgets
 
 ## 4.1.0
 Remove sizer and bug fix
+
+## 4.1.1
+Edit mode - save bar
+
+## 4.1.2
+Edit mode - save bar.
+Can select between save bar and save with debounce timer

@@ -40,6 +40,7 @@ class _EditTextValueState extends State<EditTextValue> {
   @override
   void didChangeDependencies() {
     UpdateStreamWidget.of(context)?.dataClassStream.listen(_onRemoteValueChanged);
+    UpdateStreamWidget.of(context)?.eventsStream.listen(_onRemoteEvents);
     super.didChangeDependencies();
   }
 
@@ -141,9 +142,14 @@ class _EditTextValueState extends State<EditTextValue> {
   Future<bool> changeValue(String id, dynamic value)
          async{
         if (widget.model.chosenValue != value) {
-          widget.model.chosenValue = value;
           if (widget.onValueChanged != null) {
-            return await widget.onValueChanged!(id, value);
+            bool res =  await widget.onValueChanged!(id, value);
+            if(res){
+              widget.model.chosenValue = value;
+              thisTime.value = DateTime.now().millisecondsSinceEpoch;
+              widget.model.time = thisTime.value!;
+            }
+            return res;
           }
         }
         return false;
@@ -181,23 +187,11 @@ class _EditTextValueState extends State<EditTextValue> {
       if (debounceTime != null && debounceTime! > 0) {
         _debounce = Timer(Duration(milliseconds: debounceTime!), () async {
           if (widget.onValueChanged != null) {
-            bool res =
                 await changeValue(widget.model.id, _controller!.text);
-            if (res) {
-              thisTime.value = DateTime
-                  .now()
-                  .millisecondsSinceEpoch;
-              widget.model.time = thisTime.value!;
-            }
           }
         });
       } else {
-        bool res = await changeValue(widget.model.id, _controller!.text);
-
-        if (res) {
-          thisTime.value = DateTime.now().millisecondsSinceEpoch;
-          widget.model.time = thisTime.value!;
-        }
+        await changeValue(widget.model.id, _controller!.text);
       }
     }
     firstTime = false;
@@ -205,8 +199,6 @@ class _EditTextValueState extends State<EditTextValue> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is removed from the widget tree.
-    // This also removes the _printLatestValue listener.
     _controller?.dispose();
     if (!widget.model.isReadOnly) {
       myFocusNode.dispose();
@@ -334,5 +326,12 @@ class _EditTextValueState extends State<EditTextValue> {
               ),
       ),
     );
+  }
+
+  void _onRemoteEvents(Events event) {
+    if(event == Events.CloseBottomSheet){
+      myFocusNode.unfocus();
+      return;
+    }
   }
 }

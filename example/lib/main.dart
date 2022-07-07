@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-
-
 import 'package:example/drop_down_parser2.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -281,6 +279,21 @@ class _MyHomePageState extends State<MyHomePage> {
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(date);
     return Text(buildDate(dateTime));
   }
+  Widget saveBarBuilder({required Function onSave, required Function onClose}) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+          children: [
+            ElevatedButton(
+                onPressed: ()=> onClose(),
+                child: Text("close")),
+            Spacer(),
+            ElevatedButton(
+                onPressed: ()=> onSave(),
+                child: Text("save")),
+          ]),
+    );
+  }
 
   List<String> list = ["Medium", "High"];
   List<String> toggleList = ["On", "Off"];
@@ -332,7 +345,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   await Future.delayed(const Duration(seconds: 1));
                   return Future.value(true);
                 })
-                .setTheme(const DefaultTheme()).build(),
+               .setSaveBarBuilderMethod(saveBarBuilder)
+               .setTheme(const DefaultTheme()).build(),
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {

@@ -8,11 +8,29 @@ import 'package:json_to_form_with_theme/exceptions/parsing_exception.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/widgets/drop_down_widget.dart';
 import 'package:json_to_form_with_theme/widgets/edit_text_value.dart';
+import 'package:json_to_form_with_theme/widgets/saveable_edit_text_value.dart';
 import 'package:json_to_form_with_theme/widgets/header.dart';
 import 'package:json_to_form_with_theme/widgets/static_text_value.dart';
 import 'package:json_to_form_with_theme/widgets/toggle.dart';
 
 void main() {
+
+  Widget saveBarBuilder({required Function onSave, required Function onClose}) {
+    return Row(
+          children: [
+            ElevatedButton(
+              key: ValueKey("closeButton"),
+                onPressed: ()=> onClose(),
+                child: Text("close")),
+
+            ElevatedButton(
+                key: ValueKey("saveButton"),
+                onPressed: ()=> onSave(),
+                child: Text("save")),
+          ]
+    );
+  }
+
   group("Widget tests:", () {
     testWidgets('Verify toggle', (WidgetTester tester) async {
       final Map<String, dynamic> json = {
@@ -35,6 +53,7 @@ void main() {
       await tester.pump();
       expect(find.byType(Toggle), findsOneWidget);
       expect(find.byType(EditTextValue), findsNothing);
+      expect(find.byType(SaveableEditTextValue), findsNothing);
       expect(find.byType(Header), findsNothing);
       expect(find.byType(DropDownWidget), findsNothing);
     });
@@ -59,6 +78,33 @@ void main() {
       await tester.pump();
       expect(find.byType(Toggle), findsNothing);
       expect(find.byType(EditTextValue), findsOneWidget);
+      expect(find.byType(SaveableEditTextValue), findsNothing);
+      expect(find.byType(Header), findsNothing);
+      expect(find.byType(DropDownWidget), findsNothing);
+    });
+
+    testWidgets('Verify save able edit text', (WidgetTester tester) async {
+      final Map<String, dynamic> json = {
+        "widgets": [
+          {
+            "id": "3",
+            "name": "Edit text",
+            "type": "edit_text",
+            "chosen_value": "edit value",
+            "description": "(edit description..)",
+          }
+        ]
+      };
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json).setSaveBarBuilderMethod(saveBarBuilder).build()),
+        ),
+      );
+      // Trigger a frame.
+      await tester.pump();
+      expect(find.byType(Toggle), findsNothing);
+      expect(find.byType(EditTextValue), findsNothing);
+      expect(find.byType(SaveableEditTextValue), findsOneWidget);
       expect(find.byType(Header), findsNothing);
       expect(find.byType(DropDownWidget), findsNothing);
     });
@@ -84,6 +130,7 @@ void main() {
       await tester.pump();
       expect(find.byType(Toggle), findsNothing);
       expect(find.byType(EditTextValue), findsNothing);
+      expect(find.byType(SaveableEditTextValue), findsNothing);
       expect(find.byType(Header), findsNothing);
       expect(find.byType(StaticTextValue), findsOneWidget);
       expect(find.byType(DropDownWidget), findsNothing);
@@ -108,6 +155,7 @@ void main() {
       await tester.pump();
       expect(find.byType(Toggle), findsNothing);
       expect(find.byType(EditTextValue), findsNothing);
+      expect(find.byType(SaveableEditTextValue), findsNothing);
       expect(find.byType(Header), findsNothing);
       expect(find.byType(StaticTextValue), findsNothing);
       expect(find.byType(DropDownWidget), findsOneWidget);
@@ -161,6 +209,7 @@ void main() {
       await tester.pump();
       expect(tester.takeException(), isInstanceOf<ParsingException>());
     });
+
     testWidgets('Expect onValueChanged:', (WidgetTester tester) async {
       String valueAfterChange = "";
       final Map<String, dynamic> json = {
@@ -191,6 +240,88 @@ void main() {
       await tester.enterText(find.byKey(const ValueKey("3")), "edit value");
       expect(valueAfterChange, "edit value");
     });
+
+    testWidgets('Saveable Edit text Expect onValueChanged:', (WidgetTester tester) async {
+      String valueAfterChange = "";
+      final Map<String, dynamic> json = {
+        "widgets": [
+          {
+            "id": "3",
+            "name": "Edit text",
+            "type": "edit_text",
+            "chosen_value": "start",
+            "description": "(edit description..)",
+          }
+        ]
+      };
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json)
+              .setSaveBarBuilderMethod(saveBarBuilder)
+              .setOnValueChanged((String id, dynamic value){
+            valueAfterChange = value;
+            return Future.value(true);
+          }).build()),
+        ),
+      );
+      // Trigger a frame.
+      await tester.pump();
+
+      final findText = find.text('start');
+      expect(findText, findsOneWidget);
+
+      await tester.enterText(find.byKey(const ValueKey("3")), "test");
+      expect(find.text('test'), findsOneWidget);
+
+      FocusScope.of(tester.element(find.byType(TextField))).requestFocus();
+      await tester.idle();
+      await tester.pump();
+
+      await tester.tap(find.byKey(const ValueKey("saveButton")));
+      await tester.pump();
+
+      expect(valueAfterChange, "test");
+    });
+
+    testWidgets('Saveable Edit text reverted on close', (WidgetTester tester) async {
+      final Map<String, dynamic> json = {
+        "widgets": [
+          {
+            "id": "3",
+            "name": "Edit text",
+            "type": "edit_text",
+            "chosen_value": "start",
+            "description": "(edit description..)",
+          }
+        ]
+      };
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json)
+              .setSaveBarBuilderMethod(saveBarBuilder)
+              .build()),
+        ),
+      );
+      // Trigger a frame.
+      await tester.pump();
+
+      final findText = find.text('start');
+      expect(findText, findsOneWidget);
+
+      await tester.enterText(find.byKey(const ValueKey("3")), "test");
+      expect(find.text('test'), findsOneWidget);
+
+      FocusScope.of(tester.element(find.byType(TextField))).requestFocus();
+      await tester.idle();
+      await tester.pump();
+
+      await tester.tap(find.byKey(const ValueKey("closeButton")));
+      await tester.pump();
+
+      expect(find.text('test'), findsNothing);
+      expect(find.text('start'), findsOneWidget);
+    });
+
 
     testWidgets('Expect onValueChanged: - not changed, read only short', (WidgetTester tester) async {
       String valueAfterChange = "";
@@ -369,11 +500,11 @@ void main() {
           "51"); // toggle
 
       expect(find.text("51"), findsNothing);
-      await tester.drag(find.byKey(Key('scrollView')), const Offset(0.0, -3000));
+      await tester.drag(find.byKey(Key('scrollView')), const Offset(0.0, -6000));
       await tester.pump(const Duration(seconds: 5));
 
       expect(find.text("51"), findsOneWidget);
-      await tester.drag(find.byKey(Key('scrollView')), const Offset(0.0, 3000));
+      await tester.drag(find.byKey(Key('scrollView')), const Offset(0.0, 6000));
       await tester.pump(const Duration(seconds: 5));
       expect(find.text("zzz"), findsOneWidget);
     });
@@ -642,6 +773,61 @@ void main() {
 
     });
 
+  });
+
+  testWidgets('Saveable edit text, Change value - long list with scroll', (WidgetTester tester) async {
+
+    final Map<String, dynamic> json= {};
+    json["widgets"] = [];
+    for(int i = 0; i < 51; i++){
+      json["widgets"].add ( {
+        "id": "abc"+i.toString(),
+        "name": "Edit text",
+        "type": "edit_text",
+        "chosen_value": "abc"+i.toString(),
+        "description": "(edit description..)",
+      });
+    }
+
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json)
+            .setSaveBarBuilderMethod(saveBarBuilder)
+            .build()),
+      ),
+    );
+    // Trigger a frame.
+    await tester.pump();
+
+    expect(find.text("abc0"), findsOneWidget);
+    expect(find.text("abc50"), findsNothing);
+
+
+    // FocusScope.of(tester.element(find.byKey(const ValueKey("abc0")))).requestFocus();
+    FocusScope.of(await tester.element(find.byKey(const ValueKey("abc0")))).requestFocus();
+    await tester.idle();
+    await tester.pump();
+
+    await tester.enterText(find.byKey(const ValueKey("abc0")), "test");
+
+
+    await tester.drag(find.byKey(Key('scrollView')), const Offset(0.0, -6000));
+    await tester.pump(const Duration(seconds: 5));
+
+
+    expect(find.text('test'), findsNothing);
+    expect(find.text("abc0"), findsNothing);
+    expect(find.text("abc50"), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey("saveButton")));
+    await tester.pump();
+
+    await tester.drag(find.byKey(Key('scrollView')), const Offset(0.0, 6000));
+    await tester.pump(const Duration(seconds: 5));
+    expect(find.text("test"), findsOneWidget);
+    expect(find.text("abc0"), findsNothing);
+    expect(find.text("abc50"), findsNothing);
   });
 
 
