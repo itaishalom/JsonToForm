@@ -3,6 +3,7 @@ import 'package:json_to_form_with_theme/parsers/item_model.dart';
 import 'package:json_to_form_with_theme/parsers/parser_creator.dart';
 import 'package:json_to_form_with_theme/widgets/saveable_edit_text_value.dart';
 import '../json_to_form_with_theme.dart';
+import '../widgets/edit_text_value.dart';
 
 class EditTextValueModel extends ItemModel {
   final String name;
@@ -45,6 +46,13 @@ class EditTextParserCreator extends ParserCreator<EditTextValueModel>{
 
   @override
   Widget createWidget(EditTextValueModel model, OnValueChanged? onValueChanged, DateBuilderMethod? dateBuilder, SaveBarBuilderMethod? savebarBuilder) {
+    if (savebarBuilder == null) {
+      return EditTextValue(
+          key: ValueKey(model.id),
+          model: model,
+          onValueChanged: onValueChanged,
+          dateBuilder: dateBuilder);
+    }
     return SaveableEditTextValue(
         key: ValueKey(model.id),
         model: model,

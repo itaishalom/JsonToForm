@@ -49,7 +49,7 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
     if (!widget.model.isReadOnly) {
       _focusNode = FocusNode();
       _focusNode.addListener(() {
-        if (_focusNode.hasFocus) {
+        if (_focusNode.hasFocus) { //add is mounted
            updateControllerToOriginalText();
             enableBottomSheet(context);
         }else{
@@ -108,9 +108,10 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
     }
   }
 
-  void applaySave(BuildContext context) {
-    changeValue(widget.model.id, _controller.text);
-    closeBottomSheet(fromSave: true);
+  void applaySave(BuildContext context) async{
+    if (await changeValue(widget.model.id, _controller.text)) {
+      closeBottomSheet(fromSave: true);
+    }
   }
 
   void _onRemoteValueChanged(DataClass event) {
@@ -126,15 +127,22 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
     }
   }
 
-  void changeValue(String id, dynamic value)  {
-    if (widget.model.chosenValue != value) {
-      widget.model.chosenValue = value;
-      if (widget.onValueChanged != null) {
-        widget.onValueChanged!(id, value);
+  Future<bool> changeValue(String id, dynamic value) async {
+    if (widget.model.chosenValue == value) {
+      return Future.value(false);
+    }
+
+    if (widget.onValueChanged != null) {
+      bool res = await widget.onValueChanged!(id, value);
+      if (res) {
+        widget.model.chosenValue = value;
+        thisTime.value = DateTime.now().millisecondsSinceEpoch;
+        widget.model.time = thisTime.value!;
+        return true;
       }
     }
+    return false;
   }
-
 
   @override
   void dispose() {
@@ -146,16 +154,6 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
     super.dispose();
   }
 
-  requestFocus(BuildContext context) {
-    print("request focus Hurry!, readonly: ${widget.model.isReadOnly}");
-    if (!widget.model.isReadOnly) {
-      updateControllerToOriginalText();
-      if(_focusNode.hasFocus){
-        print("already has foucs");
-        FocusScope.of(context).requestFocus(_focusNode);
-      }
-    }
-  }
 
   resetText(){
    _controller.text = generatefinalText(widget.model.chosenValue);

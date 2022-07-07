@@ -69,6 +69,20 @@ class JsonFormWithThemeBuilder {
     return this;
   }
 
+  bool _isFocusOnNext = true;
+
+  JsonFormWithThemeBuilder shouldFocusOnNext(bool isFocusOnNext) {
+    this._isFocusOnNext = isFocusOnNext;
+    return this;
+  }
+
+  bool _canListUnFocus = true;
+
+  JsonFormWithThemeBuilder canListUnfocus(bool canListUnFocus) {
+    this._canListUnFocus = canListUnFocus;
+    return this;
+  }
+
   _registerComponents() {
     registerComponent(ToggleParserCreator());
     registerComponent(HeaderParserCreator());
@@ -92,6 +106,8 @@ class JsonFormWithTheme extends StatefulWidget {
   final Map<String, dynamic> jsonWidgets;
   final JsonFormTheme theme;
   final Stream<Map<String, dynamic>>? streamUpdates;
+  final bool canListUnFocus;
+  final bool isFocusOnNext;
 
   JsonFormWithTheme._builder(JsonFormWithThemeBuilder builder)
       : jsonWidgets = builder.jsonWidgets,
@@ -101,6 +117,8 @@ class JsonFormWithTheme extends StatefulWidget {
         dateBuilder = builder._dateBuilderMethod,
         savebarBuilder = builder._savebarBuilderMethod,
         _creators = builder._parsers,
+        canListUnFocus = builder._canListUnFocus,
+        isFocusOnNext = builder._isFocusOnNext,
         super();
 
   JsonFormWithTheme._({
@@ -111,6 +129,8 @@ class JsonFormWithTheme extends StatefulWidget {
     this.streamUpdates,
     this.dateBuilder,
     this.savebarBuilder,
+    this.canListUnFocus = false,
+    this.isFocusOnNext = false,
   })  : _creators = HashMap(),
         super(key: key);
 
@@ -122,11 +142,11 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
   late final StreamSubscription<Map<String, dynamic>>? _valueChange;
   late Stream<DataClass> dataClassStream;
   late Stream<Events> eventsStream;
-  late final OnValueChanged _localValueChange;
 
   final StreamController<DataClass> _onDataClassReady =
       StreamController<DataClass>();
   final StreamController<Events> _onEventsClassReady = StreamController<Events>();
+
   buildWidgetsFromJson() {
     List<dynamic>? widgets = widget.jsonWidgets['widgets'];
     if (widgets == null) {
@@ -163,7 +183,9 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
         throw ParsingException("Bad $type format");
       }
     }
+  }
 
+  void checkNextValueForEditTexts() {
     for (int i = 0; i < widget.items.length; i++) {
       ItemModel currentItem = widget.items[i];
       bool hasNext = false;
@@ -180,23 +202,26 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
     }
   }
 
+  void buildTheList(){
+    buildWidgetsFromJson();
+    if(widget.isFocusOnNext){
+      checkNextValueForEditTexts();
+    }
+  }
+
+
   @override
   void initState() {
-   _localValueChange = (id, value) {
-    widget.onValueChanged?.call(id, value);
-    _onRemoteValueChanged({id: value});
-    return Future.value(true);
-    };
     _valueChange = widget.streamUpdates?.listen(_onRemoteValueChanged);
     dataClassStream = _onDataClassReady.stream.asBroadcastStream();
     eventsStream = _onEventsClassReady.stream.asBroadcastStream();
-    buildWidgetsFromJson();
+    buildTheList();
     super.initState();
   }
 
   @override
   void didUpdateWidget(covariant JsonFormWithTheme oldWidget) {
-    buildWidgetsFromJson();
+    buildTheList();
     super.didUpdateWidget(oldWidget);
   }
 
@@ -228,7 +253,9 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
             backgroundColor: widget.theme.backgroundColor,
             body: GestureDetector(
               onTap: () {
-                _onEventsClassReady.add(Events.CloseBottomSheet);
+                if(widget.canListUnFocus) {
+                  _onEventsClassReady.add(Events.CloseBottomSheet);
+                }
               },
               child: UpdateStreamWidget(
                 dataClassStream: dataClassStream,
@@ -246,8 +273,7 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
                                       EmptyCreator())
                                   .createWidget(
                                       item,
-                                  _localValueChange,
-
+                                      widget.onValueChanged,
                                       widget.dateBuilder,
                                       widget.savebarBuilder);
                               return theItem;
