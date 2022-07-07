@@ -40,6 +40,7 @@ class _EditTextValueState extends State<EditTextValue> {
   @override
   void didChangeDependencies() {
     UpdateStreamWidget.of(context)?.dataClassStream.listen(_onRemoteValueChanged);
+    UpdateStreamWidget.of(context)?.eventsStream.listen(_onRemoteEvents);
     super.didChangeDependencies();
   }
 
@@ -325,5 +326,12 @@ class _EditTextValueState extends State<EditTextValue> {
               ),
       ),
     );
+  }
+
+  void _onRemoteEvents(Events event) {
+    if(event == Events.CloseBottomSheet){
+      myFocusNode.unfocus();
+      return;
+    }
   }
 }

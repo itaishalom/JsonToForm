@@ -345,8 +345,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   await Future.delayed(const Duration(seconds: 1));
                   return Future.value(true);
                 })
-                .setSaveBarBuilderMethod(saveBarBuilder)
-                .setTheme(const DefaultTheme()).build(),
+               .setSaveBarBuilderMethod(saveBarBuilder)
+               .setTheme(const DefaultTheme()).build(),
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
