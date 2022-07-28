@@ -86,6 +86,7 @@ abstract class JsonFormTheme {
       required this.toggleWidthOfHeader,
       required this.editTextWidthOfHeader,
       required this.dropDownWidthOfHeader,
+        required this.scrollPadding,
       required this.staticTextWidthOfHeader,
       required this.staticValueWidth,
       this.activeToggleBorder,
@@ -200,6 +201,8 @@ abstract class JsonFormTheme {
   final double dropDownWith;
 
   final double dropDownWidthOfHeader;
+
+  final double scrollPadding;
 }
 
 /// Default chat theme which extends [JsonFormTheme]
@@ -356,5 +359,6 @@ class DefaultTheme extends JsonFormTheme {
             toggleWidthOfHeader: 45,
             editTextWidthOfHeader: 125,
             dropDownWidthOfHeader: 105,
+            scrollPadding: 100,
             staticTextWidthOfHeader: 125);
 }
