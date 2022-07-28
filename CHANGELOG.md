@@ -170,3 +170,6 @@ Edit mode - save bar
 ## 4.1.2
 Edit mode - save bar.
 Can select between save bar and save with debounce timer
+
+## 4.1.3
+Get scrollPadding configuration from theme 

@@ -182,7 +182,7 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
             : InheritedJsonFormTheme.of(context).theme.editTextMargins,
 
         child: TextField(
-          scrollPadding: const EdgeInsets.only(bottom: 100),
+          scrollPadding: EdgeInsets.only(bottom: InheritedJsonFormTheme.of(context).theme.scrollPadding),
           focusNode: widget.model.isReadOnly ? null : _focusNode,
           autofocus: false,
           clipBehavior: Clip.antiAlias,
