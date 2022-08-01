@@ -173,3 +173,7 @@ Can select between save bar and save with debounce timer
 
 ## 4.1.3
 Get scrollPadding configuration from theme 
+
+
+## 4.1.4
+Add Padding to scroll when keyboard is open 
