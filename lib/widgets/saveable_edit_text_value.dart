@@ -160,8 +160,8 @@ class _SaveableEditTextValueState extends State<SaveableEditTextValue> with Tick
   }
 
   String generatefinalText(String longText) {
-    if(_shouldCutLight() && longText.length > 5) {
-       return longText.substring(0, 5) + ".." ;
+    if(_shouldCutLight() && longText.length > InheritedJsonFormTheme.of(context).theme.digitsBeforeDots) {
+       return longText.substring(0, InheritedJsonFormTheme.of(context).theme.digitsBeforeDots) + ".." ;
     }
     return longText;
   }

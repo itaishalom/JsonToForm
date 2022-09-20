@@ -322,6 +322,7 @@ class DefaultTheme extends JsonFormTheme {
             bottom: BorderSide.none,
           ))})
       : super(
+    digitsBeforeDots: 7,
             itemMinHeight: 0,
             staticValueWidth: 90,
             dropDownWith: 120,

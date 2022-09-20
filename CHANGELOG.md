@@ -180,3 +180,6 @@ Add Padding to scroll when keyboard is open
 
 ## 4.1.5
 Number of digits before adding ".." is now configurable
+
+## 4.1.6
+Number of digits before adding ".." is now configurable on Text with save button
