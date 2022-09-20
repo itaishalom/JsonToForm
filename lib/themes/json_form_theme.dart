@@ -40,6 +40,7 @@ const inactiveToggleActiveBgColor = Color(0xffaD5C14);
 /// Extend this class if you want to create a custom theme.
 @immutable
 abstract class JsonFormTheme {
+
   /// Creates a new chat theme based on provided colors and text styles.
   const JsonFormTheme(
       {required this.headerContainerPadding,
@@ -93,7 +94,8 @@ abstract class JsonFormTheme {
       required this.staticValueWidth,
       this.activeToggleBorder,
       this.itemMinHeight = 0,
-      this.mainAxisAlignmentOfName = MainAxisAlignment.start});
+      this.mainAxisAlignmentOfName = MainAxisAlignment.start,
+      this.digitsBeforeDots = 5});
 
   /// Global container params///
 
@@ -207,6 +209,8 @@ abstract class JsonFormTheme {
   final double scrollPadding;
   final double keyboardOpenPadding;
   final double keyboardClosePadding;
+
+  final int digitsBeforeDots;
 }
 
 /// Default chat theme which extends [JsonFormTheme]

@@ -176,4 +176,7 @@ Get scrollPadding configuration from theme
 
 
 ## 4.1.4
-Add Padding to scroll when keyboard is open 
+Add Padding to scroll when keyboard is open
+
+## 4.1.5
+Number of digits before adding ".." is now configurable

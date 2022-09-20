@@ -83,8 +83,8 @@ class _EditTextValueState extends State<EditTextValue> {
   }
 
   String generateDottedText(String longText) {
-    if(longText.length > 5) {
-      return longText.substring(0, 5) + ".." ;
+    if(longText.length > InheritedJsonFormTheme.of(context).theme.digitsBeforeDots) {
+      return longText.substring(0, InheritedJsonFormTheme.of(context).theme.digitsBeforeDots) + ".." ;
     }
     return longText;
   }
@@ -94,7 +94,7 @@ class _EditTextValueState extends State<EditTextValue> {
   }
 
   bool shouldCut(String text) {
-    bool res = (shouldCutLight() && text.length > 5);
+    bool res = (shouldCutLight() && text.length > InheritedJsonFormTheme.of(context).theme.digitsBeforeDots);
     if (res) {
       cutIgnore = true;
     }
