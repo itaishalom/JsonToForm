@@ -2,22 +2,40 @@ import 'package:flutter/cupertino.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/parsers/item_model.dart';
 import 'package:json_to_form_with_theme/parsers/parser_creator.dart';
+import 'package:stream_live_data/live_data.dart';
 
 import 'drop_down_widget2.dart';
 
 class DropDownParser2Model extends ItemModel{
   dynamic chosenValue;
   final String? description;
-  final String name;
+  final MutableLiveData<String> name;
   final List<String> values;
-  int? time;
+  MutableLiveData<int?> time;
+
+  @override
+  void updateValue(value, {bool withTime = true}) {
+    chosenValue.add(value);
+    if(withTime){
+      updateTime();
+    }
+  }
+
+  @override
+  void dispose(){
+    chosenValue.dispose();
+    time.dispose();
+  }
+  void updateTime(){
+    time.add(DateTime.now().millisecondsSinceEpoch);
+  }
 
   DropDownParser2Model.fromJson(Map<String, dynamic> json, String type, bool isBeforeHeader)
       : name = json['name'],
         description = json['description'],
-        time = json['time'],
+        time = MutableLiveData(initValue: json['time']),
         values = json['values'].cast<String>(),
-        chosenValue = json['chosen_value'], super(json['id'], type, isBeforeHeader);
+        chosenValue = MutableLiveData(initValue: json['chosen_value']), super(json['id'], type, isBeforeHeader);
 
 }
 

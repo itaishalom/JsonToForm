@@ -225,7 +225,7 @@ packages:
     source: hosted
     version: "2.1.1"
   stream_live_data:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: stream_live_data
       url: "https://pub.dartlang.org"

@@ -7,6 +7,8 @@ abstract class ItemModel{
 
   ItemModel(this.id, this.type, this.isBeforeHeader);
   void updateValue(dynamic value) {}
+
+  void dispose() {}
 }
 class EmptyItemModel extends ItemModel{
   EmptyItemModel() : super(emptyItemModelType, "empty", false);

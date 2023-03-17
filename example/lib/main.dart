@@ -63,14 +63,14 @@ class _MyHomePageState extends State<MyHomePage> {
         "time": 1630164109066,
       },
       {"type": "header", "name": "Header2", "id": "39"},
-/*      {
+      {
         "id": "56",
         "name": "ADVT",
         "type": "toggle",
         "values": ["On", "Off"],
         "chosen_value": "Off",
         "time": 1630164109056,
-      },*/
+      },
       {
         "id": "2",
         "name": "Static text",
@@ -104,12 +104,12 @@ class _MyHomePageState extends State<MyHomePage> {
         "values": ["Low-Intermediate", "Medium", "High", ""],
         "chosen_value": "Low-Intermediate"
       },
-      {
+     {
         "id": "5",
         "name": "Dynamic Drop down",
         "type": "drop_down2",
-        "values": ["one", "two", "three"],
-        "chosen_value": "one",
+  "values": ["Low-Intermediate", "Medium", "High", ""],
+        "chosen_value": "Low-Intermediate",
         "time": 1530164109066,
       },
       {"type": "header", "name": "Header", "id": "10029"},
@@ -163,14 +163,14 @@ class _MyHomePageState extends State<MyHomePage> {
         "values": ["Low-Intermediate", "Medium", "High", ""],
         "chosen_value": "Low-Intermediate"
       },
-      {
+  /*    {
         "id": "1005",
         "name": "Dynamic Drop down",
         "type": "drop_down2",
         "values": ["one", "two", "three"],
         "chosen_value": "one",
         "time": 1530164109066,
-      },
+      },*/
       {"type": "header", "name": "Header", "id": "20029"},
       {
         "id": "2001",
@@ -222,14 +222,14 @@ class _MyHomePageState extends State<MyHomePage> {
         "values": ["Low-Intermediate", "Medium", "High", ""],
         "chosen_value": "Low-Intermediate"
       },
-      {
+/*      {
         "id": "2005",
         "name": "Dynamic Drop down",
         "type": "drop_down2",
         "values": ["one", "two", "three"],
         "chosen_value": "one",
         "time": 1530164109066,
-      }
+      }*/
     ]
   };
 
@@ -311,12 +311,15 @@ class _MyHomePageState extends State<MyHomePage> {
       json['widgets'][1]['chosen_value'] = "Bad";
       json['widgets'][6]['chosen_value'] = "goodReally";
       json['widgets'][8]['chosen_value'] = "Medium";
+      json['widgets'][9]['chosen_value'] = "Medium";
+
     } else {
       toggleList = ["On", "Off"];
       json['widgets'][1]['chosen_value'] = "On";
       json['widgets'][1]['values'] = toggleList;
       json['widgets'][6]['chosen_value'] = "bad";
       json['widgets'][8]['chosen_value'] = "High";
+      json['widgets'][9]['chosen_value'] = "High";
     }
 
     changeToGoodBad = !changeToGoodBad;
@@ -336,8 +339,8 @@ class _MyHomePageState extends State<MyHomePage> {
             onRefresh: _refresh,
             child: JsonFormWithThemeBuilder(
                 jsonWidgets: json)
-                .setDateBuilderMethod(dateBuilder)
-                .registerComponent(DropDownParser2Creator())
+                .setDateBuilderMethod(dateBuilder)//
+             .registerComponent(DropDownParser2Creator())
                 // .setDynamicFactory(MyWidgetParserFactory())
                 .setStreamUpdates(onValueChangeStream)
                 .setOnValueChanged((String d, dynamic s) async {

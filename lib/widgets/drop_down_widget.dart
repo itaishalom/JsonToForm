@@ -27,13 +27,16 @@ class DropDownWidget extends StatefulWidget {
 
 /// This is the private State class that goes with MyStatefulWidget.
 class _MyStatefulWidgetState extends State<DropDownWidget> {
-  String? dropdownValue;
 
   bool forceRefresh = false;
 
   @override
   void didUpdateWidget(covariant DropDownWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
+    oldWidget.model.updateValue("SSSSS", withTime: false);
+  //  print(oldWidget.model.chosenValue.value);
+    oldWidget.model.dispose();
+ //   print(widget.model.chosenValue.value);
     forceRefresh = true;
   }
 
@@ -52,7 +55,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
   Widget build(BuildContext context) {
     if (forceRefresh) {
       forceRefresh = false;
-      dropdownValue = widget.model.chosenValue.value;
+    //  dropdownValue = widget.model.chosenValue.value;
     }
     return Container(
       constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight),
@@ -74,11 +77,14 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
               }),
           Container(
             constraints: BoxConstraints(maxWidth: InheritedJsonFormTheme.of(context).theme.dropDownWith),
-            child: LiveDataBuilder<dynamic>(
-                liveData: widget.model.chosenValue,
+            child: StreamBuilder<dynamic>(
+              initialData: "",
+                stream: widget.model.chosenValueStream,
                 builder: (context, snapshot) {
+                  print("buildddd=======");
+                  print("buildddd: " +snapshot.data.toString());
+                  print("buildddd=======end");
                   return DropdownButton<String>(
-                    key: ValueKey(widget.model.id + "inner"),
                     dropdownColor: const Color(0xff222222),
                     value: snapshot.data,
                     isExpanded: true,
@@ -135,12 +141,12 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
   }
 
   Future<bool> changeValue(String id, dynamic value) async {
-    if (widget.model.chosenValue.value != value) {
+   // if (widget.model.chosenValue.value != value) {
       widget.model.updateValue(value, withTime: false);
       if (value != null) {
         return await widget.onValueChanged!(id, value);
       }
-    }
+ //   }
     return false;
   }
 }

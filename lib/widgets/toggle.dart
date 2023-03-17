@@ -35,8 +35,12 @@ class _ToggleState extends State<Toggle> {
   @override
   void didUpdateWidget(covariant Toggle oldWidget) {
     super.didUpdateWidget(oldWidget);
+    //  print(oldWidget.model.chosenValue.value);
+    oldWidget.model.dispose();
+    //   print(widget.model.chosenValue.value);
     forceRefresh = true;
   }
+
 
   @override
   void dispose() {
@@ -75,7 +79,7 @@ class _ToggleState extends State<Toggle> {
                         dateBuilder: widget.dateBuilder,
                         time: snapshot.data);
                   }),
-              LiveDataBuilder<dynamic?>(
+              LiveDataBuilder<dynamic>(
                   liveData: widget.model.chosenValue,
                   builder: (context, snapshot) {
                     return ToggleSwitch(

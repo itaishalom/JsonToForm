@@ -20,6 +20,12 @@ class ToggleModel extends ItemModel{
     }
   }
 
+  @override
+  void dispose(){
+    chosenValue.dispose();
+    time.dispose();
+  }
+
   void updateTime(){
     time.add(DateTime.now().millisecondsSinceEpoch);
   }
@@ -42,6 +48,9 @@ class ToggleParserCreator extends ParserCreator<ToggleModel>{
       dateBuilder: dateBuilder,
       onValueChanged: onValueChanged);
 
+
   @override
-  ToggleModel parseModel(Map<String, dynamic> json, bool isBeforeHeader) => ToggleModel.fromJson(json, type, isBeforeHeader);
+  ToggleModel parseModel(Map<String, dynamic> json, bool isBeforeHeader) {
+    return ToggleModel.fromJson(json, type, isBeforeHeader);
+  }
 }
