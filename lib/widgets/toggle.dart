@@ -80,6 +80,7 @@ class _ToggleState extends State<Toggle> {
                         time: snapshot.data);
                   }),
               LiveDataBuilder<dynamic>(
+                key: UniqueKey(),
                   liveData: widget.model.chosenValue,
                   builder: (context, snapshot) {
                     return ToggleSwitch(

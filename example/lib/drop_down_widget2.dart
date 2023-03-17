@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -79,6 +80,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget2> {
           Container(
             constraints: BoxConstraints(maxWidth: InheritedJsonFormTheme.of(context).theme.dropDownWith),
             child: LiveDataBuilder<dynamic>(
+              key:  UniqueKey(),
                 liveData: widget.model.chosenValue,
                 initialData: widget.model.chosenValue.value,
                 builder: (context, snapshot) {

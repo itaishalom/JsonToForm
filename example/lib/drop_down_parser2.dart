@@ -7,9 +7,9 @@ import 'package:stream_live_data/live_data.dart';
 import 'drop_down_widget2.dart';
 
 class DropDownParser2Model extends ItemModel{
-  dynamic chosenValue;
+  MutableLiveData<dynamic> chosenValue;
   final String? description;
-  final MutableLiveData<String> name;
+  final String name;
   final List<String> values;
   MutableLiveData<int?> time;
 

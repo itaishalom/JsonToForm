@@ -104,11 +104,11 @@ class _MyHomePageState extends State<MyHomePage> {
         "values": ["Low-Intermediate", "Medium", "High", ""],
         "chosen_value": "Low-Intermediate"
       },
-     {
+      {
         "id": "5",
         "name": "Dynamic Drop down",
         "type": "drop_down2",
-  "values": ["Low-Intermediate", "Medium", "High", ""],
+        "values": ["Low-Intermediate", "Medium", "High", ""],
         "chosen_value": "Low-Intermediate",
         "time": 1530164109066,
       },
@@ -354,18 +354,21 @@ class _MyHomePageState extends State<MyHomePage> {
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               counter++;
-              if (counter % 4 == 1) {
+              if (counter % 5 == 1) {
                 toggle++;
                 _onUserController.add({}..["1"] = toggleList[toggle % 2]); // toggle
               }
-              if (counter % 4 == 2) {
+              if (counter % 5 == 2) {
                 _onUserController.add({}..["2"] = "updated" + Random().nextInt(10).toString()); // toggle
               }
-              if (counter % 4 == 3) {
+              if (counter % 5 == 3) {
                 _onUserController.add({}..["3"] = "Val" + Random().nextInt(100000).toString()); // toggle
               }
-              if (counter % 4 == 0) {
+              if (counter % 5 == 4) {
                 _onUserController.add({}..["4"] = list[toggle % 2]); // toggle
+              }
+              if (counter % 5 == 0) {
+                _onUserController.add({}..["5"] = list[toggle % 2]); // toggle
               }
             },
             child: const Icon(Icons.navigation),
