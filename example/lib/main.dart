@@ -340,7 +340,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: JsonFormWithThemeBuilder(
                 jsonWidgets: json)
                 .setDateBuilderMethod(dateBuilder)//
-             .registerComponent(DropDownParser2Creator())
+             .registerComponent(DropDownParserCreator())
                 // .setDynamicFactory(MyWidgetParserFactory())
                 .setStreamUpdates(onValueChangeStream)
                 .setOnValueChanged((String d, dynamic s) async {

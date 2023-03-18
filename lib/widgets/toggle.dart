@@ -41,7 +41,6 @@ class _ToggleState extends State<Toggle> {
     forceRefresh = true;
   }
 
-
   @override
   void dispose() {
     super.dispose();
@@ -69,6 +68,7 @@ class _ToggleState extends State<Toggle> {
             textDirection: TextDirection.ltr,
             children: <Widget>[
               LiveDataBuilder<int?>(
+                key: UniqueKey(),
                   liveData: widget.model.time,
                   builder: (context, snapshot) {
                     return NameWidgetDescription(
@@ -80,7 +80,7 @@ class _ToggleState extends State<Toggle> {
                         time: snapshot.data);
                   }),
               LiveDataBuilder<dynamic>(
-                key: UniqueKey(),
+                  key: UniqueKey(),
                   liveData: widget.model.chosenValue,
                   builder: (context, snapshot) {
                     return ToggleSwitch(
@@ -101,7 +101,12 @@ class _ToggleState extends State<Toggle> {
                         labels: widget.model.values,
                         changeOnTap: false,
                         onToggle: (index) async {
-                          dynamic newValue = index != null ? widget.model.values[index] : index;
+                          String? newValue;
+                          if (indexToValue(index) == widget.model.chosenValue.value) {
+                            index = null;
+                          }
+                          newValue = index != null ? widget.model.values[index] : null;
+
                           if (widget.onValueChanged != null) {
                             bool res = false;
                             widget.model.updateValue(newValue, withTime: false);
@@ -135,6 +140,10 @@ class _ToggleState extends State<Toggle> {
       });
     }
   }*/
+
+  String? indexToValue(int? index) {
+    return index != null ? widget.model.values[index] : null;
+  }
 
   int? getIndex(dynamic value) {
     int? temp = widget.model.values.indexOf(value ?? "");

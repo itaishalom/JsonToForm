@@ -136,10 +136,10 @@ class JsonFormWithTheme extends StatefulWidget {
         super(key: key);
 
   @override
-  _JsonFormWithThemeState createState() => _JsonFormWithThemeState();
+  JsonFormWithThemeState createState() => JsonFormWithThemeState();
 }
 
-class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
+class JsonFormWithThemeState extends State<JsonFormWithTheme> {
   late final StreamSubscription<Map<String, dynamic>>? _valueChange;
   late Stream<DataClass> dataClassStream;
   late Stream<Events> eventsStream;

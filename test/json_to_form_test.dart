@@ -5,6 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:json_to_form_with_theme/exceptions/parsing_exception.dart';
 
+import 'dart:async';
+import 'dart:math';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
+import 'package:json_to_form_with_theme/themes/json_form_theme.dart';
+
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/widgets/drop_down_widget.dart';
 import 'package:json_to_form_with_theme/widgets/edit_text_value.dart';
@@ -32,39 +39,126 @@ void main() {
   }
 
   group("Widget tests:", () {
+    int yearInMilliseconds = 31556952000;
+    int monthInMilliseconds = 2629800000;
+    int weekInMilliseconds = 604800000;
+    int dayInMilliseconds = 86400000;
+    int hourInMilliseconds = 3600000;
+    int minuteInMilliseconds = 60000;
+
+    String buildDaysString(int diff) {
+      int days = diff ~/ dayInMilliseconds;
+      return "${days}d";
+    }
+
+
+    String buildMonthString(DateTime dateTime) {
+      return DateFormat.MMMd().format(dateTime);
+    }
+
+
+    String build24String(int diff) {
+      int hours = diff ~/ hourInMilliseconds;
+      int minutes = (diff - (hours * hourInMilliseconds)) ~/ minuteInMilliseconds;
+      return "${hours}h ${minutes}m";
+    }
+
+    String buildDate(DateTime dateTime) {
+      final now = DateTime.now();
+      int diff = now.millisecondsSinceEpoch - dateTime.millisecondsSinceEpoch;
+
+      if (diff < dayInMilliseconds) {
+        return build24String(diff);
+      } else if (diff >= dayInMilliseconds && diff < monthInMilliseconds) {
+        return buildDaysString(diff);
+      } else if (diff >= monthInMilliseconds && diff < yearInMilliseconds) {
+        return buildMonthString(dateTime);
+      }
+      return dateTime.year.toString();
+    }
+
+
+
+
+
+    Widget dateBuilder(int date, String id) {
+      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(date);
+      return Text(buildDate(dateTime));
+    }
+
     testWidgets('Verify toggle', (WidgetTester tester) async {
-      final Map<String, dynamic> json = {
+       Map<String, dynamic> json = {
         "widgets": [
           {
             "id": "1",
             "name": "Toggle",
             "type": "toggle",
+            "time": DateTime.now().subtract( const Duration(minutes: 5)).millisecondsSinceEpoch,
+
             "values": ["On", "Off"],
             "chosen_value": "Off"
           },
         ]
       };
+
+       MaterialApp app =  MaterialApp(
+         home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json).setDateBuilderMethod(dateBuilder).build()),
+       );
+
       await tester.pumpWidget(
-        MaterialApp(
-          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json).build()),
-        ),
+          app
       );
       // Trigger a frame.
       await tester.pump();
+
       expect(find.byType(Toggle), findsOneWidget);
-      expect(find.byType(EditTextValue), findsNothing);
+       expect(find.textContaining("On"), findsNWidgets(1));
+       expect(find.textContaining("0h 5m"), findsNWidgets(1));
+
+       expect(find.byType(EditTextValue), findsNothing);
       expect(find.byType(SaveableEditTextValue), findsNothing);
       expect(find.byType(Header), findsNothing);
       expect(find.byType(DropDownWidget), findsNothing);
+
+
+
+        json = {
+          "widgets": [
+            {
+              "time": DateTime.now().millisecondsSinceEpoch,
+              "id": "1",
+              "name": "Toggle",
+              "type": "toggle",
+              "values": ["Good", "Bad"],
+              "chosen_value": "Good"
+            },
+          ]
+        };
+        app =  MaterialApp(
+         home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json).setDateBuilderMethod(dateBuilder).build()),
+       );
+       await tester.pumpWidget(
+           app
+       );
+       // Trigger a frame.
+       await tester.pump();
+       expect(find.byType(Toggle), findsOneWidget);
+       expect(find.textContaining("Good"), findsNWidgets(1));
+
+       expect(find.textContaining("0h 0m"), findsNWidgets(1));
+
+
+
+
     });
     testWidgets('Verify edit text', (WidgetTester tester) async {
-      final Map<String, dynamic> json = {
+       Map<String, dynamic> json = {
         "widgets": [
           {
             "id": "3",
             "name": "Edit text",
             "type": "edit_text",
-            "chosen_value": "edit value",
+            "chosen_value": "kuzu",
             "description": "(edit description..)",
           }
         ]
@@ -77,10 +171,33 @@ void main() {
       // Trigger a frame.
       await tester.pump();
       expect(find.byType(Toggle), findsNothing);
+      expect(find.textContaining("kuzu"), findsNWidgets(1));
       expect(find.byType(EditTextValue), findsOneWidget);
       expect(find.byType(SaveableEditTextValue), findsNothing);
       expect(find.byType(Header), findsNothing);
       expect(find.byType(DropDownWidget), findsNothing);
+
+       json = {
+         "widgets": [
+           {
+             "id": "3",
+             "name": "Edit text",
+             "type": "edit_text",
+             "chosen_value": "refresh123",
+             "description": "(edit description..)",
+           }
+         ]
+       };
+       await tester.pumpWidget(
+         MaterialApp(
+           home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json).build()),
+         ),
+       );
+       // Trigger a frame.
+       await tester.pump();
+       debugDumpApp();
+       expect(find.textContaining("refresh.."), findsNWidgets(1));
+
     });
 
     testWidgets('Verify save able edit text', (WidgetTester tester) async {
@@ -136,7 +253,7 @@ void main() {
       expect(find.byType(DropDownWidget), findsNothing);
     });
     testWidgets('Verify dropdown', (WidgetTester tester) async {
-      final Map<String, dynamic> json = {
+       Map<String, dynamic> json = {
         "widgets": [
           {
             "id": "4",
@@ -159,6 +276,31 @@ void main() {
       expect(find.byType(Header), findsNothing);
       expect(find.byType(StaticTextValue), findsNothing);
       expect(find.byType(DropDownWidget), findsOneWidget);
+
+      expect(find.textContaining("Low"), findsNWidgets(3));
+       expect(find.textContaining("High"), findsNothing);
+
+      json = {
+        "widgets": [
+          {
+            "id": "4",
+            "name": "Drop down",
+            "type": "drop_down",
+            "values": ["Low-Intermediate", "Medium", "High"],
+            "chosen_value": "High"
+          },
+        ]
+      };
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(child: JsonFormWithThemeBuilder(jsonWidgets: json).build()),
+        ),
+      );
+       await tester.pump();
+       expect(find.textContaining("Low"), findsNothing);
+
+       expect(find.textContaining("High"), findsNWidgets(3));
+
     });
     testWidgets('Throws exception on same id twice', (WidgetTester tester) async {
       final Map<String, dynamic> json = {
@@ -431,8 +573,8 @@ void main() {
       final StreamController<Map<String, dynamic>> _onUserController =
       StreamController<Map<String, dynamic>>();
       onValueChangeStream = _onUserController.stream.asBroadcastStream();
-      String valueAfterChange = "MoroDoro";
-      String valueAfterChangeCut = "MoroD..";
+      String valueAfterChange = "MoroDorop";
+      String valueAfterChangeCut = "MoroDor..";
       final Map<String, dynamic> json = {
         "widgets": [
           {
@@ -457,7 +599,6 @@ void main() {
 
       await tester.pump(const Duration(seconds: 5));
       final findText = find.text(valueAfterChangeCut);
-     // debugDumpApp();
       expect(findText, findsOneWidget);
     });
 
@@ -638,7 +779,7 @@ void main() {
       expect(find.text("ZZZ"), findsNothing);
       await tester.pump();
 
-
+      debugDumpApp();
       expect((tester.widget(find.byKey(ValueKey(dropId +"inner"))) as DropdownButton).value,
           equals('XXX'));
       // Here before the menu is open we have one widget with text 'Lesser'
@@ -756,7 +897,7 @@ void main() {
       Key scrollKey = const Key('scrollView');
 
       await tester.tap(find.text(toggleValue));
-      await tester.pump(const Duration(seconds: 5));
+      await tester.pump(const Duration(seconds: 1));
       expect(null, valueAfterChange);
 
 

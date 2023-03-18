@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:json_to_form_with_theme/json_to_form_lib.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/parsers/drop_down_parser.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
@@ -10,36 +12,31 @@ import 'package:stream_live_data/live_data.dart';
 import 'package:stream_live_data/live_data_builder.dart';
 import 'package:stream_live_data/live_data_token.dart';
 
-import 'line_wrapper.dart';
-import 'name_description_widget.dart';
-
 /// This is the stateful widget that the main application instantiates.
 class DropDownWidget extends StatefulWidget {
   final Widget Function(int date, String id)? dateBuilder;
-  final DropDownModel model;
+  final DropDownParserModel model;
   final OnValueChanged? onValueChanged;
 
   @override
   State<DropDownWidget> createState() => _MyStatefulWidgetState();
 
-  DropDownWidget({Key? key, required this.model, this.onValueChanged, this.dateBuilder});
+  const DropDownWidget({Key? key, required this.model, this.onValueChanged, this.dateBuilder})
+      : super(key: key);
 }
 
 /// This is the private State class that goes with MyStatefulWidget.
 class _MyStatefulWidgetState extends State<DropDownWidget> {
-
   bool forceRefresh = false;
 
   @override
   void didUpdateWidget(covariant DropDownWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.model.updateValue("SSSSS", withTime: false);
-  //  print(oldWidget.model.chosenValue.value);
+
     oldWidget.model.dispose();
- //   print(widget.model.chosenValue.value);
+
     forceRefresh = true;
   }
-
 
   @override
   void dispose() {
@@ -55,7 +52,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
   Widget build(BuildContext context) {
     if (forceRefresh) {
       forceRefresh = false;
-    //  dropdownValue = widget.model.chosenValue.value;
+      //  dropdownValue = widget.model.chosenValue.value;
     }
     return Container(
       constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight),
@@ -64,11 +61,12 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, textDirection: TextDirection.ltr, children: <Widget>[
           LiveDataBuilder<int?>(
+              key: UniqueKey(),
               liveData: widget.model.time,
               builder: (context, time) {
                 return NameWidgetDescription(
                   id: widget.model.id,
-                  name: widget.model.name,
+                  name: widget.model.name.toString(),
                   width: InheritedJsonFormTheme.of(context).theme.dropDownWidthOfHeader,
                   description: widget.model.description,
                   dateBuilder: widget.dateBuilder,
@@ -77,14 +75,18 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
               }),
           Container(
             constraints: BoxConstraints(maxWidth: InheritedJsonFormTheme.of(context).theme.dropDownWith),
-            child: StreamBuilder<dynamic>(
-              initialData: "",
-                stream: widget.model.chosenValueStream,
+            child: LiveDataBuilder<dynamic>(
+                key: UniqueKey(),
+                liveData: widget.model.chosenValue,
+                initialData: widget.model.chosenValue.value,
                 builder: (context, snapshot) {
-                  print("buildddd=======");
-                  print("buildddd: " +snapshot.data.toString());
-                  print("buildddd=======end");
+                  print("build == live data with key");
+                  print("build chosen value: " + widget.model.chosenValue.value);
+                  print("build snapshot: " + snapshot.data.toString());
+                  print("build  end == live data with key");
                   return DropdownButton<String>(
+                    key: ValueKey(widget.model.id +"inner"),
+
                     dropdownColor: const Color(0xff222222),
                     value: snapshot.data,
                     isExpanded: true,
@@ -141,12 +143,12 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
   }
 
   Future<bool> changeValue(String id, dynamic value) async {
-   // if (widget.model.chosenValue.value != value) {
+    if (widget.model.chosenValue.value != value) {
       widget.model.updateValue(value, withTime: false);
       if (value != null) {
         return await widget.onValueChanged!(id, value);
       }
- //   }
+    }
     return false;
   }
 }
