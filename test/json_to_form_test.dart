@@ -779,7 +779,6 @@ void main() {
       expect(find.text("ZZZ"), findsNothing);
       await tester.pump();
 
-      debugDumpApp();
       expect((tester.widget(find.byKey(ValueKey(dropId +"inner"))) as DropdownButton).value,
           equals('XXX'));
       // Here before the menu is open we have one widget with text 'Lesser'
