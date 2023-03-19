@@ -195,7 +195,6 @@ void main() {
        );
        // Trigger a frame.
        await tester.pump();
-       debugDumpApp();
        expect(find.textContaining("refresh.."), findsNWidgets(1));
 
     });
