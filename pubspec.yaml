@@ -10,15 +10,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  toggle_switch: 2.0.1 #https://pub.dev/packages/toggle_switch
+  toggle_switch: 2.1.0 #https://pub.dev/packages/toggle_switch
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^1.0.0
-  mocktail: ^0.1.4
-  mockito: ^5.0.16
+  mocktail: 0.3.0
+  mockito: 5.4.1
 
 
 # For information on the generic Dart part of this file, see the
