@@ -2,6 +2,7 @@ library json_to_form_with_theme;
 
 import 'dart:async';
 import 'dart:collection';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 import 'package:flutter/material.dart';
 import 'package:json_to_form_with_theme/exceptions/parsing_exception.dart';
@@ -261,27 +262,36 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
                 dataClassStream: dataClassStream,
                 eventsStream: eventsStream,
                 child: FocusScope(
-                  child: CustomScrollView(
-                      key: const ValueKey("scrollView"),
-                      slivers: <Widget>[
-                        SliverList(
-                          key: const ValueKey("theList"),
-                          delegate: SliverChildBuilderDelegate(
-                            (BuildContext context, int index) {
-                              ItemModel item = widget.items[index];
-                              Widget theItem = (widget._creators[item.type] ??
+                  child: KeyboardVisibilityBuilder(
+                  builder: (context, isKeyboardVisible) {
+                    return Padding(
+                      padding: EdgeInsets.only(
+                          bottom: isKeyboardVisible ?  InheritedJsonFormTheme.of(context).theme.keyboardOpenPadding:
+                          InheritedJsonFormTheme.of(context).theme.keyboardClosePadding),
+                      child: CustomScrollView(
+                          key: const ValueKey("scrollView"),
+                          slivers: <Widget>[
+                            SliverList(
+                              key: const ValueKey("theList"),
+                              delegate: SliverChildBuilderDelegate(
+                                    (BuildContext context, int index) {
+                                  ItemModel item = widget.items[index];
+                                  Widget theItem = (widget._creators[item
+                                      .type] ??
                                       EmptyCreator())
-                                  .createWidget(
+                                      .createWidget(
                                       item,
                                       widget.onValueChanged,
                                       widget.dateBuilder,
                                       widget.savebarBuilder);
-                              return theItem;
-                            },
-                            childCount: widget.items.length,
-                          ),
-                        )
-                      ]),
+                                  return theItem;
+                                },
+                                childCount: widget.items.length,
+                              ),
+                            )
+                          ]),
+                    );
+                  }),
                 ),
               ),
             )));

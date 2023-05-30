@@ -40,6 +40,7 @@ const inactiveToggleActiveBgColor = Color(0xffaD5C14);
 /// Extend this class if you want to create a custom theme.
 @immutable
 abstract class JsonFormTheme {
+
   /// Creates a new chat theme based on provided colors and text styles.
   const JsonFormTheme(
       {required this.headerContainerPadding,
@@ -86,12 +87,15 @@ abstract class JsonFormTheme {
       required this.toggleWidthOfHeader,
       required this.editTextWidthOfHeader,
       required this.dropDownWidthOfHeader,
-        required this.scrollPadding,
+      required this.scrollPadding,
+      required this.keyboardOpenPadding,
+      required this.keyboardClosePadding,
       required this.staticTextWidthOfHeader,
       required this.staticValueWidth,
       this.activeToggleBorder,
       this.itemMinHeight = 0,
-      this.mainAxisAlignmentOfName = MainAxisAlignment.start});
+      this.mainAxisAlignmentOfName = MainAxisAlignment.start,
+      this.digitsBeforeDots = 5});
 
   /// Global container params///
 
@@ -203,6 +207,10 @@ abstract class JsonFormTheme {
   final double dropDownWidthOfHeader;
 
   final double scrollPadding;
+  final double keyboardOpenPadding;
+  final double keyboardClosePadding;
+
+  final int digitsBeforeDots;
 }
 
 /// Default chat theme which extends [JsonFormTheme]
@@ -314,6 +322,7 @@ class DefaultTheme extends JsonFormTheme {
             bottom: BorderSide.none,
           ))})
       : super(
+    digitsBeforeDots: 7,
             itemMinHeight: 0,
             staticValueWidth: 90,
             dropDownWith: 120,
@@ -360,5 +369,7 @@ class DefaultTheme extends JsonFormTheme {
             editTextWidthOfHeader: 125,
             dropDownWidthOfHeader: 105,
             scrollPadding: 100,
+            keyboardOpenPadding: 0,
+            keyboardClosePadding: 0,
             staticTextWidthOfHeader: 125);
 }
