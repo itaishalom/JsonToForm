@@ -8,21 +8,19 @@ import 'package:json_to_form_with_theme/json_to_form_lib.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/parsers/drop_down_parser.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
-import 'package:stream_live_data/live_data.dart';
 import 'package:stream_live_data/live_data_builder.dart';
-import 'package:stream_live_data/live_data_token.dart';
 
 /// This is the stateful widget that the main application instantiates.
 class DropDownWidget extends StatefulWidget {
-  final Widget Function(int date, String id)? dateBuilder;
-  final DropDownParserModel model;
-  final OnValueChanged? onValueChanged;
+  final Widget Function(int date, String id)? _dateBuilder;
+  final DropDownParserModel _model;
+  final OnValueChanged? _onValueChanged;
 
   @override
   State<DropDownWidget> createState() => _MyStatefulWidgetState();
 
-  const DropDownWidget({Key? key, required this.model, this.onValueChanged, this.dateBuilder})
-      : super(key: key);
+  const DropDownWidget({Key? key, required DropDownParserModel model, Future<bool> Function(String, dynamic)? onValueChanged, Widget Function(int, String)? dateBuilder})
+      : _dateBuilder = dateBuilder, _onValueChanged = onValueChanged, _model = model, super(key: key);
 }
 
 /// This is the private State class that goes with MyStatefulWidget.
@@ -31,7 +29,13 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
   @override
   void didUpdateWidget(covariant DropDownWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.model.dispose();
+    oldWidget._model.dispose();
+  }
+
+  @override
+  void dispose() {
+    widget._model.dispose();
+    super.dispose();
   }
 
   @override
@@ -39,19 +43,19 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
     return Container(
       constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight),
       child: LineWrapper(
-        isBeforeHeader: widget.model.isBeforeHeader,
+        isBeforeHeader: widget._model.isBeforeHeader,
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, textDirection: TextDirection.ltr, children: <Widget>[
           LiveDataBuilder<int?>(
               key: UniqueKey(),
-              liveData: widget.model.time,
+              liveData: widget._model.time,
               builder: (context, time) {
                 return NameWidgetDescription(
-                  id: widget.model.id,
-                  name: widget.model.name.toString(),
+                  id: widget._model.id,
+                  name: widget._model.name.toString(),
                   width: InheritedJsonFormTheme.of(context).theme.dropDownWidthOfHeader,
-                  description: widget.model.description,
-                  dateBuilder: widget.dateBuilder,
+                  description: widget._model.description,
+                  dateBuilder: widget._dateBuilder,
                   time: time.data,
                 );
               }),
@@ -59,11 +63,11 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
             constraints: BoxConstraints(maxWidth: InheritedJsonFormTheme.of(context).theme.dropDownWith),
             child: LiveDataBuilder<dynamic>(
                 key: UniqueKey(),
-                liveData: widget.model.chosenValue,
-                initialData: widget.model.chosenValue.value,
+                liveData: widget._model.chosenValue,
+                initialData: widget._model.chosenValue.value,
                 builder: (context, snapshot) {
                   return DropdownButton<String>(
-                    key: ValueKey(widget.model.id +"inner"),
+                    key: ValueKey(widget._model.id +"inner"),
 
                     dropdownColor: const Color(0xff222222),
                     value: snapshot.data,
@@ -90,7 +94,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                       await _onChanged(newValue);
                     },
                     selectedItemBuilder: (BuildContext context) {
-                      return widget.model.values.map((String value) {
+                      return widget._model.values.map((String value) {
                         return Container(
                           alignment: Alignment.centerRight,
                           child: Text(
@@ -100,7 +104,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                         );
                       }).toList();
                     },
-                    items: widget.model.values.map<DropdownMenuItem<String>>((String value) {
+                    items: widget._model.values.map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value, style: const TextStyle(color: Colors.white)),
@@ -115,16 +119,16 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
   }
 
   _onChanged(String? newValue) async {
-    if (await _changeValue(widget.model.id, newValue)) {
-      widget.model.updateTime();
+    if (await _changeValue(widget._model.id, newValue)) {
+      widget._model.updateTime();
     }
   }
 
   Future<bool> _changeValue(String id, dynamic value) async {
-    if (widget.model.chosenValue.value != value) {
-      widget.model.updateValue(value, withTime: false);
+    if (widget._model.chosenValue.value != value) {
+      widget._model.updateValue(value, withTime: false);
       if (value != null) {
-        return await widget.onValueChanged!(id, value);
+        return await widget._onValueChanged!(id, value);
       }
     }
     return false;

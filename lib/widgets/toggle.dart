@@ -4,60 +4,49 @@ import 'package:flutter/widgets.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 import 'package:json_to_form_with_theme/widgets/line_wrapper.dart';
-import 'package:stream_live_data/live_data.dart';
 import 'package:stream_live_data/live_data_builder.dart';
-import 'package:stream_live_data/live_data_token.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import '../parsers/toggle_parser.dart';
 import 'name_description_widget.dart';
 
 class Toggle extends StatefulWidget {
-  final ToggleModel model;
+  final ToggleModel _model;
 
   const Toggle({
     Key? key,
-    required this.model,
-    required this.onValueChanged,
-    this.dateBuilder,
-  }) : super(key: key);
+    required ToggleModel model,
+    required Future<bool> Function(String, dynamic)? onValueChanged,
+    Widget Function(int, String)? dateBuilder,
+  }) : _dateBuilder = dateBuilder, _onValueChanged = onValueChanged, _model = model, super(key: key);
 
-  final OnValueChanged? onValueChanged;
-  final Widget Function(int date, String id)? dateBuilder;
+  final OnValueChanged? _onValueChanged;
+  final Widget Function(int date, String id)? _dateBuilder;
 
   @override
   _ToggleState createState() => _ToggleState();
 }
 
 class _ToggleState extends State<Toggle> {
-  bool forceRefresh = false;
 
   @override
   void didUpdateWidget(covariant Toggle oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.model.dispose();
-    forceRefresh = true;
+    oldWidget._model.dispose();
   }
 
   @override
   void dispose() {
+    widget._model.dispose();
     super.dispose();
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (forceRefresh) {
-      forceRefresh = false;
-    }
     return Container(
       constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight),
       child: LineWrapper(
-          isBeforeHeader: widget.model.isBeforeHeader,
+          isBeforeHeader: widget._model.isBeforeHeader,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -65,19 +54,19 @@ class _ToggleState extends State<Toggle> {
             children: <Widget>[
               LiveDataBuilder<int?>(
                 key: UniqueKey(),
-                  liveData: widget.model.time,
+                  liveData: widget._model.time,
                   builder: (context, snapshot) {
                     return NameWidgetDescription(
-                        name: widget.model.name,
-                        id: widget.model.id,
+                        name: widget._model.name,
+                        id: widget._model.id,
                         width: InheritedJsonFormTheme.of(context).theme.toggleWidthOfHeader,
-                        description: widget.model.description,
-                        dateBuilder: widget.dateBuilder,
+                        description: widget._model.description,
+                        dateBuilder: widget._dateBuilder,
                         time: snapshot.data);
                   }),
               LiveDataBuilder<dynamic>(
                   key: UniqueKey(),
-                  liveData: widget.model.chosenValue,
+                  liveData: widget._model.chosenValue,
                   builder: (context, snapshot) {
                     return ToggleSwitch(
                         activeBorders: InheritedJsonFormTheme.of(context).theme.activeToggleBorder != null
@@ -87,28 +76,28 @@ class _ToggleState extends State<Toggle> {
                         minWidth: InheritedJsonFormTheme.of(context).theme.toggleMinWidth,
                         minHeight: InheritedJsonFormTheme.of(context).theme.toggleMinHeight,
                         fontSize: InheritedJsonFormTheme.of(context).theme.toggleFontSize,
-                        initialLabelIndex: getIndex(snapshot.data),
+                        initialLabelIndex: _getIndex(snapshot.data),
                         cornerRadius: 4.0,
                         activeBgColor: [InheritedJsonFormTheme.of(context).theme.toggleActiveColor],
                         activeFgColor: InheritedJsonFormTheme.of(context).theme.toggleActiveTextColor,
                         inactiveBgColor: InheritedJsonFormTheme.of(context).theme.toggleInactiveColor,
                         inactiveFgColor: InheritedJsonFormTheme.of(context).theme.toggleInactiveTextColor,
-                        totalSwitches: widget.model.values.length,
-                        labels: widget.model.values,
+                        totalSwitches: widget._model.values.length,
+                        labels: widget._model.values,
                         changeOnTap: false,
                         onToggle: (index) async {
                           String? newValue;
-                          if (indexToValue(index) == widget.model.chosenValue.value) {
+                          if (_indexToValue(index) == widget._model.chosenValue.value) {
                             index = null;
                           }
-                          newValue = index != null ? widget.model.values[index] : null;
+                          newValue = index != null ? widget._model.values[index] : null;
 
-                          if (widget.onValueChanged != null) {
+                          if (widget._onValueChanged != null) {
                             bool res = false;
-                            widget.model.updateValue(newValue, withTime: false);
-                            res = await widget.onValueChanged!(widget.model.id, newValue);
+                            widget._model.updateValue(newValue, withTime: false);
+                            res = await widget._onValueChanged!(widget._model.id, newValue);
                             if (res) {
-                              widget.model.updateTime();
+                              widget._model.updateTime();
                             }
                           }
                         });
@@ -118,12 +107,12 @@ class _ToggleState extends State<Toggle> {
     );
   }
 
-  String? indexToValue(int? index) {
-    return index != null ? widget.model.values[index] : null;
+  String? _indexToValue(int? index) {
+    return index != null ? widget._model.values[index] : null;
   }
 
-  int? getIndex(dynamic value) {
-    int? temp = widget.model.values.indexOf(value ?? "");
+  int? _getIndex(dynamic value) {
+    int? temp = widget._model.values.indexOf(value ?? "");
     if (temp == -1) temp = null;
     return temp;
   }
