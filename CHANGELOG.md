@@ -174,7 +174,6 @@ Can select between save bar and save with debounce timer
 ## 4.1.3
 Get scrollPadding configuration from theme 
 
-
 ## 4.1.4
 Add Padding to scroll when keyboard is open
 
@@ -185,4 +184,7 @@ Number of digits before adding ".." is now configurable
 Number of digits before adding ".." is now configurable on Text with save button
 
 ## 4.1.7
+Update dependencies
+
+## 4.1.8
 Migrate to liveData
