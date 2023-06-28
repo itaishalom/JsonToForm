@@ -185,3 +185,6 @@ Number of digits before adding ".." is now configurable on Text with save button
 
 ## 4.1.7
 Update dependencies
+
+## 4.1.8
+Migrate to liveData

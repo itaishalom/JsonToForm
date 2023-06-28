@@ -1,173 +1,134 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:json_to_form_with_theme/json_to_form_lib.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/parsers/drop_down_parser.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
-
-import 'line_wrapper.dart';
-import 'name_description_widget.dart';
+import 'package:stream_live_data/live_data_builder.dart';
 
 /// This is the stateful widget that the main application instantiates.
 class DropDownWidget extends StatefulWidget {
-  final Widget Function(int date, String id)? dateBuilder;
-  final DropDownModel model;
-  final OnValueChanged? onValueChanged;
-  
+  final Widget Function(int date, String id)? _dateBuilder;
+  final DropDownParserModel _model;
+  final OnValueChanged? _onValueChanged;
+
   @override
   State<DropDownWidget> createState() => _MyStatefulWidgetState();
-  
-  DropDownWidget({Key? key, required this.model, this.onValueChanged, this.dateBuilder});
+
+  const DropDownWidget({Key? key, required DropDownParserModel model, Future<bool> Function(String, dynamic)? onValueChanged, Widget Function(int, String)? dateBuilder})
+      : _dateBuilder = dateBuilder, _onValueChanged = onValueChanged, _model = model, super(key: key);
 }
 
 /// This is the private State class that goes with MyStatefulWidget.
 class _MyStatefulWidgetState extends State<DropDownWidget> {
-  String? dropdownValue;
-  final ValueNotifier<int?> thisTime = ValueNotifier<int?>(null);
-
-  late final StreamSubscription<String?>? _valueChange;
-  bool forceRefresh = false;
 
   @override
   void didUpdateWidget(covariant DropDownWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    forceRefresh = true;
+    oldWidget._model.dispose();
   }
 
   @override
-  void didChangeDependencies() {
-    UpdateStreamWidget.of(context)!
-        .dataClassStream
-        .listen(_onRemoteValueChanged);
-    super.didChangeDependencies();
+  void dispose() {
+    widget._model.dispose();
+    super.dispose();
   }
-
-  @override
-  void initState() {
-    dropdownValue = widget.model.chosenValue;
-    thisTime.value = widget.model.time;
-    super.initState();
-  }
-
-  void _onRemoteValueChanged(DataClass dataClass) {
-    if (dataClass.id == widget.model.id && mounted) {
-      setState(() {
-        dropdownValue = dataClass.value;
-      });
-      thisTime.value = widget.model.time;
-    }
-  }
-
 
   @override
   Widget build(BuildContext context) {
-    if (forceRefresh) {
-      forceRefresh = false;
-      dropdownValue = widget.model.chosenValue;
-      thisTime.value = widget.model.time;
-    }
     return Container(
       constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight),
-      child:LineWrapper(
-      isBeforeHeader: widget.model.isBeforeHeader,
-      child:  Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            textDirection: TextDirection.ltr,
-            children: <Widget>[
-              ValueListenableBuilder<int?>(
-                  valueListenable: thisTime,
-                  builder: (context, time, _) {
-                    return   NameWidgetDescription(
-                      id: widget.model.id,
-                      name: widget.model.name,
-                      width: InheritedJsonFormTheme.of(context).theme.dropDownWidthOfHeader,
-                      description: widget.model.description,
-                      dateBuilder: widget.dateBuilder,
-                      time: time,
-                    );
-                  }),
-              Container(
-                constraints: BoxConstraints(
-                    maxWidth:
-                        InheritedJsonFormTheme.of(context).theme.dropDownWith),
-                child: DropdownButton<String>(
-                  key: ValueKey(widget.model.id +"inner"),
-                  dropdownColor: const Color(0xff222222),
-                  value: dropdownValue,
-                  isExpanded: true,
-                  alignment: Alignment.centerRight,
-                  icon: InheritedJsonFormTheme.of(context).theme.dropDownIcon !=
-                          null
-                      ? InheritedJsonFormTheme.of(context).theme.dropDownIcon!
-                      : const Icon(
-                          Icons.arrow_drop_down_sharp,
-                          color: Colors.white,
-                        ),
-                  iconSize: 24,
-                  underline: InheritedJsonFormTheme.of(context)
-                              .theme
-                              .underLineWidget !=
-                          null
-                      ? InheritedJsonFormTheme.of(context).theme.underLineWidget!
-                      : Container(
-                          height: 2,
-                        ),
-                  style: const TextStyle(
-                    overflow: TextOverflow.clip,
-                    color: Color(0xff8A8B8F),
-                    fontSize: 16,
-                  ),
-                  onChanged: (String? newValue) async {
-                    await onChanged(newValue);
-                  },
-                  selectedItemBuilder: (BuildContext context) {
-                    return widget.model.values.map((String value) {
-                      return Container(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          dropdownValue!,
-                          style: const TextStyle(color: Colors.white),
-                        ),
+      child: LineWrapper(
+        isBeforeHeader: widget._model.isBeforeHeader,
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, textDirection: TextDirection.ltr, children: <Widget>[
+          LiveDataBuilder<int?>(
+              key: UniqueKey(),
+              liveData: widget._model.time,
+              builder: (context, time) {
+                return NameWidgetDescription(
+                  id: widget._model.id,
+                  name: widget._model.name.toString(),
+                  width: InheritedJsonFormTheme.of(context).theme.dropDownWidthOfHeader,
+                  description: widget._model.description,
+                  dateBuilder: widget._dateBuilder,
+                  time: time.data,
+                );
+              }),
+          Container(
+            constraints: BoxConstraints(maxWidth: InheritedJsonFormTheme.of(context).theme.dropDownWith),
+            child: LiveDataBuilder<dynamic>(
+                key: UniqueKey(),
+                liveData: widget._model.chosenValue,
+                initialData: widget._model.chosenValue.value,
+                builder: (context, snapshot) {
+                  return DropdownButton<String>(
+                    key: ValueKey(widget._model.id +"inner"),
+
+                    dropdownColor: const Color(0xff222222),
+                    value: snapshot.data,
+                    isExpanded: true,
+                    alignment: Alignment.centerRight,
+                    icon: InheritedJsonFormTheme.of(context).theme.dropDownIcon != null
+                        ? InheritedJsonFormTheme.of(context).theme.dropDownIcon!
+                        : const Icon(
+                            Icons.arrow_drop_down_sharp,
+                            color: Colors.white,
+                          ),
+                    iconSize: 24,
+                    underline: InheritedJsonFormTheme.of(context).theme.underLineWidget != null
+                        ? InheritedJsonFormTheme.of(context).theme.underLineWidget!
+                        : Container(
+                            height: 2,
+                          ),
+                    style: const TextStyle(
+                      overflow: TextOverflow.clip,
+                      color: Color(0xff8A8B8F),
+                      fontSize: 16,
+                    ),
+                    onChanged: (String? newValue) async {
+                      await _onChanged(newValue);
+                    },
+                    selectedItemBuilder: (BuildContext context) {
+                      return widget._model.values.map((String value) {
+                        return Container(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            snapshot.data!,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        );
+                      }).toList();
+                    },
+                    items: widget._model.values.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value, style: const TextStyle(color: Colors.white)),
                       );
-                    }).toList();
-                  },
-                  items:
-                      widget.model.values.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value,
-                          style: const TextStyle(color: Colors.white)),
-                    );
-                  }).toList(),
-                ),
-              )
-            ]),
+                    }).toList(),
+                  );
+                }),
+          )
+        ]),
       ),
     );
   }
 
-  onChanged(String? newValue) async {
-    if (mounted) {
-      setState(() {
-        dropdownValue = newValue!;
-      });
-    }
-
-    bool res = await changeValue(widget.model.id, dropdownValue);
-
-    if (res) {
-      thisTime.value = DateTime.now().millisecondsSinceEpoch;
-      widget.model.time = thisTime.value!;
+  _onChanged(String? newValue) async {
+    if (await _changeValue(widget._model.id, newValue)) {
+      widget._model.updateTime();
     }
   }
 
-  Future<bool> changeValue(String id, dynamic value) async {
-    if (widget.model.chosenValue != value) {
-      widget.model.chosenValue = value;
-      if (widget.model.chosenValue != null) {
-        return await widget.onValueChanged!(id, value);
+  Future<bool> _changeValue(String id, dynamic value) async {
+    if (widget._model.chosenValue.value != value) {
+      widget._model.updateValue(value, withTime: false);
+      if (value != null) {
+        return await widget._onValueChanged!(id, value);
       }
     }
     return false;

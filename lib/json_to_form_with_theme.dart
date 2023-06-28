@@ -136,10 +136,10 @@ class JsonFormWithTheme extends StatefulWidget {
         super(key: key);
 
   @override
-  _JsonFormWithThemeState createState() => _JsonFormWithThemeState();
+  JsonFormWithThemeState createState() => JsonFormWithThemeState();
 }
 
-class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
+class JsonFormWithThemeState extends State<JsonFormWithTheme> {
   late final StreamSubscription<Map<String, dynamic>>? _valueChange;
   late Stream<DataClass> dataClassStream;
   late Stream<Events> eventsStream;
@@ -220,8 +220,13 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
     super.initState();
   }
 
+
   @override
   void didUpdateWidget(covariant JsonFormWithTheme oldWidget) {
+ /*   for (var element in oldWidget.items) {element.dispose();}
+    for (int i =0 ;i <oldWidget.items.length; i ++){
+      oldWidget.items[i] = EmptyItemModel();
+    }*/
     buildTheList();
     super.didUpdateWidget(oldWidget);
   }
@@ -242,6 +247,9 @@ class _JsonFormWithThemeState extends State<JsonFormWithTheme> {
     _valueChange?.cancel();
     _onDataClassReady.close();
     _onEventsClassReady.close();
+    for (var element in widget.items) {
+      element.dispose();
+    }
     super.dispose();
   }
 

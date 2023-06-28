@@ -1,37 +1,71 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:async';
+
+import 'package:example/drop_down_widget2.dart';
+import 'package:flutter/material.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/parsers/item_model.dart';
 import 'package:json_to_form_with_theme/parsers/parser_creator.dart';
+import 'package:stream_live_data/live_data.dart';
 
-import 'drop_down_widget2.dart';
-
-class DropDownParser2Model extends ItemModel{
-  dynamic chosenValue;
+class DropDownModel extends ItemModel{
   final String? description;
   final String name;
   final List<String> values;
-  int? time;
+  StreamController<dynamic> chosenValue;
+  late Stream<dynamic> chosenValueStream ;
 
-  DropDownParser2Model.fromJson(Map<String, dynamic> json, String type, bool isBeforeHeader)
+  MutableLiveData<int?> time;
+
+
+  @override
+  void updateValue(value, {bool withTime = true})async {
+    chosenValue.add(value);
+    if(withTime) {
+      time.add(DateTime
+          .now()
+          .millisecondsSinceEpoch);
+    }
+  }
+
+  void updateTime(){
+    time.add(DateTime.now().millisecondsSinceEpoch);
+  }
+
+  DropDownModel.fromJson(Map<String, dynamic> json, String type, bool isBeforeHeader)
       : name = json['name'],
         description = json['description'],
-        time = json['time'],
+        time =  MutableLiveData(initValue:json['time'], notifyOnChangeOnly: true),
         values = json['values'].cast<String>(),
-        chosenValue = json['chosen_value'], super(json['id'], type, isBeforeHeader);
+        chosenValue = StreamController(), super(json['id'], type, isBeforeHeader){
+    chosenValue.add(json['chosen_value']);
+    chosenValueStream = chosenValue.stream;
+  }
 
+  @override
+  void dispose() {
+    time.dispose();
+    chosenValue.close();
+  }
 }
 
-class DropDownParser2Creator extends ParserCreator<DropDownParser2Model>{
+class DropDownParserCreator2 extends ParserCreator<DropDownModel> {
   @override
   String get type => "drop_down2";
 
   @override
-  Widget createWidget(DropDownParser2Model model, OnValueChanged? onValueChanged, DateBuilderMethod? dateBuilder, SaveBarBuilderMethod? saveBarBuilderMethod) => DropDownWidget2(
-      key: ValueKey(model.id),
-      model: model,
-      dateBuilder: dateBuilder,
-      onValueChanged: onValueChanged);
+  DropDownModel parseModel(Map<String, dynamic> json, bool isBeforeHeader) {
+    return DropDownModel.fromJson(json, type, isBeforeHeader);
+  }
 
   @override
-  DropDownParser2Model parseModel(Map<String, dynamic> json, bool isBeforeHeader) =>DropDownParser2Model.fromJson(json, type, isBeforeHeader);
+  Widget createWidget(DropDownModel model, OnValueChanged? onValueChanged,
+      DateBuilderMethod? dateBuilder, SaveBarBuilderMethod? savebarBuilder) {
+
+    return DropDownWidget(
+        key: ValueKey(model.id),
+        model: model,
+        dateBuilder: dateBuilder,
+        onValueChanged: onValueChanged);
+  }
+
 }
