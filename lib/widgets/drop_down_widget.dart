@@ -27,33 +27,15 @@ class DropDownWidget extends StatefulWidget {
 
 /// This is the private State class that goes with MyStatefulWidget.
 class _MyStatefulWidgetState extends State<DropDownWidget> {
-  bool forceRefresh = false;
 
   @override
   void didUpdateWidget(covariant DropDownWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-
     oldWidget.model.dispose();
-
-    forceRefresh = true;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (forceRefresh) {
-      forceRefresh = false;
-      //  dropdownValue = widget.model.chosenValue.value;
-    }
     return Container(
       constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight),
       child: LineWrapper(
@@ -105,7 +87,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                       fontSize: 16,
                     ),
                     onChanged: (String? newValue) async {
-                      await onChanged(newValue);
+                      await _onChanged(newValue);
                     },
                     selectedItemBuilder: (BuildContext context) {
                       return widget.model.values.map((String value) {
@@ -132,13 +114,13 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
     );
   }
 
-  onChanged(String? newValue) async {
-    if (await changeValue(widget.model.id, newValue)) {
+  _onChanged(String? newValue) async {
+    if (await _changeValue(widget.model.id, newValue)) {
       widget.model.updateTime();
     }
   }
 
-  Future<bool> changeValue(String id, dynamic value) async {
+  Future<bool> _changeValue(String id, dynamic value) async {
     if (widget.model.chosenValue.value != value) {
       widget.model.updateValue(value, withTime: false);
       if (value != null) {
