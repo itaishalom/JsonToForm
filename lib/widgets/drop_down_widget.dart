@@ -80,10 +80,6 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                 liveData: widget.model.chosenValue,
                 initialData: widget.model.chosenValue.value,
                 builder: (context, snapshot) {
-                  print("build == live data with key");
-                  print("build chosen value: " + widget.model.chosenValue.value);
-                  print("build snapshot: " + snapshot.data.toString());
-                  print("build  end == live data with key");
                   return DropdownButton<String>(
                     key: ValueKey(widget.model.id +"inner"),
 

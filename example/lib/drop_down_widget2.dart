@@ -33,9 +33,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
   @override
   void didUpdateWidget(covariant DropDownWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    //  print(oldWidget.model.chosenValue.value);
     oldWidget.model.dispose();
-    //   print(widget.model.chosenValue.value);
     forceRefresh = true;
   }
 
@@ -63,6 +61,7 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
         child:
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, textDirection: TextDirection.ltr, children: <Widget>[
           LiveDataBuilder<int?>(
+              key: UniqueKey(),
               liveData: widget.model.time,
               builder: (context, time) {
                 return NameWidgetDescription(
@@ -80,9 +79,6 @@ class _MyStatefulWidgetState extends State<DropDownWidget> {
                 initialData: "",
                 stream: widget.model.chosenValueStream,
                 builder: (context, snapshot) {
-                  print("build with stream without key:");
-                  print("buildddd: " +snapshot.data.toString());
-                  print("build =======end stream");
                   return DropdownButton<String>(
                     dropdownColor: const Color(0xff222222),
                     value: snapshot.data,

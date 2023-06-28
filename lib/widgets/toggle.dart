@@ -35,9 +35,7 @@ class _ToggleState extends State<Toggle> {
   @override
   void didUpdateWidget(covariant Toggle oldWidget) {
     super.didUpdateWidget(oldWidget);
-    //  print(oldWidget.model.chosenValue.value);
     oldWidget.model.dispose();
-    //   print(widget.model.chosenValue.value);
     forceRefresh = true;
   }
 
@@ -55,8 +53,6 @@ class _ToggleState extends State<Toggle> {
   Widget build(BuildContext context) {
     if (forceRefresh) {
       forceRefresh = false;
-      //stringToIndex();
-      // thisTime.value = widget.model.time;
     }
     return Container(
       constraints: BoxConstraints(minHeight: InheritedJsonFormTheme.of(context).theme.itemMinHeight),
@@ -121,25 +117,6 @@ class _ToggleState extends State<Toggle> {
           )),
     );
   }
-
-/*  void _onRemoteValueChanged(DataClass event) {
-    if (event.id != widget.model.id) {
-      return;
-    }
-    if (mounted) {
-      setState(() {
-        if (event.value == null) {
-          updatedIndex = null;
-        } else {
-          updatedIndex = widget.model.values.indexOf(event.value);
-          if (updatedIndex == -1) {
-            updatedIndex = null;
-          }
-        }
-        thisTime.add(widget.model.time);
-      });
-    }
-  }*/
 
   String? indexToValue(int? index) {
     return index != null ? widget.model.values[index] : null;

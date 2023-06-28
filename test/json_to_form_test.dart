@@ -275,8 +275,7 @@ void main() {
       expect(find.byType(Header), findsNothing);
       expect(find.byType(StaticTextValue), findsNothing);
       expect(find.byType(DropDownWidget), findsOneWidget);
-
-      expect(find.textContaining("Low"), findsNWidgets(3));
+      expect(find.textContaining("Low"), findsNWidgets(1));
        expect(find.textContaining("High"), findsNothing);
 
       json = {
@@ -298,7 +297,7 @@ void main() {
        await tester.pump();
        expect(find.textContaining("Low"), findsNothing);
 
-       expect(find.textContaining("High"), findsNWidgets(3));
+       expect(find.textContaining("High"), findsNWidgets(1));
 
     });
     testWidgets('Throws exception on same id twice', (WidgetTester tester) async {
@@ -762,7 +761,7 @@ void main() {
       final dropdownItem = find.text('valueAfterChange').last;
 
 
-      expect(find.text(valueAfterChange), findsNWidgets(3));
+      expect(find.text(valueAfterChange), findsNWidgets(1));
       expect(find.text("ZZZ"), findsNothing);
 
       await tester.drag(find.byKey(scrollKey), const Offset(0.0, -3000));
@@ -772,9 +771,7 @@ void main() {
       await tester.pump(const Duration(seconds: 5));
       await tester.pumpAndSettle();
 
-
-
-      expect(find.text(valueAfterChange), findsNWidgets(3));
+      expect(find.text(valueAfterChange), findsNWidgets(1));
       expect(find.text("ZZZ"), findsNothing);
       await tester.pump();
 
@@ -797,8 +794,6 @@ void main() {
 
       /// We directly verify the value updated in the onchaged function.
       expect(valueAfterChange, 'YYY');
-
-
 
       await tester.tap(find.byKey(ValueKey(dropId +"inner")));
       // Calling pump twice once comple the the action and

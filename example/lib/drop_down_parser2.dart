@@ -48,7 +48,7 @@ class DropDownModel extends ItemModel{
   }
 }
 
-class DropDownParserCreator extends ParserCreator<DropDownModel> {
+class DropDownParserCreator2 extends ParserCreator<DropDownModel> {
   @override
   String get type => "drop_down2";
 
