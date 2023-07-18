@@ -158,7 +158,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "4.1.8"
+    version: "4.1.9"
   lints:
     dependency: transitive
     description:
@@ -248,10 +248,10 @@ packages:
     dependency: "direct main"
     description:
       name: stream_live_data
-      sha256: "6241433da6177617a0bd80dc72fd9312c9c7eafd30b118268f198a5a7f9c7f74"
+      sha256: caab5c611808a9c6964f1c9d601a29009eaba1b84bdeaee02710f2011ffc935e
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.17"
+    version: "0.0.18"
   string_scanner:
     dependency: transitive
     description:

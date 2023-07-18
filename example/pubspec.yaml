@@ -32,7 +32,7 @@ dependencies:
 
 #  flutter_svg: 1.1.1+1 #https://pub.dev/packages/flutter_svg
   sizer: ^2.0.15 #https://pub.dev/packages/sizer
-  stream_live_data: 0.0.17
+  stream_live_data: 0.0.18
 
   json_to_form_with_theme:
     path: ../
