@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:json_to_form_with_theme/json_to_form_with_theme.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 import 'package:json_to_form_with_theme/widgets/line_wrapper.dart';
-import 'package:stream_live_data/live_data_builder.dart';
+import 'package:stream_live_data/stream_live_data.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import '../parsers/toggle_parser.dart';

@@ -9,9 +9,8 @@ import 'package:json_to_form_with_theme/parsers/drop_down_parser.dart';
 import 'package:json_to_form_with_theme/themes/inherited_json_form_theme.dart';
 import 'package:json_to_form_with_theme/widgets/line_wrapper.dart';
 import 'package:json_to_form_with_theme/widgets/name_description_widget.dart';
-import 'package:stream_live_data/live_data.dart';
-import 'package:stream_live_data/live_data_builder.dart';
-import 'package:stream_live_data/live_data_token.dart';
+import 'package:stream_live_data/stream_live_data.dart';
+
 
 /// This is the stateful widget that the main application instantiates.
 class DropDownWidget extends StatefulWidget {

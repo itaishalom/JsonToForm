@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:json_to_form_with_theme/parsers/item_model.dart';
 import 'package:json_to_form_with_theme/parsers/parser_creator.dart';
 import 'package:json_to_form_with_theme/widgets/toggle.dart';
-import 'package:stream_live_data/live_data.dart';
+import 'package:stream_live_data/stream_live_data.dart';
 import '../json_to_form_with_theme.dart';
 
 class ToggleModel extends ItemModel{
